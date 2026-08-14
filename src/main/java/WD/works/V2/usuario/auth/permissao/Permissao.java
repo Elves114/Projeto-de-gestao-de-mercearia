@@ -1,0 +1,39 @@
+package WD.works.V2.usuario.auth.permissao;
+
+public enum Permissao {
+
+    // Empresa
+    EMPRESA_VISUALIZAR,
+    EMPRESA_EDITAR,
+
+    // Usuário
+    USUARIO_CRIAR,
+    USUARIO_VISUALIZAR,
+    USUARIO_EDITAR,
+    USUARIO_BLOQUEAR,
+
+    // Produto
+    PRODUTO_CRIAR,
+    PRODUTO_VISUALIZAR,
+    PRODUTO_EDITAR,
+    PRODUTO_EXCLUIR,
+
+    // Categoria
+    CATEGORIA_CRIAR,
+    CATEGORIA_VISUALIZAR,
+    CATEGORIA_EDITAR,
+    CATEGORIA_EXCLUIR,
+
+    // Venda
+    VENDA_CRIAR,
+    VENDA_VISUALIZAR,
+    VENDA_CANCELAR,
+
+    // Estoque
+    ESTOQUE_VISUALIZAR,
+    ESTOQUE_AJUSTAR,
+    ESTOQUE_MOVIMENTAR,
+
+    // Auditoria
+    AUDITORIA_VISUALIZAR
+}
