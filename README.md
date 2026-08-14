@@ -1,6 +1,3 @@
-Claro. Como o **WD Works V2 já está com o backend completo e testado**, eu faria um README com aparência de projeto profissional, mas sem inventar endpoints ou funcionalidades que não existem.
-
-Também vou usar a estrutura que já definiste (`controller`, `dto`, `config`, etc.) para que o README realmente represente o projeto.
 
 # WD Works V2
 
