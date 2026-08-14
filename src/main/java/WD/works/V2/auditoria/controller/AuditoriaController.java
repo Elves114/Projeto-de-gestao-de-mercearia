@@ -14,6 +14,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,41 +50,36 @@ public class AuditoriaController {
                     as auditorias podem utilizar esta operação.
                     """
     )
-    @ApiResponses({
 
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Auditorias encontradas.",
-                    content = @Content(
-                            array = @ArraySchema(
-                                    schema = @Schema(
-                                            implementation = AuditoriaResponse.class
-                                    )
-                            )
+
+            @ApiResponses({
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Auditorias da empresa listadas com sucesso."
+                    ),
+
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "Usuário não autenticado.",
+                            content = @Content
+                    ),
+
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Usuário não possui permissão.",
+                            content = @Content
                     )
-            ),
+            })
+            @GetMapping
+    public ResponseEntity<Page<AuditoriaResponse>> listarPorEmpresa(
+            Pageable pageable
+    ) {
 
-            @ApiResponse(
-                    responseCode = "401",
-                    description = "Usuário não autenticado.",
-                    content = @Content
-            ),
-
-            @ApiResponse(
-                    responseCode = "403",
-                    description = "Usuário não possui permissão.",
-                    content = @Content
-            )
-    })
-    @GetMapping
-    public ResponseEntity<List<AuditoriaResponse>> listarPorEmpresa() {
-
-        List<AuditoriaResponse> auditorias =
-                auditoriaService.listarPorEmpresa();
+        Page<AuditoriaResponse> auditorias =
+                auditoriaService.listarPorEmpresa(pageable);
 
         return ResponseEntity.ok(auditorias);
     }
-
 
     /*
      * ============================================================
@@ -101,17 +98,9 @@ public class AuditoriaController {
                     """
     )
     @ApiResponses({
-
             @ApiResponse(
                     responseCode = "200",
-                    description = "Auditorias encontradas.",
-                    content = @Content(
-                            array = @ArraySchema(
-                                    schema = @Schema(
-                                            implementation = AuditoriaResponse.class
-                                    )
-                            )
-                    )
+                    description = "Auditorias do usuário autenticado listadas com sucesso."
             ),
 
             @ApiResponse(
@@ -121,14 +110,17 @@ public class AuditoriaController {
             )
     })
     @GetMapping("/minhas")
-    public ResponseEntity<List<AuditoriaResponse>> minhasAuditorias() {
+    public ResponseEntity<Page<AuditoriaResponse>> minhasAuditorias(
+            Pageable pageable
+    ) {
 
-        List<AuditoriaResponse> auditorias =
-                auditoriaService.minhasAuditorias();
+        Page<AuditoriaResponse> auditorias =
+                auditoriaService.minhasAuditorias(
+                        pageable
+                );
 
         return ResponseEntity.ok(auditorias);
     }
-
 
     /*
      * ============================================================
@@ -149,17 +141,9 @@ public class AuditoriaController {
                     """
     )
     @ApiResponses({
-
             @ApiResponse(
                     responseCode = "200",
-                    description = "Auditorias encontradas.",
-                    content = @Content(
-                            array = @ArraySchema(
-                                    schema = @Schema(
-                                            implementation = AuditoriaResponse.class
-                                    )
-                            )
-                    )
+                    description = "Auditorias do usuário listadas com sucesso."
             ),
 
             @ApiResponse(
@@ -172,16 +156,10 @@ public class AuditoriaController {
                     responseCode = "403",
                     description = "Usuário não possui permissão.",
                     content = @Content
-            ),
-
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Usuário não encontrado.",
-                    content = @Content
             )
     })
     @GetMapping("/usuario/{usuarioId}")
-    public ResponseEntity<List<AuditoriaResponse>> listarPorUsuario(
+    public ResponseEntity<Page<AuditoriaResponse>> listarPorUsuario(
 
             @Parameter(
                     name = "usuarioId",
@@ -190,13 +168,16 @@ public class AuditoriaController {
                     in = ParameterIn.PATH,
                     example = "1"
             )
-            @PathVariable Long usuarioId
+            @PathVariable Long usuarioId,
+
+            Pageable pageable
 
     ) {
 
-        List<AuditoriaResponse> auditorias =
+        Page<AuditoriaResponse> auditorias =
                 auditoriaService.listarPorUsuario(
-                        usuarioId
+                        usuarioId,
+                        pageable
                 );
 
         return ResponseEntity.ok(auditorias);
@@ -219,23 +200,9 @@ public class AuditoriaController {
                     """
     )
     @ApiResponses({
-
             @ApiResponse(
                     responseCode = "200",
-                    description = "Auditorias encontradas.",
-                    content = @Content(
-                            array = @ArraySchema(
-                                    schema = @Schema(
-                                            implementation = AuditoriaResponse.class
-                                    )
-                            )
-                    )
-            ),
-
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Tipo de auditoria inválido.",
-                    content = @Content
+                    description = "Auditorias filtradas por tipo listadas com sucesso."
             ),
 
             @ApiResponse(
@@ -251,7 +218,7 @@ public class AuditoriaController {
             )
     })
     @GetMapping("/tipo/{tipo}")
-    public ResponseEntity<List<AuditoriaResponse>> listarPorTipo(
+    public ResponseEntity<Page<AuditoriaResponse>> listarPorTipo(
 
             @Parameter(
                     name = "tipo",
@@ -260,13 +227,16 @@ public class AuditoriaController {
                     in = ParameterIn.PATH,
                     example = "VENDA"
             )
-            @PathVariable TipoAuditoria tipo
+            @PathVariable TipoAuditoria tipo,
+
+            Pageable pageable
 
     ) {
 
-        List<AuditoriaResponse> auditorias =
+        Page<AuditoriaResponse> auditorias =
                 auditoriaService.listarPorTipo(
-                        tipo
+                        tipo,
+                        pageable
                 );
 
         return ResponseEntity.ok(auditorias);
