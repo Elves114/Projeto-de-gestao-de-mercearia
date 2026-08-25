@@ -1,17 +1,25 @@
 import { Link } from "react-router-dom";
 import VendaForm from "../components/VendaForm";
+import "../style/NovaVenda.css";
 
 function NovaVenda() {
+
     return (
+
         <div className="page nova-venda-page">
 
             <div className="page-header">
+
                 <div>
-                    <h1>Nova Venda</h1>
+
+                    <h1>
+                        Nova Venda
+                    </h1>
 
                     <p>
                         Registe uma nova venda para a sua empresa.
                     </p>
+
                 </div>
 
                 <Link
@@ -20,10 +28,13 @@ function NovaVenda() {
                 >
                     ← Voltar
                 </Link>
+
             </div>
 
             <section className="page-section">
+
                 <VendaForm />
+
             </section>
 
         </div>

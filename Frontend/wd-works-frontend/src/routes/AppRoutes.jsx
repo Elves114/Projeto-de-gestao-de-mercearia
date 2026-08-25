@@ -17,6 +17,8 @@ import Layout from "../components/layout/Layout";
 import DetalhesVenda from "../features/vendas/pages/DetalhesVenda";
 import EditarUsuario from "../features/usuarios/pages/EditarUsuario";
 import Cadastro from "../features/auth/pages/Cadastro";
+import MovimentosStock from "../features/estoque/pages/MovimentoStock";
+import AlertasStock from "../features/alertaStock/pages/AlertaStock";
 
 
 function AppRoutes() {
@@ -34,77 +36,87 @@ function AppRoutes() {
                     element={<Login />}
                 />
                 <Route
-    path="/cadastro"
-    element={<Cadastro />}
-/>
+                    path="/cadastro"
+                    element={<Cadastro />}
+                />
 
                 <Route element={<RotaPrivada />}>
                     <Route element={<Layout />}>
 
-                <Route
-                    path="/dashboard"
-                    element={<Dashboard />}
-                />
+                        <Route
+                            path="/dashboard"
+                            element={<Dashboard />}
+                        />~
 
-                <Route
-                    path="/categorias"
-                    element={<Categorias />}
-                />
+                        <Route
+                            path="/alertas-stock"
+                            element={<AlertasStock />}
+                        />
 
-                <Route
-                    path="/produtos"
-                    element={<Produtos />}
-                />
+                        <Route
+                            path="/estoque/movimentos"
+                            element={<MovimentosStock />}
+                        />
 
-                <Route
-                    path="/estoque"
-                    element={<Estoque />}
-                />
+                        <Route
+                            path="/categorias"
+                            element={<Categorias />}
+                        />
 
-                <Route
-                    path="/vendas"
-                    element={<Vendas />}
-                />
-                <Route
-    path="/vendas/:id"
-    element={<DetalhesVenda />}
-/>
+                        <Route
+                            path="/produtos"
+                            element={<Produtos />}
+                        />
 
-                <Route
-                    path="/vendas/nova"
-                    element={<NovaVenda />}
-                />
+                        <Route
+                            path="/estoque"
+                            element={<Estoque />}
+                        />
 
-                <Route
-                    path="/estoque/entrada"
-                    element={<EntradaStock />}
-                />
+                        <Route
+                            path="/vendas"
+                            element={<Vendas />}
+                        />
+                        <Route
+                            path="/vendas/:id"
+                            element={<DetalhesVenda />}
+                        />
 
-                <Route
-                    path="/usuarios"
-                    element={<Usuarios />}
-                />
+                        <Route
+                            path="/vendas/nova"
+                            element={<NovaVenda />}
+                        />
 
-                <Route
-                    path="/usuarios/novo"
-                    element={<NovoUsuario />}
-                />
-            
-                <Route path="/usuarios/:id/editar" 
-                element={<EditarUsuario />} />
+                        <Route
+                            path="/estoque/entrada"
+                            element={<EntradaStock />}
+                        />
 
-                <Route
-                    path="/empresa"
-                    element={<Empresa />}
-                />
+                        <Route
+                            path="/usuarios"
+                            element={<Usuarios />}
+                        />
 
-                <Route
-                    path="/auditoria"
-                    element={<Auditoria />}
-                />
+                        <Route
+                            path="/usuarios/novo"
+                            element={<NovoUsuario />}
+                        />
 
-            </Route>
-        </Route>
+                        <Route path="/usuarios/:id/editar"
+                            element={<EditarUsuario />} />
+
+                        <Route
+                            path="/empresa"
+                            element={<Empresa />}
+                        />
+
+                        <Route
+                            path="/auditoria"
+                            element={<Auditoria />}
+                        />
+
+                    </Route>
+                </Route>
             </Routes>
         </BrowserRouter>
     );

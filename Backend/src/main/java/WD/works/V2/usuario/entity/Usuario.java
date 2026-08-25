@@ -6,6 +6,8 @@ import WD.works.V2.usuario.status.Status;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(
         name = "usuarios",
@@ -56,6 +58,11 @@ public class Usuario {
     )
     private Perfil perfil;
 
+    @Column(nullable = false)
+    private Integer tentativasLogin = 0;
+
+    private LocalDateTime bloqueadoAte;
+
     @Enumerated(EnumType.STRING)
     @Column(
             nullable = false,
@@ -75,4 +82,6 @@ public class Usuario {
             )
     )
     private Empresa empresa;
+
+
 }

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { pesquisarProdutos } from "../../produtos/services/produtoService";
+import "../style/NovaVenda.css";
 
 function ItemVendaForm({ onAdicionar }) {
     const [pesquisa, setPesquisa] = useState("");

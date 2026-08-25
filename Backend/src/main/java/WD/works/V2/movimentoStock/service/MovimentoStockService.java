@@ -1,6 +1,7 @@
 package WD.works.V2.movimentoStock.service;
 
-import WD.works.V2.empresa.repository.EmpresaRepository;
+import WD.works.V2.alertaStock.service.AlertaStockService;
+import WD.works.V2.empresa.entity.Empresa;
 import WD.works.V2.estoque.entity.Estoque;
 import WD.works.V2.estoque.repository.EstoqueRepository;
 import WD.works.V2.exception.RecursoNaoEncontradoException;
@@ -12,6 +13,7 @@ import WD.works.V2.movimentoStock.repository.MovimentoStockRepository;
 import WD.works.V2.produtos.entity.Produto;
 import WD.works.V2.produtos.repository.ProdutoRepository;
 import WD.works.V2.usuario.entity.Usuario;
+import WD.works.V2.configuracao.context.UsuarioContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,32 +29,31 @@ public class MovimentoStockService {
     private final MovimentoStockRepository movimentoRepository;
     private final EstoqueRepository estoqueRepository;
     private final ProdutoRepository produtoRepository;
-    private final EmpresaRepository empresaRepository;
+    private final UsuarioContext usuarioContext;
+    private final AlertaStockService alertaStockService;
 
     @Transactional
     public MovimentoStockResponse criar(
-            MovimentoStockRequest request,
-            Long empresaId,
-            Usuario usuario
+            MovimentoStockRequest request
     ) {
 
-        validarEmpresa(empresaId);
+        Usuario usuario = usuarioContext.getUsuarioAtual();
+        Empresa empresa = obterEmpresaDoUsuario(usuario);
 
         Produto produto = buscarProduto(
                 request.getProdutoId(),
-                empresaId
+                empresa.getId()
         );
 
         Estoque estoque = buscarEstoque(
                 request.getProdutoId(),
-                empresaId
+                empresa.getId()
         );
 
         int quantidadeAnterior =
                 estoque.getQuantidade();
 
         int quantidadePosterior;
-
         int quantidadeMovimentada;
 
         switch (request.getAcao()) {
@@ -124,7 +125,6 @@ public class MovimentoStockService {
                     "Ação de estoque inválida."
             );
         }
-
         /*
          * Atualiza o estoque
          */
@@ -134,6 +134,18 @@ public class MovimentoStockService {
 
         estoqueRepository.save(estoque);
 
+        /*
+         * Verifica se o estoque está abaixo
+         * ou igual à quantidade mínima.
+         *
+         * Pode:
+         * - criar um novo alerta;
+         * - manter um alerta existente;
+         * - resolver um alerta existente.
+         */
+        alertaStockService.verificarEstoque(
+                estoque
+        );
         /*
          * Cria o histórico do movimento
          */
@@ -171,9 +183,7 @@ public class MovimentoStockService {
 
         movimento.setProduto(produto);
 
-        movimento.setEmpresa(
-                produto.getEmpresa()
-        );
+        movimento.setEmpresa(empresa);
 
         movimento.setUsuario(usuario);
 
@@ -186,37 +196,65 @@ public class MovimentoStockService {
     }
 
     @Transactional(readOnly = true)
-    public Page<MovimentoStockResponse> listarPorEmpresa(
-            Long empresaId,
+    public Page<MovimentoStockResponse> listar(
+            String produto,
             Pageable pageable
     ) {
 
-        validarEmpresa(empresaId);
+        Usuario usuario =
+                usuarioContext.getUsuarioAtual();
 
-        return movimentoRepository
-                .findByEmpresaIdOrderByDataDesc(
-                        empresaId,
-                        pageable
-                )
-                .map(this::converterParaResponse);
+        Empresa empresa =
+                obterEmpresaDoUsuario(usuario);
+
+        Page<MovimentoStock> movimentos;
+
+        if (produto == null || produto.isBlank()) {
+
+            movimentos =
+                    movimentoRepository
+                            .findByEmpresaIdOrderByDataDesc(
+                                    empresa.getId(),
+                                    pageable
+                            );
+
+        } else {
+
+            movimentos =
+                    movimentoRepository
+                            .findByEmpresaIdAndProdutoNomeContainingIgnoreCaseOrderByDataDesc(
+                                    empresa.getId(),
+                                    produto.trim(),
+                                    pageable
+                            );
+        }
+
+        return movimentos.map(
+                this::converterParaResponse
+        );
     }
 
     @Transactional(readOnly = true)
     public Page<MovimentoStockResponse> listarPorProduto(
             Long produtoId,
-            Long empresaId,
             Pageable pageable
     ) {
 
+        Usuario usuario =
+                usuarioContext.getUsuarioAtual();
+
+        Empresa empresa =
+                obterEmpresaDoUsuario(usuario);
+
         buscarProduto(
                 produtoId,
-                empresaId
+                empresa.getId()
         );
 
         return movimentoRepository
                 .findByProdutoIdAndEmpresaIdOrderByDataDesc(
                         produtoId,
-                        empresaId,
+                        empresa.getId(),
                         pageable
                 )
                 .map(this::converterParaResponse);
@@ -227,6 +265,27 @@ public class MovimentoStockService {
      * MÉTODOS INTERNOS
      * ============================================================
      */
+
+    private Empresa obterEmpresaDoUsuario(
+            Usuario usuario
+    ) {
+
+        if (usuario == null) {
+
+            throw new RecursoNaoEncontradoException(
+                    "Usuário autenticado não encontrado."
+            );
+        }
+
+        if (usuario.getEmpresa() == null) {
+
+            throw new RegraNegocioException(
+                    "O usuário não está associado a uma empresa."
+            );
+        }
+
+        return usuario.getEmpresa();
+    }
 
     private Produto buscarProduto(
             Long produtoId,
@@ -262,27 +321,15 @@ public class MovimentoStockService {
                 );
     }
 
-    private void validarEmpresa(
-            Long empresaId
-    ) {
-
-        empresaRepository.findById(empresaId)
-                .orElseThrow(() ->
-                        new RecursoNaoEncontradoException(
-                                "Empresa não encontrada."
-                        )
-                );
-    }
-
     private void validarQuantidade(
             Integer quantidade
     ) {
 
         if (quantidade == null || quantidade <= 0) {
 
-            new RegraNegocioException(
-    "A quantidade deve ser maior que zero."
-);
+            throw new RegraNegocioException(
+                    "A quantidade deve ser maior que zero."
+            );
         }
     }
 

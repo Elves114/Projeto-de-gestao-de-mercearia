@@ -1,6 +1,7 @@
 package WD.works.V2.auditoria.controller;
 
 import WD.works.V2.auditoria.dto.AuditoriaResponse;
+import WD.works.V2.auditoria.gravidade.GravidadeAuditoria;
 import WD.works.V2.auditoria.service.AuditoriaService;
 import WD.works.V2.auditoria.tipo.TipoAuditoria;
 import io.swagger.v3.oas.annotations.Operation;
@@ -232,6 +233,90 @@ public class AuditoriaController {
         Page<AuditoriaResponse> auditorias =
                 auditoriaService.listarPorTipo(
                         tipo,
+                        pageable
+                );
+
+        return ResponseEntity.ok(auditorias);
+    }
+
+    /*
+     * ============================================================
+     * LISTAR POR GRAVIDADE
+     * ============================================================
+     */
+
+    @Operation(
+            summary = "Listar auditorias por gravidade",
+            description = """
+                Retorna as auditorias da empresa filtradas
+                pelo nível de gravidade da operação.
+
+                Os níveis disponíveis são:
+
+                INFO:
+                Eventos informativos e operações normais.
+
+                WARNING:
+                Eventos que merecem atenção, como alterações
+                importantes no sistema.
+
+                CRITICAL:
+                Eventos críticos que podem representar uma
+                operação de alto impacto ou uma tentativa
+                suspeita.
+
+                Apenas ADMIN e GERENTE podem utilizar esta operação.
+                """
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Auditorias filtradas por gravidade listadas com sucesso."
+            ),
+
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Gravidade inválida ou parâmetro inválido.",
+                    content = @Content
+            ),
+
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Usuário não autenticado.",
+                    content = @Content
+            ),
+
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "Usuário não possui permissão para consultar auditorias.",
+                    content = @Content
+            )
+    })
+    @GetMapping("/gravidade/{gravidade}")
+    public ResponseEntity<Page<AuditoriaResponse>> listarPorGravidade(
+
+            @Parameter(
+                    name = "gravidade",
+                    description = """
+                        Nível de gravidade utilizado para filtrar
+                        as auditorias.
+
+                        Valores possíveis:
+                        INFO, WARNING ou CRITICAL.
+                        """,
+                    required = true,
+                    in = ParameterIn.PATH,
+                    example = "CRITICAL"
+            )
+            @PathVariable GravidadeAuditoria gravidade,
+
+            Pageable pageable
+
+    ) {
+
+        Page<AuditoriaResponse> auditorias =
+                auditoriaService.listarPorGravidade(
+                        gravidade,
                         pageable
                 );
 

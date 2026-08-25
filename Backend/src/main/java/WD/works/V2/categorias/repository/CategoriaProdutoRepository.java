@@ -27,4 +27,9 @@ public interface CategoriaProdutoRepository
             String nome,
             Long empresaId
     );
+    Page<CategoriaProduto> findByEmpresaIdAndNomeContainingIgnoreCaseOrderByNomeAsc(
+            Long empresaId,
+            String nome,
+            Pageable pageable
+    );
 }

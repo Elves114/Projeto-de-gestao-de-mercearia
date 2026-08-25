@@ -1,10 +1,15 @@
 import api from "../../../services/api";
 
-export async function listarCategorias(page = 0, size = 10) {
+export async function listarCategorias(
+    page = 0,
+    size = 10,
+    nome = ""
+) {
     const response = await api.get("/api/categorias", {
         params: {
             page,
             size,
+            ...(nome.trim() && { nome: nome.trim() }),
         },
     });
 

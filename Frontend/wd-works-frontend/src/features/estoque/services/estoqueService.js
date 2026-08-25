@@ -14,7 +14,9 @@ export async function listarEstoque(page = 0, size = 10) {
 
 // Buscar estoque por ID
 export async function buscarEstoquePorId(id) {
-    const response = await api.get(`/api/estoques/${id}`);
+    const response = await api.get(
+        `/api/estoques/${id}`
+    );
 
     return response.data;
 }
@@ -23,6 +25,21 @@ export async function buscarEstoquePorId(id) {
 export async function buscarEstoquePorProduto(produtoId) {
     const response = await api.get(
         `/api/estoques/produto/${produtoId}`
+    );
+
+    return response.data;
+}
+
+// Alterar quantidade mínima do estoque
+export async function alterarQuantidadeMinima(
+    produtoId,
+    quantidadeMinima
+) {
+    const response = await api.patch(
+        `/api/estoques/produto/${produtoId}/quantidade-minima`,
+        {
+            quantidadeMinima,
+        }
     );
 
     return response.data;

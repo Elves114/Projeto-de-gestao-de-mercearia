@@ -11,6 +11,7 @@ import {
 import UsuarioTabela from "../components/UsuarioTabela";
 
 import { useNavigate } from "react-router-dom";
+import "../style/Usuario.css";
 
 
 function Usuarios() {
@@ -96,37 +97,37 @@ function Usuarios() {
     }
 
 
-  useEffect(() => {
+    useEffect(() => {
 
-    async function carregarInicialmente() {
+        async function carregarInicialmente() {
 
-        try {
+            try {
 
-            const data =
-                await listarUsuarios(0);
+                const data =
+                    await listarUsuarios(0);
 
-            setUsuarios(data.content);
-            setPaginaAtual(data.number);
-            setTotalPaginas(data.totalPages);
+                setUsuarios(data.content);
+                setPaginaAtual(data.number);
+                setTotalPaginas(data.totalPages);
 
-        } catch (error) {
+            } catch (error) {
 
-            console.error(error);
+                console.error(error);
 
-            setErro(
-                "Não foi possível carregar os usuários."
-            );
+                setErro(
+                    "Não foi possível carregar os usuários."
+                );
 
-        } finally {
+            } finally {
 
-            setCarregando(false);
+                setCarregando(false);
 
+            }
         }
-    }
 
-    carregarInicialmente();
+        carregarInicialmente();
 
-}, []);
+    }, []);
 
 
     async function handlePesquisar(event) {
@@ -194,6 +195,16 @@ function Usuarios() {
         setCarregando(false);
     }
 
+    function handleUsuarioAtualizado(usuarioAtualizado) {
+
+        setUsuarios((usuariosAtuais) =>
+            usuariosAtuais.map((usuario) =>
+                usuario.id === usuarioAtualizado.id
+                    ? usuarioAtualizado
+                    : usuario
+            )
+        );
+    }
 
     async function handleAtivar(id) {
 
@@ -260,8 +271,8 @@ function Usuarios() {
     return (
         <div className="usuarios-page">
 
-            
-        <div className="page-header">
+
+            <div className="page-header">
 
                 <div>
 
@@ -293,42 +304,70 @@ function Usuarios() {
                 onSubmit={handlePesquisar}
             >
 
-                <input
-                    type="text"
-                    value={termo}
-                    onChange={(event) =>
-                        setTermo(event.target.value)
-                    }
-                    placeholder="Pesquisar por nome ou email..."
-                />
+                <div className="usuario-search-input-wrapper">
+
+                    <span className="usuario-search-icon">
+                        
+                    </span>
+
+                    <input
+                        type="text"
+                        value={termo}
+                        onChange={(event) =>
+                            setTermo(event.target.value)
+                        }
+                        placeholder="Pesquisar por nome ou email..."
+                        aria-label="Pesquisar usuários"
+                    />
+
+                    {termo && !pesquisando && (
+
+                        <button
+                            type="button"
+                            className="usuario-search-clear"
+                            onClick={handleLimparPesquisa}
+                            aria-label="Limpar pesquisa"
+                        >
+                            ×
+                        </button>
+
+                    )}
+
+                </div>
 
 
                 <button
                     type="submit"
-                    className="button-primary"
+                    className="usuario-search-button"
                     disabled={pesquisando}
                 >
-                    {pesquisando
-                        ? "Pesquisando..."
-                        : "Pesquisar"
-                    }
+
+                    {pesquisando ? (
+
+                        <>
+                            <span className="search-spinner"></span>
+                            Pesquisando...
+                        </>
+
+                    ) : (
+
+                        <>
+                            Pesquisar
+                        </>
+
+                    )}
+
                 </button>
 
-
-                {termo && (
-
-                    <button
-                        type="button"
-                        className="button-secondary"
-                        onClick={handleLimparPesquisa}
-                        disabled={pesquisando}
-                    >
-                        Limpar
-                    </button>
-
-                )}
-
             </form>
+            {termo.trim() && !pesquisando && (
+                <div className="usuario-search-info">
+                    <span className="search-active-dot"></span>
+
+                    Pesquisando por
+                    <strong>“{termo.trim()}”</strong>
+                </div>
+            )}
 
 
             {erro && (
@@ -365,6 +404,7 @@ function Usuarios() {
                         usuarios={usuarios}
                         onAtivar={handleAtivar}
                         onDesativar={handleDesativar}
+                        onUsuarioAtualizado={handleUsuarioAtualizado}
                     />
 
 

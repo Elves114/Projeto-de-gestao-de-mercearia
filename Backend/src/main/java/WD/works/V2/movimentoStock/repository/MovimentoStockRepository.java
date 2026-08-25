@@ -18,4 +18,10 @@ public interface MovimentoStockRepository
             Long empresaId,
             Pageable pageable
     );
+
+    Page<MovimentoStock> findByEmpresaIdAndProdutoNomeContainingIgnoreCaseOrderByDataDesc(
+            Long empresaId,
+            String nome,
+            Pageable pageable
+    );
 }

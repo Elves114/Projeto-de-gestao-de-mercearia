@@ -1,5 +1,6 @@
 package WD.works.V2.auditoria.dto;
 
+import WD.works.V2.auditoria.gravidade.GravidadeAuditoria;
 import WD.works.V2.auditoria.tipo.TipoAuditoria;
 import lombok.*;
 
@@ -15,6 +16,8 @@ public class AuditoriaResponse {
 
     private TipoAuditoria tipo;
 
+    private GravidadeAuditoria gravidade;
+
     private String tabela;
 
     private String registo;
@@ -28,4 +31,16 @@ public class AuditoriaResponse {
     private Long usuarioId;
 
     private String usuarioNome;
+
+    private String ip;
+
+    private String metodo;
+
+    private String endpoint;
+
+    private String dadosAntigos;
+
+    private String dadosNovos;
+
+    private String payload;
 }

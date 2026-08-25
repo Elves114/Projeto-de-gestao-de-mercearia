@@ -3,12 +3,18 @@ import { criarVenda } from "../services/vendaService";
 import ItemVendaForm from "./ItemVendaForm";
 
 function VendaForm() {
+
     const [itens, setItens] = useState([]);
     const [carregando, setCarregando] = useState(false);
     const [erro, setErro] = useState(null);
     const [sucesso, setSucesso] = useState(false);
 
+    const [formularioEmFoco, setFormularioEmFoco] =
+        useState(false);
+
+
     function adicionarItem(item) {
+
         setItens((itensAtuais) => [
             ...itensAtuais,
             item,
@@ -18,7 +24,9 @@ function VendaForm() {
         setSucesso(false);
     }
 
+
     function removerItem(index) {
+
         setItens((itensAtuais) =>
             itensAtuais.filter(
                 (_, itemIndex) => itemIndex !== index
@@ -26,11 +34,18 @@ function VendaForm() {
         );
     }
 
+
     function calcularSubtotal(item) {
-        return item.precoVenda * item.quantidade;
+
+        return (
+            item.precoVenda *
+            item.quantidade
+        );
     }
 
+
     function calcularTotal() {
+
         return itens.reduce(
             (total, item) =>
                 total + calcularSubtotal(item),
@@ -38,7 +53,9 @@ function VendaForm() {
         );
     }
 
+
     function formatarPreco(valor) {
+
         return Number(valor).toLocaleString(
             "pt-MZ",
             {
@@ -48,15 +65,21 @@ function VendaForm() {
         ) + " MT";
     }
 
+
     async function finalizarVenda() {
+
         if (itens.length === 0) {
+
             setErro(
                 "Adicione pelo menos um produto à venda."
             );
+
             return;
         }
 
+
         try {
+
             setCarregando(true);
             setErro(null);
             setSucesso(false);
@@ -68,12 +91,15 @@ function VendaForm() {
                 })),
             });
 
+
             setItens([]);
+
             setSucesso(
                 "Venda registada com sucesso!"
             );
 
         } catch (error) {
+
             console.error(
                 "Erro ao registar venda:",
                 error
@@ -82,34 +108,117 @@ function VendaForm() {
             setErro(
                 "Não foi possível registar a venda."
             );
+
         } finally {
+
             setCarregando(false);
         }
     }
 
+
+    /*
+     * ============================================================
+     * FOCUS MODE
+     * ============================================================
+     */
+
+    function entrarNoModoFoco() {
+
+        setFormularioEmFoco(true);
+    }
+
+
+    function sairDoModoFoco(event) {
+
+        /*
+         * relatedTarget representa o elemento
+         * para onde o utilizador está a clicar.
+         *
+         * Se o novo elemento ainda estiver dentro
+         * do formulário de produto, continuamos
+         * em Focus Mode.
+         */
+
+        if (
+            !event.currentTarget.contains(
+                event.relatedTarget
+            )
+        ) {
+            setFormularioEmFoco(false);
+        }
+    }
+
+
     return (
-        <div className="venda-form">
+
+        <div
+            className={
+                `venda-form ${
+                    formularioEmFoco
+                        ? "venda-form-focus"
+                        : ""
+                }`
+            }
+        >
 
             <div className="venda-form-header">
+
                 <div>
-                    <h2>Registar Venda</h2>
+
+                    <h2>
+                        Registar Venda
+                    </h2>
 
                     <p>
                         Adicione os produtos que fazem
                         parte desta venda.
                     </p>
+
                 </div>
+
             </div>
 
-            <ItemVendaForm
-                onAdicionar={adicionarItem}
-            />
 
-            <section className="sale-items-section">
+            {/* =====================================================
+                ÁREA DE PESQUISA / ADIÇÃO
+               ===================================================== */}
+
+            <div
+                className="venda-produto-area"
+
+                onFocus={entrarNoModoFoco}
+
+                onBlur={sairDoModoFoco}
+            >
+
+                <ItemVendaForm
+                    onAdicionar={adicionarItem}
+                />
+
+            </div>
+
+
+            {/* =====================================================
+                CARRINHO
+               ===================================================== */}
+
+            <section
+                className={
+                    `sale-items-section ${
+                        formularioEmFoco
+                            ? "sale-items-focus-secondary"
+                            : ""
+                    }`
+                }
+            >
 
                 <div className="sale-items-section-header">
+
                     <div>
-                        <h3>Itens da venda</h3>
+
+                        <h3>
+                            Itens da venda
+                        </h3>
 
                         <span>
                             {itens.length}{" "}
@@ -117,11 +226,16 @@ function VendaForm() {
                                 ? "produto"
                                 : "produtos"}
                         </span>
+
                     </div>
+
                 </div>
 
+
                 {itens.length === 0 ? (
+
                     <div className="empty-state">
+
                         <p>
                             Nenhum produto adicionado.
                         </p>
@@ -130,30 +244,52 @@ function VendaForm() {
                             Pesquise um produto acima
                             para começar a venda.
                         </span>
+
                     </div>
+
                 ) : (
+
                     <div className="sale-items">
 
                         <div className="sale-items-header">
-                            <span>Produto</span>
-                            <span>Quantidade</span>
-                            <span>Preço</span>
-                            <span>Subtotal</span>
+
+                            <span>
+                                Produto
+                            </span>
+
+                            <span>
+                                Quantidade
+                            </span>
+
+                            <span>
+                                Preço
+                            </span>
+
+                            <span>
+                                Subtotal
+                            </span>
+
                             <span></span>
+
                         </div>
 
+
                         {itens.map((item, index) => (
+
                             <div
                                 className="sale-item"
                                 key={`${item.produtoId}-${index}`}
                             >
+
                                 <strong>
                                     {item.produtoNome}
                                 </strong>
 
+
                                 <span>
                                     {item.quantidade}
                                 </span>
+
 
                                 <span>
                                     {formatarPreco(
@@ -161,11 +297,13 @@ function VendaForm() {
                                     )}
                                 </span>
 
+
                                 <strong>
                                     {formatarPreco(
                                         calcularSubtotal(item)
                                     )}
                                 </strong>
+
 
                                 <button
                                     type="button"
@@ -177,7 +315,9 @@ function VendaForm() {
                                 >
                                     Remover
                                 </button>
+
                             </div>
+
                         ))}
 
                     </div>
@@ -185,7 +325,13 @@ function VendaForm() {
 
             </section>
 
+
+            {/* =====================================================
+                TOTAL
+               ===================================================== */}
+
             {itens.length > 0 && (
+
                 <div className="sale-total">
 
                     <span>
@@ -199,19 +345,35 @@ function VendaForm() {
                     </strong>
 
                 </div>
+
             )}
 
+
+            {/* =====================================================
+                MENSAGENS
+               ===================================================== */}
+
             {erro && (
+
                 <p className="form-error">
                     {erro}
                 </p>
+
             )}
 
+
             {sucesso && (
+
                 <p className="form-success">
                     {sucesso}
                 </p>
+
             )}
+
+
+            {/* =====================================================
+                AÇÕES
+               ===================================================== */}
 
             <div className="sale-actions">
 
@@ -224,9 +386,11 @@ function VendaForm() {
                         itens.length === 0
                     }
                 >
+
                     {carregando
                         ? "A registar..."
                         : "Finalizar Venda"}
+
                 </button>
 
             </div>

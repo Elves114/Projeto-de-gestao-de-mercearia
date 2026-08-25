@@ -3,8 +3,10 @@ package WD.works.V2.auditoria.service;
 import WD.works.V2.auditoria.dto.AuditoriaRequest;
 import WD.works.V2.auditoria.dto.AuditoriaResponse;
 import WD.works.V2.auditoria.entity.Auditoria;
+import WD.works.V2.auditoria.gravidade.GravidadeAuditoria;
 import WD.works.V2.auditoria.repository.AuditoriaRepository;
 import WD.works.V2.auditoria.tipo.TipoAuditoria;
+import WD.works.V2.configuracao.context.AuditoriaContext;
 import WD.works.V2.configuracao.context.EmpresaContext;
 import WD.works.V2.configuracao.context.UsuarioContext;
 import WD.works.V2.configuracao.security.AutorizacaoService;
@@ -12,6 +14,7 @@ import WD.works.V2.empresa.entity.Empresa;
 import WD.works.V2.exception.RecursoNaoEncontradoException;
 import WD.works.V2.exception.RegraNegocioException;
 import WD.works.V2.usuario.entity.Usuario;
+import WD.works.V2.auditoria.dto.AuditoriaDetalhes;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +29,7 @@ public class AuditoriaService {
 
     private final UsuarioContext usuarioContext;
     private final EmpresaContext empresaContext;
+    private final AuditoriaContext auditoriaContext;
     private final AutorizacaoService autorizacaoService;
 
 
@@ -53,6 +57,7 @@ public class AuditoriaService {
         Auditoria auditoria =
                 new Auditoria();
 
+
         auditoria.setTipo(
                 request.getTipo()
         );
@@ -67,6 +72,17 @@ public class AuditoriaService {
 
         auditoria.setDescricao(
                 request.getDescricao()
+        );
+        auditoria.setIp(
+                auditoriaContext.getIp()
+        );
+
+        auditoria.setMetodo(
+                auditoriaContext.getMetodo()
+        );
+
+        auditoria.setEndpoint(
+                auditoriaContext.getEndpoint()
         );
 
         auditoria.setEmpresa(
@@ -84,9 +100,14 @@ public class AuditoriaService {
                 );
 
 
-        return converterParaResponse(
-                salva
+        return registrar(
+                request,
+                usuarioContext.getUsuarioAtual(),
+                empresaContext.getEmpresaAtual(),
+                GravidadeAuditoria.INFO,
+                null
         );
+
     }
 
     @Transactional
@@ -127,6 +148,17 @@ public class AuditoriaService {
         auditoria.setDescricao(
                 request.getDescricao()
         );
+        auditoria.setIp(
+                auditoriaContext.getIp()
+        );
+
+        auditoria.setMetodo(
+                auditoriaContext.getMetodo()
+        );
+
+        auditoria.setEndpoint(
+                auditoriaContext.getEndpoint()
+        );
 
         auditoria.setEmpresa(
                 empresa
@@ -141,10 +173,69 @@ public class AuditoriaService {
                         auditoria
                 );
 
-        return converterParaResponse(
-                salva
+        return registrar(
+                request,
+                usuarioContext.getUsuarioAtual(),
+                empresaContext.getEmpresaAtual(),
+                GravidadeAuditoria.INFO,
+                null
         );
     }
+
+    public AuditoriaResponse registrar(
+            AuditoriaRequest request,
+            Usuario usuario,
+            Empresa empresa,
+            GravidadeAuditoria gravidade,
+            AuditoriaDetalhes detalhes
+    ) {
+
+        validarRequest(request);
+
+        if (usuario == null) {
+            throw new RegraNegocioException(
+                    "O usuário responsável pela auditoria é obrigatório."
+            );
+        }
+
+        if (empresa == null) {
+            throw new RegraNegocioException(
+                    "A empresa da auditoria é obrigatória."
+            );
+        }
+
+        Auditoria auditoria = new Auditoria();
+
+        auditoria.setTipo(request.getTipo());
+        auditoria.setTabela(request.getTabela());
+        auditoria.setRegisto(request.getRegisto());
+        auditoria.setDescricao(request.getDescricao());
+        auditoria.setEmpresa(empresa);
+        auditoria.setUsuario(usuario);
+        auditoria.setGravidade(gravidade);
+
+        if (detalhes != null) {
+
+            auditoria.setDadosAntigos(
+                    detalhes.getDadosAntigos()
+            );
+
+            auditoria.setDadosNovos(
+                    detalhes.getDadosNovos()
+            );
+
+            auditoria.setPayload(
+                    detalhes.getPayload()
+            );
+        }
+
+        Auditoria salva =
+                auditoriaRepository.save(auditoria);
+
+        return converterParaResponse(salva);
+    }
+
+
     /**
      * Retorna todas as auditorias da empresa.
      *
@@ -357,6 +448,43 @@ public class AuditoriaService {
         }
     }
 
+    @Transactional(readOnly = true)
+    public Page<AuditoriaResponse> listarPorGravidade(
+            GravidadeAuditoria gravidade,
+            Pageable pageable
+    ) {
+
+        Usuario usuario =
+                usuarioContext.getUsuarioAtual();
+
+        if (!autorizacaoService
+                .podeVisualizarTodasAuditorias(usuario)) {
+
+            throw new SecurityException(
+                    "Não possui permissão para consultar "
+                            + "auditorias por gravidade."
+            );
+        }
+
+        if (gravidade == null) {
+
+            throw new RegraNegocioException(
+                    "A gravidade da auditoria é obrigatória."
+            );
+        }
+
+        Long empresaId =
+                empresaContext.getEmpresaIdAtual();
+
+        return auditoriaRepository
+                .findByEmpresaIdAndGravidadeOrderByDataDesc(
+                        empresaId,
+                        gravidade,
+                        pageable
+                )
+                .map(this::converterParaResponse);
+    }
+
 
     /**
      * Converte a entidade para o DTO de resposta.
@@ -372,13 +500,20 @@ public class AuditoriaService {
         return new AuditoriaResponse(
                 auditoria.getId(),
                 auditoria.getTipo(),
+                auditoria.getGravidade(),
                 auditoria.getTabela(),
                 auditoria.getRegisto(),
                 auditoria.getDescricao(),
                 auditoria.getData(),
                 auditoria.getEmpresa().getId(),
                 usuario.getId(),
-                usuario.getNome()
+                usuario.getNome(),
+                auditoria.getIp(),
+                auditoria.getMetodo(),
+                auditoria.getEndpoint(),
+                auditoria.getDadosAntigos(),
+                auditoria.getDadosNovos(),
+                auditoria.getPayload()
         );
     }
 }

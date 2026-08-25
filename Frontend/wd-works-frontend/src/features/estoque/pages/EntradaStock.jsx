@@ -1,4 +1,5 @@
 import MovimentoStockForm from "../components/MovimentoStockForm";
+import "../style/EntradaStock.css"
 
 function EntradaStock() {
     return (

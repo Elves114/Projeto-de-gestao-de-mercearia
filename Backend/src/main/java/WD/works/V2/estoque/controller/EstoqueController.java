@@ -1,5 +1,6 @@
 package WD.works.V2.estoque.controller;
 
+import WD.works.V2.estoque.dto.EstoqueQuantidadeMinimaRequest;
 import WD.works.V2.estoque.dto.EstoqueResponse;
 import WD.works.V2.estoque.service.EstoqueService;
 import WD.works.V2.usuario.auth.security.UsuarioDetails;
@@ -11,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -199,6 +201,73 @@ public class EstoqueController {
                 estoqueService.buscarPorProduto(
                         produtoId,
                         empresaId
+                )
+        );
+    }
+    @Operation(
+            summary = "Alterar quantidade mínima do estoque",
+            description = """
+                Define a quantidade mínima de estoque
+                para um produto pertencente à empresa
+                do usuário autenticado.
+
+                Se a quantidade atual for menor ou igual
+                à nova quantidade mínima, um alerta de stock
+                será criado automaticamente.
+                """
+    )
+    @ApiResponses({
+
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Quantidade mínima alterada com sucesso",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = EstoqueResponse.class
+                            )
+                    )
+            ),
+
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Quantidade mínima inválida",
+                    content = @Content
+            ),
+
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Usuário não autenticado",
+                    content = @Content
+            ),
+
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "Usuário não possui permissão para ajustar o estoque",
+                    content = @Content
+            ),
+
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Estoque não encontrado",
+                    content = @Content
+            )
+    })
+    @PatchMapping("/produto/{produtoId}/quantidade-minima")
+    @PreAuthorize("hasAuthority('ESTOQUE_AJUSTAR')")
+    public ResponseEntity<EstoqueResponse> alterarQuantidadeMinima(
+
+            @PathVariable Long produtoId,
+
+            @Valid
+            @RequestBody
+            EstoqueQuantidadeMinimaRequest request
+    ) {
+
+        return ResponseEntity.ok(
+                estoqueService.alterarQuantidadeMinima(
+                        produtoId,
+                        request.getQuantidadeMinima()
                 )
         );
     }

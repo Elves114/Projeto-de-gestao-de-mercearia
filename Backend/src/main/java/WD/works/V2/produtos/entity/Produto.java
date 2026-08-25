@@ -2,6 +2,7 @@ package WD.works.V2.produtos.entity;
 
 import WD.works.V2.categorias.entity.CategoriaProduto;
 import WD.works.V2.empresa.entity.Empresa;
+import WD.works.V2.produtos.status.StatusProduto;
 import WD.works.V2.usuario.entity.Usuario;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
@@ -101,4 +102,11 @@ public class Produto {
             foreignKey = @ForeignKey(name = "fk_produto_alterado_por")
     )
     private Usuario ultimaAlteracaoPor;
+
+    @Enumerated(EnumType.STRING)
+    @Column(
+            nullable = false,
+            length = 20
+    )
+    private StatusProduto status;
 }
