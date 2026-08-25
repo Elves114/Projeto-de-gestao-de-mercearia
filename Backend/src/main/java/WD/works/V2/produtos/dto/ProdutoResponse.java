@@ -1,5 +1,6 @@
 package WD.works.V2.produtos.dto;
 
+import WD.works.V2.produtos.status.StatusProduto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,4 +29,6 @@ public class ProdutoResponse {
     private String categoriaNome;
 
     private Long empresaId;
+
+    private StatusProduto status;
 }

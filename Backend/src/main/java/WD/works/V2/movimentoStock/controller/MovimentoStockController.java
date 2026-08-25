@@ -3,8 +3,6 @@ package WD.works.V2.movimentoStock.controller;
 import WD.works.V2.movimentoStock.dto.MovimentoStockRequest;
 import WD.works.V2.movimentoStock.dto.MovimentoStockResponse;
 import WD.works.V2.movimentoStock.service.MovimentoStockService;
-import WD.works.V2.usuario.auth.security.UsuarioDetails;
-import WD.works.V2.usuario.entity.Usuario;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -19,7 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -34,20 +32,19 @@ public class MovimentoStockController {
 
     private final MovimentoStockService movimentoStockService;
 
-
     @Operation(
             summary = "Criar movimento de stock",
             description = """
                     Registra uma movimentação de stock para um produto.
-
+                    
                     As ações disponíveis são:
                     - ENTRADA: aumenta a quantidade em stock.
                     - SAIDA: reduz a quantidade em stock.
                     - DEVOLUCAO: aumenta a quantidade em stock.
                     - AJUSTE: define diretamente a quantidade existente.
-
-                    O usuário e a empresa são obtidos através
-                    do usuário autenticado.
+                    
+                    O usuário e a empresa são obtidos
+                    através do usuário autenticado.
                     """
     )
     @ApiResponses({
@@ -78,43 +75,35 @@ public class MovimentoStockController {
             )
     })
     @PostMapping
+    @PreAuthorize("""
+            hasAuthority('ESTOQUE_MOVIMENTAR')
+            or hasAuthority('ESTOQUE_AJUSTAR')
+            """)
     public ResponseEntity<MovimentoStockResponse> criar(
-
             @Valid
             @RequestBody
-            MovimentoStockRequest request,
-
-            Authentication authentication
+            MovimentoStockRequest request
     ) {
 
-        Usuario usuario =
-                obterUsuario(authentication);
-
-        Long empresaId =
-                usuario.getEmpresa().getId();
-
         MovimentoStockResponse response =
-                movimentoStockService.criar(
-                        request,
-                        empresaId,
-                        usuario
-                );
+                movimentoStockService.criar(request);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(response);
     }
 
-
     @Operation(
             summary = "Listar movimentos de stock",
             description = """
-                    Retorna todos os movimentos de stock
-                    pertencentes à empresa do usuário autenticado.
+                Retorna os movimentos de stock
+                pertencentes à empresa do usuário autenticado.
 
-                    Os movimentos são apresentados do mais recente
-                    para o mais antigo.
-                    """
+                É possível pesquisar pelo nome do produto.
+
+                Os movimentos são apresentados
+                do mais recente para o mais antigo.
+                """
     )
     @ApiResponses({
 
@@ -128,33 +117,33 @@ public class MovimentoStockController {
                     description = "Usuário não autenticado"
             )
     })
-
     @GetMapping
     public ResponseEntity<Page<MovimentoStockResponse>> listar(
-            Authentication authentication,
+
+            @Parameter(
+                    description = "Nome ou parte do nome do produto",
+                    example = "Arroz"
+            )
+            @RequestParam(required = false)
+            String produto,
+
             Pageable pageable
     ) {
-        Usuario usuario =
-                obterUsuario(authentication);
-
-        Long empresaId =
-                usuario.getEmpresa().getId();
 
         return ResponseEntity.ok(
-                movimentoStockService.listarPorEmpresa(
-                        empresaId,
+                movimentoStockService.listar(
+                        produto,
                         pageable
                 )
         );
     }
-
 
     @Operation(
             summary = "Listar movimentos de um produto",
             description = """
                     Retorna o histórico de movimentações de stock
                     de um determinado produto.
-
+                    
                     O produto deve pertencer à empresa
                     do usuário autenticado.
                     """
@@ -177,6 +166,7 @@ public class MovimentoStockController {
             )
     })
     @GetMapping("/produto/{produtoId}")
+    @PreAuthorize("hasAuthority('ESTOQUE_VISUALIZAR')")
     public ResponseEntity<Page<MovimentoStockResponse>> listarPorProduto(
 
             @Parameter(
@@ -186,41 +176,14 @@ public class MovimentoStockController {
             )
             @PathVariable Long produtoId,
 
-            Authentication authentication,
-
             Pageable pageable
     ) {
-
-        Usuario usuario =
-                obterUsuario(authentication);
-
-        Long empresaId =
-                usuario.getEmpresa().getId();
 
         return ResponseEntity.ok(
                 movimentoStockService.listarPorProduto(
                         produtoId,
-                        empresaId,
                         pageable
                 )
         );
-    }
-
-
-    /*
-     * ============================================================
-     * MÉTODO INTERNO
-     * ============================================================
-     */
-
-    private Usuario obterUsuario(
-            Authentication authentication
-    ) {
-
-        UsuarioDetails usuarioDetails =
-                (UsuarioDetails)
-                        authentication.getPrincipal();
-
-        return usuarioDetails.getUsuario();
     }
 }

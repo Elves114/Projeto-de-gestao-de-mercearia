@@ -1,5 +1,7 @@
 package WD.works.V2.estoque.service;
 
+import WD.works.V2.alertaStock.service.AlertaStockService;
+import WD.works.V2.configuracao.context.EmpresaContext;
 import WD.works.V2.empresa.repository.EmpresaRepository;
 import WD.works.V2.estoque.dto.EstoqueResponse;
 import WD.works.V2.estoque.entity.Estoque;
@@ -18,6 +20,8 @@ public class EstoqueService {
 
     private final EstoqueRepository estoqueRepository;
     private final EmpresaRepository empresaRepository;
+    private final EmpresaContext empresaContext;
+    private final AlertaStockService alertaStockService;
 
     @Transactional(readOnly = true)
     public EstoqueResponse buscarPorId(
@@ -77,7 +81,7 @@ public class EstoqueService {
     ) {
 
         if (quantidade == null || quantidade <= 0) {
-            new RegraNegocioException("A quantidade deve ser maior que zero.");
+            throw  new RegraNegocioException("A quantidade deve ser maior que zero.");
         }
 
         Estoque estoque = estoqueRepository
@@ -93,6 +97,49 @@ public class EstoqueService {
         return estoque.getQuantidade() >= quantidade;
     }
 
+    @Transactional
+    public EstoqueResponse alterarQuantidadeMinima(
+            Long produtoId,
+            Integer quantidadeMinima
+    ) {
+
+        Long empresaId =
+                empresaContext.getEmpresaIdAtual();
+
+        if (quantidadeMinima == null || quantidadeMinima < 0) {
+
+            throw new RegraNegocioException(
+                    "A quantidade mínima não pode ser negativa."
+            );
+        }
+
+        Estoque estoque =
+                estoqueRepository
+                        .findByProdutoIdAndEmpresaId(
+                                produtoId,
+                                empresaId
+                        )
+                        .orElseThrow(() ->
+                                new RecursoNaoEncontradoException(
+                                        "Estoque do produto não encontrado."
+                                )
+                        );
+
+        estoque.setQuantidadeMinima(
+                quantidadeMinima
+        );
+
+        Estoque estoqueAtualizado =
+                estoqueRepository.save(estoque);
+
+        alertaStockService.verificarEstoque(
+                estoqueAtualizado
+        );
+
+        return converterParaResponse(
+                estoqueAtualizado
+        );
+    }
     /*
      * ============================================================
      * Métodos internos

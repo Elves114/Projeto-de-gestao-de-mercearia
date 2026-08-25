@@ -7,6 +7,7 @@ import WD.works.V2.categorias.service.CategoriaProdutoService;
 import WD.works.V2.configuracao.context.EmpresaContext;
 import WD.works.V2.empresa.repository.EmpresaRepository;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -133,10 +134,21 @@ public class CategoriaProdutoController {
                 categoriaService.buscarPorId(id)
         );
     }
-
     @Operation(
-            summary = "Listar categorias da empresa",
-            description = "Retorna as categorias da empresa de forma paginada."
+            summary = "Listar e pesquisar categorias",
+            description = """
+                Retorna as categorias da empresa do usuário autenticado
+                de forma paginada.
+
+                O parâmetro 'nome' é opcional.
+                Quando informado, retorna apenas categorias
+                cujo nome contenha o texto pesquisado.
+                """
+    )
+    @Parameter(
+            description = "Texto para pesquisar no nome da categoria",
+            example = "bebidas",
+            required = false
     )
     @ApiResponses({
 
@@ -163,13 +175,21 @@ public class CategoriaProdutoController {
     @GetMapping
     @PreAuthorize("hasAuthority('CATEGORIA_VISUALIZAR')")
     public ResponseEntity<Page<CategoriaProdutoResponse>> listarPorEmpresa(
+
+            @RequestParam(required = false)
+            String nome,
+
             Pageable pageable
     ) {
 
         return ResponseEntity.ok(
-                categoriaService.listarPorEmpresa(pageable)
+                categoriaService.listarPorEmpresa(
+                        nome,
+                        pageable
+                )
         );
     }
+
     @Operation(
             summary = "Atualizar categoria",
             description = "Atualiza os dados de uma categoria pertencente à empresa informada."

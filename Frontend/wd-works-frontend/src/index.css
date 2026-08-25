@@ -163,106 +163,357 @@ p {
 
     background: var(--background);
 }
-
-/* ================================
+/* ============================================================
    SIDEBAR
-   ================================ */
+   ============================================================ */
 
 .sidebar {
-    width: 240px;
-    min-height: 100vh;
+    width: 250px;
+    min-width: 250px;
 
-    flex-shrink: 0;
-
-    background: var(--onyx);
-
-    border-right: 1px solid var(--onyx-border);
-
-    padding: 24px 16px;
-
-    box-sizing: border-box;
+    height: 100vh;
 
     display: flex;
     flex-direction: column;
+
+    background: #111827;
+
+    color: #ffffff;
+
+    position: sticky;
+    top: 0;
+
+    overflow-y: auto;
 }
 
-/* Marca */
+
+/* ============================================================
+   MARCA
+   ============================================================ */
 
 .sidebar-brand {
-    padding: 8px 12px 28px;
-}
+    height: 76px;
 
-.sidebar-brand h2 {
-    margin: 0;
-
-    color: var(--candy-blue);
-
-    font-size: 22px;
-    font-weight: 700;
-}
-
-.sidebar-brand span {
-    display: block;
-
-    margin-top: 4px;
-
-    color: var(--text-muted);
-
-    font-size: 12px;
-}
-
-/* Navegação */
-
-.sidebar-nav {
-    display: flex;
-    flex-direction: column;
-
-    gap: 6px;
-}
-
-/* Links */
-
-.sidebar-link {
     display: flex;
     align-items: center;
 
-    min-height: 42px;
+    padding: 0 22px;
 
-    padding: 0 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
 
-    box-sizing: border-box;
+
+.sidebar-logo {
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 9px;
+
+    background: #2563eb;
+
+    color: #ffffff;
+
+    font-size: 16px;
+    font-weight: 800;
+}
+
+
+.sidebar-brand-text {
+    display: flex;
+    flex-direction: column;
+
+    margin-left: 11px;
+}
+
+
+.sidebar-brand-text strong {
+    font-size: 14px;
+    font-weight: 700;
+
+    letter-spacing: -0.2px;
+}
+
+
+.sidebar-brand-text span {
+    margin-top: 2px;
+
+    color: #9ca3af;
+
+    font-size: 9px;
+}
+
+
+/* ============================================================
+   NAVEGAÇÃO
+   ============================================================ */
+
+.sidebar-nav {
+    flex: 1;
+
+    padding: 20px 12px;
+
+    overflow-y: auto;
+}
+
+
+.sidebar-group {
+    margin-bottom: 25px;
+}
+
+
+.sidebar-group-title {
+    display: block;
+
+    padding: 0 11px;
+    margin-bottom: 7px;
+
+    color: #6b7280;
+
+    font-size: 9px;
+    font-weight: 700;
+
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+
+.sidebar-group-links {
+    display: flex;
+    flex-direction: column;
+
+    gap: 3px;
+}
+
+
+/* ============================================================
+   LINKS
+   ============================================================ */
+
+.sidebar-link {
+    min-height: 40px;
+
+    display: flex;
+    align-items: center;
+
+    padding: 0 11px;
 
     border-radius: 8px;
 
-    color: var(--text-secondary);
+    color: #9ca3af;
 
     text-decoration: none;
 
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 500;
 
     transition:
-        background-color 0.2s ease,
-        color 0.2s ease;
+        color 0.18s ease,
+        background 0.18s ease;
 }
 
-/* Hover */
 
 .sidebar-link:hover {
-    background: var(--onyx-hover);
+    color: #ffffff;
 
-    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.06);
 }
 
-/* Página atual */
 
 .sidebar-link.active {
-    background: var(--candy-blue-bg);
+    color: #ffffff;
 
-    color: var(--candy-blue);
+    background: #2563eb;
 
     font-weight: 600;
 }
+
+
+.sidebar-link-icon {
+    width: 25px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-right: 7px;
+
+    font-size: 15px;
+}
+
+
+/* ============================================================
+   UTILIZADOR
+   ============================================================ */
+
+.sidebar-user {
+    display: flex;
+    align-items: center;
+
+    margin: 0 12px 14px;
+
+    padding: 12px;
+
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 10px;
+
+    background: rgba(255, 255, 255, 0.035);
+}
+
+
+.sidebar-user-avatar {
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: #2563eb;
+
+    color: #ffffff;
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+
+.sidebar-user-info {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    margin-left: 9px;
+}
+
+
+.sidebar-user-info strong {
+    overflow: hidden;
+
+    color: #ffffff;
+
+    font-size: 11px;
+    font-weight: 600;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+.sidebar-user-info span {
+    margin-top: 2px;
+
+    color: #9ca3af;
+
+    font-size: 9px;
+}
+
+
+/* ============================================================
+   SCROLLBAR
+   ============================================================ */
+
+.sidebar::-webkit-scrollbar,
+.sidebar-nav::-webkit-scrollbar {
+    width: 4px;
+}
+
+
+.sidebar::-webkit-scrollbar-thumb,
+.sidebar-nav::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.12);
+
+    border-radius: 10px;
+}
+
+
+/* ============================================================
+   RESPONSIVIDADE
+   ============================================================ */
+
+@media (max-width: 900px) {
+
+    .sidebar {
+        width: 220px;
+        min-width: 220px;
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .sidebar {
+        width: 70px;
+        min-width: 70px;
+    }
+
+
+    .sidebar-brand {
+        justify-content: center;
+
+        padding: 0;
+    }
+
+
+    .sidebar-brand-text {
+        display: none;
+    }
+
+
+    .sidebar-nav {
+        padding: 20px 8px;
+    }
+
+
+    .sidebar-group-title {
+        display: none;
+    }
+
+
+    .sidebar-link {
+        justify-content: center;
+
+        padding: 0;
+    }
+
+
+    .sidebar-link-icon {
+        margin: 0;
+    }
+
+
+    .sidebar-link > span:last-child {
+        display: none;
+    }
+
+
+    .sidebar-user {
+        justify-content: center;
+
+        margin: 0 8px 10px;
+
+        padding: 8px;
+    }
+
+
+    .sidebar-user-info {
+        display: none;
+    }
+
+}
+
+
 
 /* ================================
    HEADER

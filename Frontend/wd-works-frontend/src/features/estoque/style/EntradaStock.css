@@ -1,0 +1,324 @@
+/* ============================================================
+   ENTRADA-STOCK.CSS
+   Formulário de movimentação de stock
+   ============================================================ */
+
+.entrada-stock-page {
+    width: 100%;
+    min-height: 100%;
+    padding: 28px;
+    box-sizing: border-box;
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+
+.entrada-stock-page .page-header {
+    margin-bottom: 28px;
+}
+
+.entrada-stock-page .page-header h1 {
+    margin: 0 0 6px;
+
+    font-size: 30px;
+    font-weight: 800;
+
+    letter-spacing: -0.5px;
+}
+
+.entrada-stock-page .page-header p {
+    margin: 0;
+
+    color: #6b7280;
+
+    font-size: 14px;
+}
+
+/* ============================================================
+   CARD
+   ============================================================ */
+
+.entrada-stock-card {
+    width: 100%;
+    max-width: 820px;
+
+    box-sizing: border-box;
+
+    padding: 28px;
+
+    background: rgba(255, 255, 255, 0.95);
+
+    border: 1px solid #e7ebf2;
+
+    border-radius: 22px;
+
+    box-shadow:
+        0 12px 35px rgba(15, 23, 42, 0.06);
+}
+
+/* ============================================================
+   FORM
+   ============================================================ */
+
+.movimento-stock-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.movimento-stock-form .section-header {
+    margin-bottom: 4px;
+}
+
+.movimento-stock-form .section-header h2 {
+    margin: 0 0 5px;
+
+    font-size: 19px;
+    font-weight: 800;
+}
+
+.movimento-stock-form .section-header p {
+    margin: 0;
+
+    color: #7a8494;
+
+    font-size: 13px;
+}
+
+/* ============================================================
+   FORM GROUP
+   ============================================================ */
+
+.movimento-stock-form .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.movimento-stock-form label {
+    color: #263247;
+
+    font-size: 13px;
+    font-weight: 750;
+}
+
+.movimento-stock-form input,
+.movimento-stock-form select {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    min-height: 45px;
+
+    padding: 0 13px;
+
+    border: 1px solid #dce3ec;
+
+    border-radius: 11px;
+
+    background: #ffffff;
+
+    color: #172033;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+.movimento-stock-form input:hover,
+.movimento-stock-form select:hover {
+    border-color: #cbd5e1;
+}
+
+.movimento-stock-form input:focus,
+.movimento-stock-form select:focus {
+    border-color: #38bdf8;
+
+    box-shadow:
+        0 0 0 4px rgba(56, 189, 248, 0.11);
+}
+
+.movimento-stock-form small {
+    color: #7a8494;
+
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+/* ============================================================
+   BOTÃO
+   ============================================================ */
+
+.movimento-stock-form .button-primary {
+    position: relative;
+
+    align-self: flex-start;
+
+    min-height: 46px;
+
+    padding: 0 20px;
+
+    border: 0;
+    border-radius: 11px;
+
+    background: #0f172a;
+    color: #ffffff;
+
+    font-family: inherit;
+
+    font-size: 13px;
+    font-weight: 750;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.14s ease,
+        box-shadow 0.2s ease,
+        opacity 0.2s ease;
+}
+
+.movimento-stock-form .button-primary:hover {
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 8px 20px rgba(15, 23, 42, 0.14);
+}
+
+/*
+   Efeito tátil:
+   botão afunda quando pressionado.
+*/
+
+.movimento-stock-form .button-primary:active {
+    transform: scale(0.95);
+}
+
+.movimento-stock-form .button-primary:disabled {
+    opacity: 0.6;
+
+    cursor: not-allowed;
+
+    transform: none;
+
+    box-shadow: none;
+}
+
+/* ============================================================
+   SUCESSO
+   ============================================================ */
+
+.movimento-stock-form .form-success {
+    margin: 0;
+
+    padding: 11px 13px;
+
+    border-radius: 10px;
+
+    background: rgba(34, 197, 94, 0.09);
+
+    color: #15803d;
+
+    font-size: 13px;
+    font-weight: 650;
+
+    animation:
+        successMessageIn 300ms ease-out;
+}
+
+@keyframes successMessageIn {
+
+    0% {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================================
+   ERRO
+   ============================================================ */
+
+.movimento-stock-form .form-error {
+    margin: 0;
+
+    padding: 11px 13px;
+
+    border-radius: 10px;
+
+    background: rgba(239, 68, 68, 0.08);
+
+    color: #dc2626;
+
+    font-size: 13px;
+    font-weight: 650;
+
+    animation:
+        errorMessageIn 250ms ease-out;
+}
+
+@keyframes errorMessageIn {
+
+    0% {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================================
+   ANIMAÇÃO DE ENVIO
+   ============================================================ */
+
+.movimento-stock-form.is-enviando {
+    opacity: 0.85;
+}
+
+/* ============================================================
+   RESPONSIVO
+   ============================================================ */
+
+@media (max-width: 700px) {
+
+    .entrada-stock-page {
+        padding: 18px;
+    }
+
+    .entrada-stock-card {
+        padding: 20px;
+        border-radius: 17px;
+    }
+
+    .movimento-stock-form .button-primary {
+        width: 100%;
+    }
+}
+
+/* ============================================================
+   REDUÇÃO DE MOVIMENTO
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .movimento-stock-form *,
+    .movimento-stock-form .form-success,
+    .movimento-stock-form .form-error {
+        animation: none !important;
+        transition: none !important;
+    }
+}

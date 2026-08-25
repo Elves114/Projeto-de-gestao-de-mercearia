@@ -1,6 +1,16 @@
 package WD.works.V2.usuario.auth.service;
 
+import WD.works.V2.auditoria.dto.AuditoriaRequest;
+import WD.works.V2.auditoria.entity.Auditoria;
+import WD.works.V2.auditoria.repository.AuditoriaRepository;
+import WD.works.V2.auditoria.service.AuditoriaService;
+import WD.works.V2.auditoria.tipo.TipoAuditoria;
+import WD.works.V2.configuracao.context.EmpresaContext;
+import WD.works.V2.configuracao.context.UsuarioContext;
+import WD.works.V2.configuracao.security.AutorizacaoService;
 import WD.works.V2.configuracao.security.JwtService;
+import WD.works.V2.empresa.repository.EmpresaRepository;
+import WD.works.V2.exception.RegraNegocioException;
 import WD.works.V2.usuario.auth.dto.AuthMeResponse;
 import WD.works.V2.usuario.auth.dto.AuthRequest;
 import WD.works.V2.usuario.auth.dto.AuthResponse;
@@ -11,7 +21,9 @@ import WD.works.V2.empresa.dto.EmpresaResponse;
 import WD.works.V2.empresa.service.EmpresaService;
 import WD.works.V2.usuario.dto.UsuarioRequest;
 import WD.works.V2.usuario.dto.UsuarioResponse;
+import WD.works.V2.usuario.entity.Usuario;
 import WD.works.V2.usuario.perfil.Perfil;
+import WD.works.V2.usuario.repository.UsuarioRepository;
 import WD.works.V2.usuario.service.UsuarioService;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +42,10 @@ public class AuthService {
     private final JwtService jwtService;
     private final EmpresaService empresaService;
     private final UsuarioService usuarioService;
+    private final AuditoriaService auditoriaService;
+    private final UsuarioRepository usuarioRepository;
+    private final LoginTentativaService loginTentativaService;
+
 
     @Transactional
     public AuthResponse cadastrar(
@@ -58,6 +74,17 @@ public class AuthService {
                         empresa.getId()
                 );
 
+        auditoriaService.registrar(
+                new AuditoriaRequest(
+                        TipoAuditoria.CRIACAO,
+                        "empresa",
+                        empresa.getId().toString(),
+                        "Empresa '" +
+                                empresa.getNome() +
+                                "' foi criada com sucesso"
+                )
+        );
+
         return login(
                 new AuthRequest(
                         request.getEmailAdministrador(),
@@ -68,22 +95,81 @@ public class AuthService {
 
     public AuthResponse login(AuthRequest request) {
 
-        Authentication authentication =
-                authenticationManager.authenticate(
-                        new UsernamePasswordAuthenticationToken(
-                                request.getEmail(),
-                                request.getSenha()
-                        )
-                );
+        Usuario usuario =
+                usuarioRepository
+                        .findByEmail(request.getEmail())
+                        .orElseThrow(() ->
+                                new RegraNegocioException(
+                                        "Email ou senha inválidos."
+                                )
+                        );
 
-        UsuarioDetails usuarioDetails =
-                (UsuarioDetails) authentication.getPrincipal();
+        /*
+         * Verifica se existe um bloqueio temporário
+         * causado por excesso de tentativas.
+         */
+        if (loginTentativaService.estaTemporariamenteBloqueado(usuario)) {
 
-        String token =
-                jwtService.gerarToken(usuarioDetails);
+            throw new RegraNegocioException(
+                    "Email ou senha inválidos."
+            );
+        }
 
-        return new AuthResponse(token);
+        try {
+
+            Authentication authentication =
+                    authenticationManager.authenticate(
+                            new UsernamePasswordAuthenticationToken(
+                                    request.getEmail(),
+                                    request.getSenha()
+                            )
+                    );
+
+            UsuarioDetails usuarioDetails =
+                    (UsuarioDetails) authentication.getPrincipal();
+
+            /*
+             * Login correto:
+             * limpamos as tentativas anteriores.
+             */
+            loginTentativaService.registrarSucesso(
+                    usuario
+            );
+
+            String token =
+                    jwtService.gerarToken(usuarioDetails);
+
+            auditoriaService.registrar(
+                    new AuditoriaRequest(
+                            TipoAuditoria.LOGIN,
+                            "Usuario",
+                            usuario.getId().toString(),
+                            "O usuario " +
+                                    usuario.getNome() +
+                                    " fez login."
+                    ),
+                    usuario,
+                    usuario.getEmpresa()
+            );
+
+            return new AuthResponse(token);
+
+        } catch (org.springframework.security.core.AuthenticationException ex) {
+
+            /*
+             * A senha estava incorreta ou a autenticação
+             * falhou.
+             */
+            loginTentativaService.registrarFalha(
+                    usuario
+            );
+
+            throw new RegraNegocioException(
+                    "Email ou senha inválidos."
+            );
+        }
     }
+
     public AuthMeResponse usuarioAutenticado() {
 
         Authentication authentication =
@@ -103,5 +189,10 @@ public class AuthService {
                 usuario.getPerfil(),
                 usuario.getEmpresa().getId()
         );
+    }
+
+    public void registrarLogin(Usuario usuario) {
+
+
     }
 }

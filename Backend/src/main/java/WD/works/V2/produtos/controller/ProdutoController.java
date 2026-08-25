@@ -3,6 +3,7 @@ package WD.works.V2.produtos.controller;
 import WD.works.V2.produtos.dto.ProdutoRequest;
 import WD.works.V2.produtos.dto.ProdutoResponse;
 import WD.works.V2.produtos.service.ProdutoService;
+import WD.works.V2.produtos.status.StatusProduto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -18,6 +19,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
 
 @RestController
 @RequestMapping("/api/produtos")
@@ -129,44 +132,6 @@ public class ProdutoController {
 
 
     @Operation(
-            summary = "Listar produtos",
-            description = "Retorna os produtos pertencentes à empresa do usuário autenticado."
-    )
-    @ApiResponses({
-
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Produtos encontrados",
-                    content = @Content(
-                            mediaType = "application/json"
-                    )
-            ),
-
-            @ApiResponse(
-                    responseCode = "401",
-                    description = "Usuário não autenticado",
-                    content = @Content
-            ),
-
-            @ApiResponse(
-                    responseCode = "403",
-                    description = "Usuário não possui permissão para visualizar produtos",
-                    content = @Content
-            )
-    })
-    @GetMapping
-    @PreAuthorize("hasAuthority('PRODUTO_VISUALIZAR')")
-    public ResponseEntity<Page<ProdutoResponse>> listarPorEmpresa(
-            Pageable pageable
-    ) {
-
-        return ResponseEntity.ok(
-                produtoService.listarPorEmpresa(pageable)
-        );
-    }
-
-
-    @Operation(
             summary = "Pesquisar produtos",
             description = "Pesquisa produtos pelo nome dentro da empresa do usuário autenticado."
     )
@@ -198,16 +163,43 @@ public class ProdutoController {
                     content = @Content
             )
     })
-    @GetMapping("/pesquisar")
+    @GetMapping
     @PreAuthorize("hasAuthority('PRODUTO_VISUALIZAR')")
-    public ResponseEntity<Page<ProdutoResponse>> pesquisar(
-            @RequestParam String nome,
+    public ResponseEntity<Page<ProdutoResponse>> listarPorEmpresa(
+
+            @RequestParam(required = false)
+            String nome,
+
+            @RequestParam(required = false)
+            StatusProduto status,
+
+            @RequestParam(required = false)
+            Long categoriaId,
+
+            @RequestParam(required = false)
+            BigDecimal precoMin,
+
+            @RequestParam(required = false)
+            BigDecimal precoMax,
+
+            @RequestParam(required = false)
+            Integer quantidadeMin,
+
+            @RequestParam(required = false)
+            Integer quantidadeMax,
+
             Pageable pageable
     ) {
 
         return ResponseEntity.ok(
-                produtoService.pesquisar(
+                produtoService.pesquisarComFiltros(
                         nome,
+                        status,
+                        categoriaId,
+                        precoMin,
+                        precoMax,
+                        quantidadeMin,
+                        quantidadeMax,
                         pageable
                 )
         );
@@ -272,14 +264,21 @@ public class ProdutoController {
 
 
     @Operation(
-            summary = "Eliminar produto",
-            description = "Remove um produto pertencente à empresa do usuário autenticado."
+            summary = "Desativar produto",
+            description = "Desativa um produto pertencente à empresa do usuário autenticado. " +
+                    "O produto não é eliminado da base de dados."
     )
     @ApiResponses({
 
             @ApiResponse(
                     responseCode = "204",
-                    description = "Produto eliminado com sucesso"
+                    description = "Produto desativado com sucesso"
+            ),
+
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Produto já está inativo",
+                    content = @Content
             ),
 
             @ApiResponse(
@@ -290,7 +289,7 @@ public class ProdutoController {
 
             @ApiResponse(
                     responseCode = "403",
-                    description = "Usuário não possui permissão para eliminar produtos",
+                    description = "Usuário não possui permissão para desativar produtos",
                     content = @Content
             ),
 
@@ -300,13 +299,52 @@ public class ProdutoController {
                     content = @Content
             )
     })
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('PRODUTO_EXCLUIR')")
-    public ResponseEntity<Void> eliminar(
+    @PatchMapping("/{id}/desativar")
+    @PreAuthorize("hasAuthority('PRODUTO_DESATIVAR')")
+    public ResponseEntity<Void> desativar(
+            @PathVariable Long id
+    ) {
+        produtoService.desativar(id);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(
+            summary = "Ativar produto",
+            description = "Ativa um produto pertencente à empresa do usuário autenticado."
+    )
+    @ApiResponses({
+
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "Produto ativado com sucesso"
+            ),
+
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Usuário não autenticado",
+                    content = @Content
+            ),
+
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "Usuário não possui permissão para ativar produtos",
+                    content = @Content
+            ),
+
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Produto não encontrado",
+                    content = @Content
+            )
+    })
+    @PatchMapping("/{id}/ativar")
+    @PreAuthorize("hasAuthority('PRODUTO_ATIVAR')")
+    public ResponseEntity<Void> ativar(
             @PathVariable Long id
     ) {
 
-        produtoService.eliminar(id);
+        produtoService.ativar(id);
 
         return ResponseEntity.noContent().build();
     }

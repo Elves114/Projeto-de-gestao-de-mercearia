@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class CategoriaProdutoService {
 
     private final CategoriaProdutoRepository categoriaRepository;
-    private final EmpresaRepository empresaRepository;
     private final EmpresaContext empresaContext;
 
 
@@ -91,20 +90,31 @@ public class CategoriaProdutoService {
 
     @Transactional(readOnly = true)
     public Page<CategoriaProdutoResponse> listarPorEmpresa(
+            String nome,
             Pageable pageable
     ) {
 
         Long empresaId =
                 empresaContext.getEmpresaIdAtual();
 
+        if (nome == null || nome.isBlank()) {
+
+            return categoriaRepository
+                    .findByEmpresaIdOrderByNomeAsc(
+                            empresaId,
+                            pageable
+                    )
+                    .map(this::converterParaResponse);
+        }
+
         return categoriaRepository
-                .findByEmpresaIdOrderByNomeAsc(
+                .findByEmpresaIdAndNomeContainingIgnoreCaseOrderByNomeAsc(
                         empresaId,
+                        nome.trim(),
                         pageable
                 )
                 .map(this::converterParaResponse);
     }
-
 
     /*
      * ============================================================
@@ -201,18 +211,6 @@ public class CategoriaProdutoService {
     }
 
 
-    private Empresa buscarEmpresa(
-            Long empresaId
-    ) {
-
-        return empresaRepository
-                .findById(empresaId)
-                .orElseThrow(() ->
-                        new RecursoNaoEncontradoException(
-                                "Empresa não encontrada."
-                        )
-                );
-    }
 
 
     private void validarNomeDuplicado(

@@ -1,38 +1,51 @@
 import api from "../../../services/api";
 
-export async function listarProdutos(page = 0, size = 10) {
+export async function listarProdutos(
+    page = 0,
+    size = 10,
+    nome = "",
+    filtros = {}
+) {
     const response = await api.get("/api/produtos", {
         params: {
             page,
             size,
+
+            ...(nome.trim() && {
+                nome: nome.trim(),
+            }),
+
+            ...(filtros.status && {
+                status: filtros.status,
+            }),
+
+            ...(filtros.categoriaId && {
+                categoriaId: filtros.categoriaId,
+            }),
+
+            ...(filtros.precoMin && {
+                precoMin: filtros.precoMin,
+            }),
+
+            ...(filtros.precoMax && {
+                precoMax: filtros.precoMax,
+            }),
+
+            ...(filtros.quantidadeMin && {
+                quantidadeMin: filtros.quantidadeMin,
+            }),
+
+            ...(filtros.quantidadeMax && {
+                quantidadeMax: filtros.quantidadeMax,
+            }),
         },
     });
 
     return response.data;
 }
-
 export async function buscarProduto(id) {
     const response = await api.get(
         `/api/produtos/${id}`
-    );
-
-    return response.data;
-}
-
-export async function pesquisarProdutos(
-    nome,
-    page = 0,
-    size = 10
-) {
-    const response = await api.get(
-        "/api/produtos/pesquisar",
-        {
-            params: {
-                nome,
-                page,
-                size,
-            },
-        }
     );
 
     return response.data;
@@ -59,8 +72,28 @@ export async function atualizarProduto(
     return response.data;
 }
 
-export async function eliminarProduto(id) {
-    await api.delete(
-        `/api/produtos/${id}`
+export async function desativarProduto(id) {
+    const response = await api.patch(
+        `/api/produtos/${id}/desativar`
+    );
+
+    return response.data;
+}
+export async function ativarProduto(id) {
+    const response = await api.patch(
+        `/api/produtos/${id}/ativar`
+    );
+
+    return response.data;
+}
+export async function pesquisarProdutos(
+    nome,
+    page = 0,
+    size = 10
+) {
+    return listarProdutos(
+        page,
+        size,
+        nome
     );
 }

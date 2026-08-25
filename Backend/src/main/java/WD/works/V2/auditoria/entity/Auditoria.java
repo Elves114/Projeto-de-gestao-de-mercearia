@@ -1,5 +1,6 @@
 package WD.works.V2.auditoria.entity;
 
+import WD.works.V2.auditoria.gravidade.GravidadeAuditoria;
 import WD.works.V2.auditoria.tipo.TipoAuditoria;
 import WD.works.V2.empresa.entity.Empresa;
 import WD.works.V2.usuario.entity.Usuario;
@@ -36,6 +37,11 @@ import java.time.LocalDateTime;
                 @Index(
                         name = "idx_auditoria_tipo",
                         columnList = "tipo"
+                ),
+
+                @Index(
+                        name = "idx_auditoria_gravidade",
+                        columnList = "gravidade"
                 )
         }
 )
@@ -56,27 +62,19 @@ public class Auditoria {
     )
     private TipoAuditoria tipo;
 
-    /*
-     * Nome da entidade/tabela afetada.
-     *
-     * Exemplos:
-     * "Venda"
-     * "Produto"
-     * "Estoque"
-     * "Usuario"
-     */
+    @Enumerated(EnumType.STRING)
+    @Column(
+            nullable = false,
+            length = 20
+    )
+    private GravidadeAuditoria gravidade;
+
     @Column(
             nullable = false,
             length = 100
     )
     private String tabela;
 
-    /*
-     * ID do registro afetado.
-     *
-     * Exemplo:
-     * Venda #25 → "25"
-     */
     @Column(
             nullable = false,
             length = 100
@@ -91,6 +89,61 @@ public class Auditoria {
 
     @Column(nullable = false)
     private LocalDateTime data;
+
+    /*
+     * Endereço IP de onde a operação foi realizada.
+     */
+    @Column(length = 45)
+    private String ip;
+
+    /*
+     * Método HTTP utilizado.
+     *
+     * Exemplos:
+     * GET
+     * POST
+     * PUT
+     * PATCH
+     * DELETE
+     */
+    @Column(length = 10)
+    private String metodo;
+
+    /*
+     * Endpoint utilizado.
+     *
+     * Exemplo:
+     * /api/produtos/15
+     */
+    @Column(length = 500)
+    private String endpoint;
+
+    /*
+     * Estado do registro antes da operação.
+     *
+     * Será armazenado posteriormente como JSON.
+     */
+    @Lob
+    @Column(columnDefinition = "TEXT")
+    private String dadosAntigos;
+
+    /*
+     * Estado do registro depois da operação.
+     *
+     * Será armazenado posteriormente como JSON.
+     */
+    @Lob
+    @Column(columnDefinition = "TEXT")
+    private String dadosNovos;
+
+    /*
+     * Dados enviados na requisição.
+     *
+     * Será armazenado posteriormente como JSON.
+     */
+    @Lob
+    @Column(columnDefinition = "TEXT")
+    private String payload;
 
     @ManyToOne(
             fetch = FetchType.LAZY,
@@ -123,6 +176,10 @@ public class Auditoria {
 
         if (data == null) {
             data = LocalDateTime.now();
+        }
+
+        if (gravidade == null) {
+            gravidade = GravidadeAuditoria.INFO;
         }
     }
 }

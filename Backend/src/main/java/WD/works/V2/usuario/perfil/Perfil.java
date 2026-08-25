@@ -7,6 +7,9 @@ import java.util.Set;
 public enum Perfil {
 
     ADMIN(
+            Permissao.DASHBOARD_VISUALIZAR,
+            Permissao.ALERTA_STOCK_VISUALIZAR,
+
             Permissao.EMPRESA_VISUALIZAR,
             Permissao.EMPRESA_EDITAR,
 
@@ -18,7 +21,8 @@ public enum Perfil {
             Permissao.PRODUTO_CRIAR,
             Permissao.PRODUTO_VISUALIZAR,
             Permissao.PRODUTO_EDITAR,
-            Permissao.PRODUTO_EXCLUIR,
+            Permissao.PRODUTO_DESATIVAR,
+            Permissao.PRODUTO_ATIVAR,
 
             Permissao.CATEGORIA_CRIAR,
             Permissao.CATEGORIA_VISUALIZAR,
@@ -37,6 +41,8 @@ public enum Perfil {
     ),
 
     GERENTE(
+            Permissao.ALERTA_STOCK_VISUALIZAR,
+
             Permissao.EMPRESA_VISUALIZAR,
 
             Permissao.USUARIO_VISUALIZAR,
@@ -45,7 +51,8 @@ public enum Perfil {
             Permissao.PRODUTO_CRIAR,
             Permissao.PRODUTO_VISUALIZAR,
             Permissao.PRODUTO_EDITAR,
-            Permissao.PRODUTO_EXCLUIR,
+            Permissao.PRODUTO_DESATIVAR,
+            Permissao.PRODUTO_ATIVAR,
 
             Permissao.CATEGORIA_CRIAR,
             Permissao.CATEGORIA_VISUALIZAR,
@@ -64,6 +71,8 @@ public enum Perfil {
     ),
 
     FUNCIONARIO(
+            Permissao.ALERTA_STOCK_VISUALIZAR,
+
             Permissao.EMPRESA_VISUALIZAR,
 
             Permissao.USUARIO_VISUALIZAR,

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { buscarVenda } from "../services/vendaService";
+import "../style/Venda.css";
 
 function formatarValor(valor) {
     return Number(valor).toLocaleString("pt-MZ", {
@@ -152,7 +153,10 @@ function DetalhesVenda() {
 
                             <tbody>
                                 {venda.itens.map((item) => (
-                                    <tr key={item.id}>
+                                    <tr
+                                        key={item.id}
+                                        className="venda-produto-row"
+                                    >
                                         <td>
                                             <strong>
                                                 {item.produtoNome}

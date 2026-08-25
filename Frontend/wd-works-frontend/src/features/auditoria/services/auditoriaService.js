@@ -57,3 +57,21 @@ export async function listarAuditoriasPorTipo(
 
     return response.data;
 }
+
+export async function listarAuditoriasPorGravidade(
+    gravidade,
+    page = 0,
+    size = 10
+) {
+    const response = await api.get(
+        `/api/auditorias/gravidade/${gravidade}`,
+        {
+            params: {
+                page,
+                size,
+            },
+        }
+    );
+
+    return response.data;
+}

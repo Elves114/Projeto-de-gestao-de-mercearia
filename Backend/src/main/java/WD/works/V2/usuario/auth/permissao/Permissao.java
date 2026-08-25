@@ -6,17 +6,22 @@ public enum Permissao {
     EMPRESA_VISUALIZAR,
     EMPRESA_EDITAR,
 
+
     // Usuário
     USUARIO_CRIAR,
     USUARIO_VISUALIZAR,
     USUARIO_EDITAR,
     USUARIO_BLOQUEAR,
 
+    // Alertas de Stock
+    ALERTA_STOCK_VISUALIZAR,
+
     // Produto
     PRODUTO_CRIAR,
     PRODUTO_VISUALIZAR,
     PRODUTO_EDITAR,
-    PRODUTO_EXCLUIR,
+    PRODUTO_DESATIVAR,
+    PRODUTO_ATIVAR,
 
     // Categoria
     CATEGORIA_CRIAR,
@@ -35,5 +40,8 @@ public enum Permissao {
     ESTOQUE_MOVIMENTAR,
 
     // Auditoria
-    AUDITORIA_VISUALIZAR
+    AUDITORIA_VISUALIZAR,
+
+    //Dashboard
+    DASHBOARD_VISUALIZAR
 }

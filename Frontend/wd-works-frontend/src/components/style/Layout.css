@@ -1,0 +1,250 @@
+/* ============================================================
+   WD WORKS V2
+   APP LAYOUT
+   ============================================================ */
+
+:root {
+    --sidebar-fechada: 78px;
+    --sidebar-aberta: 260px;
+
+    --layout-duration: 300ms;
+
+    --layout-ease: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+
+/* ============================================================
+   ESTRUTURA PRINCIPAL
+   ============================================================ */
+
+.app-layout {
+    min-height: 100vh;
+
+    display: flex;
+
+    background: #f4f7fb;
+
+    overflow-x: hidden;
+}
+
+
+/* ============================================================
+   CONTEÚDO DA APLICAÇÃO
+   ============================================================ */
+
+.app-content {
+    flex: 1;
+
+    min-width: 0;
+    min-height: 100vh;
+
+    margin-left: var(--sidebar-fechada);
+
+    /*
+     * Mesma física do Sidebar.
+     * Isso cria o "Fluid Grid Resizing".
+     */
+    transition:
+        margin-left var(--layout-duration) var(--layout-ease);
+
+    /*
+     * Ajuda o browser a preparar a animação.
+     */
+    will-change: margin-left;
+}
+
+
+/* Sidebar aberta */
+
+.app-layout.sidebar-aberto .app-content {
+    margin-left: var(--sidebar-aberta);
+}
+
+
+/* ============================================================
+   ÁREA PRINCIPAL
+   ============================================================ */
+
+.main-content {
+    width: 100%;
+
+    min-height: calc(100vh - 76px);
+
+    padding: 24px;
+
+    box-sizing: border-box;
+
+    /*
+     * O conteúdo também acompanha a animação.
+     */
+    transition:
+        transform var(--layout-duration) var(--layout-ease),
+        filter var(--layout-duration) var(--layout-ease);
+
+    transform-origin: center center;
+
+    will-change: transform, filter;
+}
+
+
+/* ============================================================
+   BENTO REVEAL
+   ============================================================ */
+
+/*
+ * Qualquer elemento que receber .bento-item
+ * entra suavemente quando a página é carregada.
+ */
+
+.bento-item {
+    opacity: 0;
+
+    transform: translateY(10px);
+
+    animation:
+        bentoReveal 320ms var(--layout-ease) forwards;
+}
+
+
+/* Cascata */
+
+.bento-item:nth-child(1) {
+    animation-delay: 0ms;
+}
+
+.bento-item:nth-child(2) {
+    animation-delay: 40ms;
+}
+
+.bento-item:nth-child(3) {
+    animation-delay: 80ms;
+}
+
+.bento-item:nth-child(4) {
+    animation-delay: 120ms;
+}
+
+.bento-item:nth-child(5) {
+    animation-delay: 160ms;
+}
+
+.bento-item:nth-child(6) {
+    animation-delay: 200ms;
+}
+
+.bento-item:nth-child(7) {
+    animation-delay: 240ms;
+}
+
+.bento-item:nth-child(8) {
+    animation-delay: 280ms;
+}
+
+
+@keyframes bentoReveal {
+
+    from {
+        opacity: 0;
+
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform: translateY(0);
+    }
+}
+
+
+/* ============================================================
+   TABLETS / ECRÃS PEQUENOS
+   ============================================================ */
+
+@media (max-width: 900px) {
+
+    /*
+     * Neste ponto o Sidebar deixa de participar
+     * no fluxo normal da aplicação.
+     *
+     * Ele passa a ser uma camada sobre o conteúdo.
+     */
+
+    .app-content {
+        margin-left: 0;
+
+        width: 100%;
+
+        transition:
+            transform var(--layout-duration) var(--layout-ease),
+            filter var(--layout-duration) var(--layout-ease);
+
+        will-change: transform, filter;
+    }
+
+
+    /*
+     * Abrir Sidebar NÃO empurra o conteúdo.
+     */
+
+    .app-layout.sidebar-aberto .app-content {
+        margin-left: 0;
+
+        transform:
+            scale(0.98);
+
+        filter: blur(1px);
+    }
+
+
+    .main-content {
+        padding: 20px;
+    }
+}
+
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+@media (max-width: 600px) {
+
+    .main-content {
+        padding: 16px;
+    }
+
+    /*
+     * O efeito de profundidade fica ainda mais subtil
+     * em ecrãs pequenos.
+     */
+
+    .app-layout.sidebar-aberto .app-content {
+        transform: scale(0.985);
+
+        filter: blur(1px);
+    }
+}
+
+
+/* ============================================================
+   ACESSIBILIDADE
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .app-content,
+    .main-content,
+    .bento-item {
+        transition: none !important;
+
+        animation: none !important;
+
+        transform: none !important;
+
+        filter: none !important;
+    }
+
+    .bento-item {
+        opacity: 1;
+    }
+}

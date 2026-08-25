@@ -6,6 +6,7 @@ import {
     buscarUsuario,
     atualizarUsuario
 } from "../services/usuarioService";
+import "../style/Usuario.css";
 
 
 function EditarUsuario() {

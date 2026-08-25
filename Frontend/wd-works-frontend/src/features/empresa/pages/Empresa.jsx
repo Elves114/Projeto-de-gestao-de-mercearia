@@ -5,7 +5,7 @@ import {
     ativarMinhaEmpresa,
     desativarMinhaEmpresa,
 } from "../services/empresaService";
-
+import "../style/Empresa.css";
 
 function Empresa() {
     const [empresa, setEmpresa] = useState(null);

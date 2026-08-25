@@ -1,6 +1,7 @@
 package WD.works.V2.auditoria.repository;
 
 import WD.works.V2.auditoria.entity.Auditoria;
+import WD.works.V2.auditoria.gravidade.GravidadeAuditoria;
 import WD.works.V2.auditoria.tipo.TipoAuditoria;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +24,11 @@ public interface AuditoriaRepository
     Page<Auditoria> findByEmpresaIdAndTipoOrderByDataDesc(
             Long empresaId,
             TipoAuditoria tipo,
+            Pageable pageable
+    );
+    Page<Auditoria> findByEmpresaIdAndGravidadeOrderByDataDesc(
+            Long empresaId,
+            GravidadeAuditoria gravidade,
             Pageable pageable
     );
 }

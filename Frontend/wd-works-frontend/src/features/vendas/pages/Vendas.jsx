@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { listarVendas } from "../services/vendaService";
 import VendaTabela from "../components/VendaTabela";
+import "../style/Venda.css";
 
 function Vendas() {
     const [vendas, setVendas] = useState([]);
