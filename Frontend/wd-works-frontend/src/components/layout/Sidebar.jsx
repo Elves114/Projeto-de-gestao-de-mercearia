@@ -17,7 +17,6 @@ function Sidebar({ aberto, setAberto }) {
             .charAt(0)
             .toUpperCase();
 
-
     const grupos = [
         {
             titulo: "Principal",
@@ -88,34 +87,26 @@ function Sidebar({ aberto, setAberto }) {
         }
     ];
 
-
     return (
         <aside
             className={`sidebar ${aberto ? "open" : ""}`}
-            onClick={() => {
-                if (!aberto) {
-                    setAberto(true);
-                }
-            }}
         >
 
             {/* ==================================================
-                MARCA
+                MARCA / BOTÃO DO SIDEBAR
                ================================================== */}
 
             <button
-                className="sidebar-toggle"
-                onClick={(e) => {
-                    e.stopPropagation();
-                    setAberto(!aberto);
-                }}
-                aria-label="Abrir ou fechar menu"
+                type="button"
+                className="sidebar-brand"
+                onClick={() => setAberto(!aberto)}
+                aria-label={
+                    aberto
+                        ? "Fechar menu"
+                        : "Abrir menu"
+                }
+                aria-expanded={aberto}
             >
-                ☰
-            </button>
-
-
-            <div className="sidebar-brand">
 
                 <div className="sidebar-logo">
                     W
@@ -133,7 +124,7 @@ function Sidebar({ aberto, setAberto }) {
 
                 </div>
 
-            </div>
+            </button>
 
 
             {/* ==================================================
@@ -242,3 +233,4 @@ function formatarPerfil(perfil) {
 
 
 export default Sidebar;
+
