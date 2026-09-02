@@ -27,21 +27,16 @@ function Login() {
         setCarregando(true);
 
         try {
-
             const response = await loginApi(email, senha);
 
             login(response.token);
 
-            navigate("/dashboard");
+            navigate("/");
 
         } catch (error) {
-
             console.error(error);
-
             setErro("Email ou senha incorretos.");
-
         } finally {
-
             setCarregando(false);
         }
     }
@@ -135,7 +130,7 @@ function Login() {
                             <div className="auth-input-wrapper">
 
                                 <span className="auth-input-icon">
-                                    
+
                                 </span>
 
                                 <input
@@ -164,7 +159,7 @@ function Login() {
                             <div className="auth-input-wrapper">
 
                                 <span className="auth-input-icon">
-                                    
+
                                 </span>
 
                                 <input

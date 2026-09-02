@@ -41,6 +41,7 @@ public enum Perfil {
     ),
 
     GERENTE(
+            Permissao.DASHBOARD_VISUALIZAR,
             Permissao.ALERTA_STOCK_VISUALIZAR,
 
             Permissao.EMPRESA_VISUALIZAR,

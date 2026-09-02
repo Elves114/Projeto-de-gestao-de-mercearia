@@ -10,6 +10,10 @@ import {
     eliminarCategoria,
 } from "../services/categoriaService";
 
+import {
+    obterMensagemErro
+} from "../../../services/api";
+
 import CategoriaForm from "../components/CategoriaForm";
 
 import "../style/Categoria.css";
@@ -489,9 +493,8 @@ function Categorias() {
 
 
             alert(
-                "Não foi possível atualizar a categoria."
+                obterMensagemErro(error)
             );
-
         }
 
     }
@@ -582,7 +585,7 @@ function Categorias() {
 
 
             alert(
-                "Não foi possível eliminar a categoria."
+                obterMensagemErro(error)
             );
 
         }

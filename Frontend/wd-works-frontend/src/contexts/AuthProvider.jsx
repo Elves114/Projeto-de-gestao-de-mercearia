@@ -17,6 +17,31 @@ export function AuthProvider({ children }) {
 
     useEffect(() => {
 
+        function tratarSessaoExpirada() {
+
+            setToken(null);
+            setUsuario(null);
+        }
+
+        window.addEventListener(
+            "sessao-expirada",
+            tratarSessaoExpirada
+        );
+
+        return () => {
+
+            window.removeEventListener(
+                "sessao-expirada",
+                tratarSessaoExpirada
+            );
+
+        };
+
+    }, []);
+
+
+    useEffect(() => {
+
         async function carregarUsuario() {
 
             if (!token) {
