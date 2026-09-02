@@ -1,5 +1,8 @@
-
 import { useEffect, useState } from "react";
+
+import {
+    obterMensagemErro
+} from "../../../services/api";
 
 import { listarCategorias } from "../../categorias/services/categoriaService";
 
@@ -14,7 +17,6 @@ import {
     desativarProduto,
     ativarProduto
 } from "../services/produtoService";
-
 
 function Produtos() {
 
@@ -225,7 +227,7 @@ function Produtos() {
                 setTotalPaginas(0);
 
                 setErro(
-                    "Não foi possível carregar os produtos."
+                    obterMensagemErro(error)
                 );
 
             } finally {
@@ -486,8 +488,7 @@ function Produtos() {
             );
 
             setErro(
-                error?.response?.data?.message ||
-                "Não foi possível criar o produto."
+                obterMensagemErro(error)
             );
 
         }
@@ -640,8 +641,7 @@ function Produtos() {
             );
 
             setErro(
-                error?.response?.data?.message ||
-                "Não foi possível desativar o produto."
+                obterMensagemErro(error)
             );
 
         }
@@ -754,8 +754,7 @@ function Produtos() {
             );
 
             setErro(
-                error?.response?.data?.message ||
-                "Não foi possível ativar o produto."
+                obterMensagemErro(error)
             );
 
         }
@@ -853,8 +852,7 @@ function Produtos() {
             );
 
             setErro(
-                error?.response?.data?.message ||
-                "Não foi possível atualizar o produto."
+                obterMensagemErro(error)
             );
 
         }

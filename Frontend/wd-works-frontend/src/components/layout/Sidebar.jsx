@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../../contexts/useAuth";
+import { PERMISSOES_ROTAS } from "../../config/Permissions";
 import "../style/Sidebar.css";
 
 function Sidebar({ aberto, setAberto }) {
@@ -87,6 +88,21 @@ function Sidebar({ aberto, setAberto }) {
         }
     ];
 
+    const gruposPermitidos = grupos
+        .map((grupo) => ({
+            ...grupo,
+            links: grupo.links.filter((link) => {
+                const permissoes = PERMISSOES_ROTAS[link.to];
+
+                if (!permissoes) {
+                    return false;
+                }
+
+                return permissoes.includes(usuario?.perfil);
+            })
+        }))
+        .filter((grupo) => grupo.links.length > 0);
+
     return (
         <aside
             className={`sidebar ${aberto ? "open" : ""}`}
@@ -133,7 +149,7 @@ function Sidebar({ aberto, setAberto }) {
 
             <nav className="sidebar-nav">
 
-                {grupos.map((grupo) => (
+                {gruposPermitidos.map((grupo) => (
 
                     <div
                         className="sidebar-group"

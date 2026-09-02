@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { criarUsuario } from "../services/usuarioService";
-import "../style/Usuario.css";
+import "../style/NovoUsuario.css";
 
 function calcularForcaSenha(senha) {
 
