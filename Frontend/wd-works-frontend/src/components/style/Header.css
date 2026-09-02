@@ -14,17 +14,15 @@
     align-items: center;
     justify-content: space-between;
 
-    padding: 0 28px;
+    padding-inline: 28px; /* Propriedade Lógica: substitui padding Left/Right */
 
     background: rgba(255, 255, 255, 0.94);
-
-    border-bottom: 1px solid #e8edf3;
+    border-bottom: 1px solid var(--sb-border, #e8edf3); /* Usa as variáveis da sidebar */
 
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
 
-    box-shadow:
-        0 4px 20px rgba(15, 23, 42, 0.035);
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.035);
 }
 
 
@@ -35,37 +33,29 @@
 .header-left {
     display: flex;
     align-items: center;
-
     min-width: 0;
 }
 
 .header-page-info {
     display: flex;
     flex-direction: column;
-
     gap: 2px;
 }
 
 .header-section {
     color: #9aa4b2;
-
     font-size: 10px;
     font-weight: 800;
-
     text-transform: uppercase;
     letter-spacing: 0.9px;
 }
 
 .header-page-info h1 {
     margin: 0;
-
-    color: #111827;
-
+    color: var(--sb-text-dark, #111827);
     font-size: 22px;
     font-weight: 800;
-
     line-height: 1.2;
-
     letter-spacing: -0.5px;
 }
 
@@ -77,7 +67,6 @@
 .header-right {
     display: flex;
     align-items: center;
-
     gap: 12px;
 }
 
@@ -89,98 +78,69 @@
 .header-search {
     width: 320px;
     height: 42px;
-
     display: flex;
     align-items: center;
-
     gap: 9px;
-
-    padding: 0 13px;
+    padding-inline: 13px;
 
     background: #f4f7fb;
-
     border: 1px solid transparent;
     border-radius: 12px;
+    will-change: width, background-color; /* Avisa o browser para otimizar animação */
 
     transition:
-        width 300ms cubic-bezier(0.4, 0, 0.2, 1),
-        background 200ms ease,
-        border-color 200ms ease,
-        box-shadow 200ms ease;
+        width var(--sb-transition, 250ms cubic-bezier(0.4, 0, 0.2, 1)),
+        background-color var(--sb-transition, 200ms ease),
+        border-color var(--sb-transition, 200ms ease),
+        box-shadow var(--sb-transition, 200ms ease);
 }
-
-
-/*
-   Equivalente ao:
-
-   focus-within:w-96
-
-   320px → 384px
-*/
 
 .header-search:focus-within {
     width: 384px;
-
     background: #ffffff;
-
     border-color: rgba(0, 174, 239, 0.35);
-
-    box-shadow:
-        0 0 0 3px rgba(0, 174, 239, 0.08);
+    box-shadow: 0 0 0 3px rgba(0, 174, 239, 0.08);
 }
 
-
 /* Ícone */
-
 .header-search-icon {
     flex-shrink: 0;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     width: 20px;
     height: 20px;
 
-    color: #8a95a5;
-
+    color: var(--sb-text-muted, #8a95a5);
     font-size: 21px;
+    will-change: transform;
 
     transition:
         color 200ms ease,
-        transform 200ms ease;
+        transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1); /* Animação elástica sutil */
 }
 
 .header-search:focus-within .header-search-icon {
-    color: #00aeef;
-
+    color: var(--sb-primary, #00aeef);
     transform: scale(1.05);
 }
 
-
 /* Input */
-
 .header-search input {
     width: 100%;
-
     min-width: 0;
-
     border: 0;
     outline: 0;
-
     background: transparent;
 
     color: #1f2937;
-
     font-family: inherit;
-
     font-size: 13px;
     font-weight: 500;
 }
 
 .header-search input::placeholder {
     color: #9aa4b2;
-
     transition: color 200ms ease;
 }
 
@@ -195,25 +155,21 @@
 
 .header-notification {
     position: relative;
-
     width: 42px;
     height: 42px;
-
     display: flex;
     align-items: center;
     justify-content: center;
 
-    border: 1px solid #e8edf3;
+    border: 1px solid var(--sb-border, #e8edf3);
     border-radius: 12px;
-
     background: #ffffff;
-
     color: #697586;
-
     cursor: pointer;
+    will-change: transform;
 
     transition:
-        background 180ms ease,
+        background-color 180ms ease,
         border-color 180ms ease,
         color 180ms ease,
         transform 180ms ease,
@@ -222,38 +178,31 @@
 
 .header-notification:hover {
     background: #f7f9fc;
-
     border-color: #dce3eb;
-
-    color: #111827;
-
+    color: var(--sb-text-dark, #111827);
     transform: translateY(-1px);
-
-    box-shadow:
-        0 5px 14px rgba(15, 23, 42, 0.06);
+    box-shadow: 0 5px 14px rgba(15, 23, 42, 0.06);
 }
 
 .header-notification:active {
     transform: scale(0.95);
 }
 
-
-/* Ícone */
-
+/* Ícone de Sino Animado */
 .notification-icon {
     display: flex;
     align-items: center;
     justify-content: center;
-
     font-size: 19px;
-
+    transform-origin: top center; /* Roda o sino a partir do topo (efeito real) */
+    
     transition:
-        transform 200ms ease,
+        transform 250ms cubic-bezier(0.34, 1.56, 0.64, 1),
         color 200ms ease;
 }
 
 .header-notification:hover .notification-icon {
-    transform: rotate(-8deg);
+    transform: rotate(12deg);
 }
 
 
@@ -264,9 +213,7 @@
 .header-divider {
     width: 1px;
     height: 30px;
-
-    margin: 0 4px;
-
+    margin-inline: 4px; /* Propriedade Lógica */
     background: #e5eaf0;
 }
 
@@ -277,56 +224,40 @@
 
 .header-user {
     height: 48px;
-
     display: flex;
     align-items: center;
-
     gap: 10px;
-
     padding: 4px 8px 4px 5px;
-
     border-radius: 13px;
-
     cursor: pointer;
 
     transition:
-        background 180ms ease,
+        background-color 180ms ease,
         box-shadow 180ms ease;
 }
 
 .header-user:hover {
     background: #f5f8fb;
-
-    box-shadow:
-        0 4px 12px rgba(15, 23, 42, 0.04);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
 }
 
 
-/* =========================================================
-   AVATAR
-   ========================================================= */
-
+/* Avatar */
 .header-user-avatar {
     width: 38px;
     height: 38px;
-
     flex-shrink: 0;
-
     display: flex;
     align-items: center;
     justify-content: center;
 
     border-radius: 50%;
-
-    background: #111827;
-
+    background: var(--sb-text-dark, #111827);
     color: #ffffff;
-
     font-size: 13px;
     font-weight: 800;
-
-    box-shadow:
-        0 5px 13px rgba(17, 24, 39, 0.14);
+    box-shadow: 0 5px 13px rgba(17, 24, 39, 0.14);
+    will-change: transform;
 
     transition:
         transform 200ms ease,
@@ -335,61 +266,43 @@
 
 .header-user:hover .header-user-avatar {
     transform: scale(1.04);
-
-    box-shadow:
-        0 7px 16px rgba(17, 24, 39, 0.18);
+    box-shadow: 0 7px 16px rgba(17, 24, 39, 0.18);
 }
 
 
-/* =========================================================
-   INFORMAÇÕES DO UTILIZADOR
-   ========================================================= */
-
+/* Informações */
 .header-user-info {
     min-width: 90px;
-
     display: flex;
     flex-direction: column;
-
     gap: 2px;
 }
 
 .header-user-info strong {
     max-width: 130px;
-
     overflow: hidden;
-
     color: #1f2937;
-
     font-size: 12px;
     font-weight: 700;
-
     line-height: 1.2;
-
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
 .header-user-info span {
-    color: #8b96a5;
-
+    color: var(--sb-text-muted, #8b96a5);
     font-size: 10px;
     font-weight: 600;
-
     line-height: 1.2;
 }
 
 
-/* =========================================================
-   SETA DO UTILIZADOR
-   ========================================================= */
-
+/* Seta indicadora */
 .header-user-arrow {
     margin-left: 2px;
-
-    color: #8a95a5;
-
+    color: var(--sb-text-muted, #8a95a5);
     font-size: 14px;
+    will-change: transform;
 
     transition:
         transform 200ms ease,
@@ -397,8 +310,7 @@
 }
 
 .header-user:hover .header-user-arrow {
-    color: #111827;
-
+    color: var(--sb-text-dark, #111827);
     transform: translateY(2px);
 }
 
@@ -409,7 +321,7 @@
 
 .header-notification:focus-visible,
 .header-user:focus-visible {
-    outline: 3px solid rgba(0, 174, 239, 0.18);
+    outline: 3px solid rgba(0, 174, 239, 0.25);
     outline-offset: 2px;
 }
 
@@ -419,108 +331,57 @@
    ========================================================= */
 
 @media (max-width: 1100px) {
-
-    .header-search {
-        width: 260px;
-    }
-
-    .header-search:focus-within {
-        width: 320px;
-    }
+    .header-search { width: 260px; }
+    .header-search:focus-within { width: 320px; }
 }
-
 
 @media (max-width: 850px) {
-
-    .header {
-        padding: 0 20px;
-    }
-
-    .header-search {
-        width: 220px;
-    }
-
-    .header-search:focus-within {
-        width: 280px;
-    }
-
-    .header-user-info {
-        display: none;
-    }
+    .header { padding-inline: 20px; }
+    .header-search { width: 220px; }
+    .header-search:focus-within { width: 280px; }
+    .header-user-info { display: none; }
 }
 
-
 @media (max-width: 650px) {
-
     .header {
         height: 68px;
-
-        padding: 0 14px;
+        padding-inline: 14px;
     }
 
-    .header-page-info h1 {
-        font-size: 18px;
-    }
-
-    .header-section {
-        font-size: 9px;
-    }
+    .header-page-info h1 { font-size: 18px; }
+    .header-section { font-size: 9px; }
 
     .header-search {
         width: 42px;
         height: 42px;
-
         padding: 0;
-
         justify-content: center;
     }
 
     .header-search:focus-within {
         position: absolute;
-
         left: 14px;
         right: 14px;
-
-        width: auto;
-
-        padding: 0 13px;
+        width: calc(100% - 28px); /* Garante dimensionamento robusto */
+        padding-inline: 13px;
+        z-index: 10;
     }
 
+    /* Correção do salto de texto: usa opacity/visibility em vez de display: none */
     .header-search input {
-        display: none;
+        width: 0;
+        opacity: 0;
+        visibility: hidden;
+        transition: width 200ms ease, opacity 150ms ease;
     }
 
     .header-search:focus-within input {
-        display: block;
+        width: 100%;
+        opacity: 1;
+        visibility: visible;
     }
 
-    .header-right {
-        gap: 7px;
-    }
-
-    .header-divider {
-        display: none;
-    }
-
-    .header-user {
-        padding-right: 3px;
-    }
-
-    .header-user-arrow {
-        display: none;
-    }
-}
-
-
-/* =========================================================
-   REDUÇÃO DE MOVIMENTO
-   ========================================================= */
-
-@media (prefers-reduced-motion: reduce) {
-
-    .header *,
-    .header {
-        transition: none !important;
-        animation: none !important;
-    }
+    .header-right { gap: 7px; }
+    .header-divider { display: none; }
+    .header-user { padding-right: 3px; }
 }

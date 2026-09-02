@@ -336,25 +336,49 @@ public class VendaService {
         );
     }
 
-
     /**
-     * Lista todas as vendas da empresa do usuário autenticado.
+     * Lista/pesquisa vendas da empresa do usuário autenticado.
+     * <p>
+     * Todos os filtros são opcionais.
      */
     @Transactional(readOnly = true)
     public Page<VendaResponse> listarPorEmpresa(
+            Long vendaId,
+            LocalDateTime inicio,
+            LocalDateTime fim,
+            Long usuarioId,
             Pageable pageable
     ) {
 
         Long empresaId =
                 empresaContext.getEmpresaIdAtual();
 
+        /*
+         * Validação do período.
+         */
+        if (inicio != null
+                && fim != null
+                && inicio.isAfter(fim)) {
+
+            throw new RegraNegocioException(
+                    "A data/hora inicial não pode ser maior que a data/hora final."
+            );
+        }
+
         return vendaRepository
-                .findByEmpresaIdOrderByDataVendaDesc(
+                .pesquisar(
                         empresaId,
+                        vendaId,
+                        inicio,
+                        fim,
+                        usuarioId,
                         pageable
                 )
                 .map(this::converterParaResponse);
     }
+
+
+
 
     /*
      * ============================================================
@@ -474,7 +498,7 @@ public class VendaService {
         if (quantidade == null
                 || quantidade <= 0) {
 
-            throw new  RegraNegocioException("A quantidade deve ser maior que zero.");
+            throw new RegraNegocioException("A quantidade deve ser maior que zero.");
         }
     }
 

@@ -1520,3 +1520,409 @@
         width: 100%;
     }
 }
+/* ============================================================
+   ÁREA DE PESQUISA DE VENDAS – BARRA UNIFICADA
+   ============================================================ */
+
+.vendas-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0; /* espaçamento controlado por padding dos itens */
+  padding: 6px 12px;
+  margin-bottom: 8px;
+
+  background: #ffffff;
+  border: 1px solid #e7edf5;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+
+  transition:
+    box-shadow 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease;
+}
+
+/* Efeito hover na barra inteira – micro‑elevação */
+.vendas-filtros:hover {
+  border-color: #d5dce7;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.07);
+}
+
+/* ============================================================
+   GRUPOS DE FILTRO
+   ============================================================ */
+
+.filtro-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 6px 10px;
+  flex: 1 1 auto;
+  min-width: 0;
+  position: relative;
+}
+
+/* Ajustes específicos para unificar data e hora */
+.filtro-group:nth-child(2),  /* Data inicial */
+.filtro-group:nth-child(4) { /* Hora inicial */
+  padding-right: 0;
+  flex: 1 1 110px;
+}
+
+.filtro-group:nth-child(3),  /* Data final */
+.filtro-group:nth-child(5) { /* Hora final */
+  padding-left: 0;
+  flex: 1 1 110px;
+}
+
+/* Grupo do ID – fixo */
+.filtro-group:nth-child(1) {
+  flex: 0 0 140px;
+  padding-right: 14px;
+  border-right: 1px solid #edf1f5;
+}
+
+/* Divisórias verticais entre os grandes blocos */
+.filtro-group:nth-child(3) {
+  border-right: 1px solid #edf1f5;
+  padding-right: 14px;
+}
+
+.filtro-group:nth-child(5) {
+  border-right: 1px solid #edf1f5;
+  padding-right: 14px;
+}
+
+/* ============================================================
+   LABELS
+   ============================================================ */
+
+.filtro-group label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #667085;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  transition: color 0.2s ease;
+}
+
+/* ============================================================
+   INPUTS
+   ============================================================ */
+
+.filtro-group input {
+  width: 100%;
+  height: 34px;
+  padding: 0 10px;
+  box-sizing: border-box;
+  border: 1px solid #dbe2ea;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #172033;
+  font-size: 0.85rem;
+  font-family: inherit;
+  outline: none;
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease,
+    transform 0.2s ease;
+}
+
+.filtro-group input::placeholder {
+  color: #98a2b3;
+  opacity: 1;
+}
+
+/* Inputs de data e hora – estilo consistente */
+.filtro-group input[type="date"],
+.filtro-group input[type="time"] {
+  cursor: pointer;
+  padding-right: 6px;
+}
+
+/* ============================================================
+   FOCUS – destaque apenas no grupo activo
+   ============================================================ */
+
+.filtro-group:focus-within {
+  z-index: 2;
+}
+
+.filtro-group:focus-within label {
+  color: #2563eb;
+}
+
+.filtro-group:focus-within input {
+  border-color: #2563eb;
+  background: #fafcff;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+  transform: translateY(-1px);
+}
+
+.filtro-group input:focus::placeholder {
+  opacity: 0.5;
+}
+
+/* ============================================================
+   TEXTO "até" ENTRE DATA E HORA (pseudo‑elementos)
+   ============================================================ */
+
+.filtro-group:nth-child(2)::after,
+.filtro-group:nth-child(4)::after {
+  content: "até";
+  position: absolute;
+  right: -18px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #98a2b3;
+  background: #ffffff;
+  padding: 0 4px;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* Ajuste para hora – mesmo efeito */
+.filtro-group:nth-child(4)::after {
+  content: "às";
+}
+
+/* ============================================================
+   ÁREA DOS BOTÕES
+   ============================================================ */
+
+.filtros-acoes {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-left: 14px;
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+
+/* ============================================================
+   BOTÃO PESQUISAR (primário)
+   ============================================================ */
+
+.filtros-acoes .button-primary {
+  height: 34px;
+  padding: 0 18px;
+  border: none;
+  border-radius: 8px;
+  background: #2563eb;
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.18);
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.filtros-acoes .button-primary:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.25);
+}
+
+.filtros-acoes .button-primary:active {
+  transform: scale(0.97);
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.15);
+}
+
+/* ============================================================
+   BOTÃO LIMPAR (secundário)
+   ============================================================ */
+
+.filtros-acoes .button-secondary {
+  height: 34px;
+  padding: 0 14px;
+  border: 1px solid #dbe2ea;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #475467;
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.filtros-acoes .button-secondary:hover {
+  background: #f7f9fc;
+  border-color: #cbd5e1;
+  color: #172033;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.05);
+}
+
+.filtros-acoes .button-secondary:active {
+  transform: translateY(0);
+}
+
+/* ============================================================
+   RESUMO DOS RESULTADOS
+   ============================================================ */
+
+.vendas-resumo {
+  display: flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 4px;
+  margin-bottom: 8px;
+  color: #64748b;
+  font-size: 0.82rem;
+  animation: resumoEntrada 0.3s ease both;
+}
+
+@keyframes resumoEntrada {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================================
+   RESPONSIVIDADE
+   ============================================================ */
+
+/* Tablet – quebra em duas/três linhas */
+@media (max-width: 1024px) {
+  .vendas-filtros {
+    padding: 8px 12px;
+  }
+
+  .filtro-group:nth-child(1) {
+    flex: 0 0 130px;
+  }
+
+  .filtro-group:nth-child(2),
+  .filtro-group:nth-child(3),
+  .filtro-group:nth-child(4),
+  .filtro-group:nth-child(5) {
+    flex: 1 1 80px;
+  }
+
+  .filtros-acoes {
+    padding-left: 10px;
+    margin-left: 0;
+    flex: 1 1 100%;
+    justify-content: flex-end;
+    margin-top: 4px;
+  }
+
+  /* Remove divisórias que podem atrapalhar no wrap */
+  .filtro-group:nth-child(3),
+  .filtro-group:nth-child(5) {
+    border-right: none;
+    padding-right: 10px;
+  }
+
+  .filtro-group:nth-child(1) {
+    border-right: 1px solid #edf1f5;
+  }
+}
+
+/* Tablet pequeno / mobile grande */
+@media (max-width: 760px) {
+  .vendas-filtros {
+    padding: 10px 14px;
+    border-radius: 12px;
+  }
+
+  .filtro-group {
+    flex: 0 0 100% !important;
+    padding: 6px 0 !important;
+    border-right: none !important;
+  }
+
+  .filtro-group:nth-child(2)::after,
+  .filtro-group:nth-child(4)::after {
+    display: none; /* esconde "até" no empilhamento */
+  }
+
+  .filtro-group label {
+    font-size: 0.7rem;
+  }
+
+  .filtro-group input {
+    height: 40px;
+    font-size: 0.95rem;
+  }
+
+  .filtros-acoes {
+    flex: 0 0 100%;
+    padding-left: 0;
+    margin-top: 8px;
+    justify-content: stretch;
+    gap: 8px;
+  }
+
+  .filtros-acoes .button-primary,
+  .filtros-acoes .button-secondary {
+    flex: 1;
+    height: 40px;
+    justify-content: center;
+  }
+}
+
+/* Mobile – empilhado verticalmente */
+@media (max-width: 520px) {
+  .vendas-filtros {
+    padding: 12px 14px;
+    border-radius: 10px;
+  }
+
+  .filtro-group input {
+    height: 44px;
+  }
+
+  .filtros-acoes {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .filtros-acoes .button-primary,
+  .filtros-acoes .button-secondary {
+    width: 100%;
+    height: 44px;
+  }
+}
+
+/* ============================================================
+   ACESSIBILIDADE – reduzir animações
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .vendas-filtros,
+  .filtro-group input,
+  .filtros-acoes button,
+  .vendas-resumo {
+    transition: none;
+    animation: none;
+  }
+
+  .filtros-acoes .button-primary:hover,
+  .filtros-acoes .button-secondary:hover {
+    transform: none;
+  }
+}

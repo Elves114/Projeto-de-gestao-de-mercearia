@@ -31,6 +31,25 @@ public interface VendaRepository
     );
 
     /* * ============================================================ *
+     PESQUISA / LISTAGEM DE VENDAS
+     * ============================================================ *
+     * Todos os filtros são opcionais. * * Se o filtro for null, ele não é aplicado.*
+     * A venda continua sendo filtrada pela empresa
+     *do usuário autenticado. */
+
+    @Query("""
+            SELECT v FROM Venda v WHERE v.empresa.id = :empresaId AND 
+            (:vendaId IS NULL OR v.id = :vendaId) AND (:inicio IS NULL OR v.dataVenda >= :inicio) AND
+            (:fim IS NULL OR v.dataVenda < :fim) AND (:usuarioId IS NULL OR v.usuario.id = :usuarioId) 
+              ORDER BY v.dataVenda DESC
+            """)
+    Page<Venda> pesquisar(@Param("empresaId") Long empresaId,
+                          @Param("vendaId") Long vendaId,
+                          @Param("inicio") LocalDateTime inicio,
+                          @Param("fim") LocalDateTime fim,
+                          @Param("usuarioId") Long usuarioId, Pageable pageable);
+
+    /* * ============================================================ *
                                  DASHBOARD
      * ============================================================ */
     @Query("SELECT COUNT(v) FROM Venda v WHERE v.empresa.id = :empresaId AND v.dataVenda >= :inicio AND v.dataVenda < :fim ")
@@ -52,14 +71,14 @@ public interface VendaRepository
             @Param("fim") LocalDateTime fim);
 
     @Query("""
-    SELECT FUNCTION('DATE', v.dataVenda), COALESCE(SUM(v.total), 0)
-    FROM Venda v
-    WHERE v.empresa.id = :empresaId
-      AND v.dataVenda >= :inicio
-      AND v.dataVenda < :fim
-    GROUP BY FUNCTION('DATE', v.dataVenda)
-    ORDER BY FUNCTION('DATE', v.dataVenda) ASC
-    """)
+            SELECT FUNCTION('DATE', v.dataVenda), COALESCE(SUM(v.total), 0)
+            FROM Venda v
+            WHERE v.empresa.id = :empresaId
+              AND v.dataVenda >= :inicio
+              AND v.dataVenda < :fim
+            GROUP BY FUNCTION('DATE', v.dataVenda)
+            ORDER BY FUNCTION('DATE', v.dataVenda) ASC
+            """)
     List<Object[]> vendasPorPeriodo(
             @Param("empresaId") Long empresaId,
             @Param("inicio") LocalDateTime inicio,
