@@ -1,8 +1,9 @@
+
 import { useEffect, useState } from "react";
 
-import { listarProdutos } from "../../produtos/services/produtoService";
+import { pesquisarProdutos } from "../../produtos/services/produtoService";
 import { criarMovimentoStock } from "../services/MovimentoStockService";
-import "../style/Estoque.css"
+import "../style/Estoque.css";
 
 function MovimentoStockForm() {
 
@@ -10,61 +11,70 @@ function MovimentoStockForm() {
     const [produtoId, setProdutoId] = useState("");
     const [produtoPesquisa, setProdutoPesquisa] = useState("");
     const [produtoSelecionado, setProdutoSelecionado] = useState(null);
+
     const [mostrarProdutos, setMostrarProdutos] = useState(false);
+
     const [acao, setAcao] = useState("ENTRADA");
     const [quantidade, setQuantidade] = useState("");
     const [quantidadeAjuste, setQuantidadeAjuste] = useState("");
     const [descricao, setDescricao] = useState("");
 
-    const [carregando, setCarregando] = useState(true);
+    const [carregando, setCarregando] = useState(false);
     const [enviando, setEnviando] = useState(false);
 
     const [erro, setErro] = useState("");
     const [sucesso, setSucesso] = useState("");
 
+
     /*
-     * Carregar produtos
+     * Pesquisar produtos no backend
+     * quando o utilizador escreve.
      */
     useEffect(() => {
 
-        async function carregarProdutos() {
+        const nome = produtoPesquisa.trim();
+
+        // Não fazemos nada se o campo estiver vazio.
+        if (!nome) {
+            return;
+        }
+
+        const timeout = setTimeout(async () => {
 
             try {
 
-                const data =
-                    await listarProdutos();
+                setCarregando(true);
+
+                const data = await pesquisarProdutos(
+                    nome,
+                    0,
+                    10
+                );
 
                 setProdutos(
-                    data.content
+                    data.content || []
                 );
 
             } catch (error) {
 
                 console.error(
-                    "Erro ao carregar produtos:",
+                    "Erro ao pesquisar produtos:",
                     error
                 );
 
-                setErro(
-                    "Não foi possível carregar os produtos."
-                );
+                setProdutos([]);
 
             } finally {
 
                 setCarregando(false);
 
             }
-        }
 
-        carregarProdutos();
+        }, 300);
 
-    }, []);
+        return () => clearTimeout(timeout);
 
-    const produtosFiltrados = produtos.filter((produto) =>
-        produto.nome
-            .toLowerCase()
-            .includes(produtoPesquisa.toLowerCase())
-    );
+    }, [produtoPesquisa]);
 
 
     /*
@@ -72,20 +82,32 @@ function MovimentoStockForm() {
      */
     function handleAcao(event) {
 
-        const novaAcao =
-            event.target.value;
+        const novaAcao = event.target.value;
 
         setAcao(novaAcao);
 
-        /*
-         * Limpamos os campos que não
-         * pertencem à nova operação.
-         */
         setQuantidade("");
         setQuantidadeAjuste("");
 
         setErro("");
         setSucesso("");
+    }
+
+
+    /*
+     * Selecionar produto
+     */
+    function selecionarProduto(produto) {
+
+        setProdutoId(produto.id);
+
+        setProdutoPesquisa(produto.nome);
+
+        setProdutoSelecionado(produto);
+
+        setMostrarProdutos(false);
+
+        setErro("");
     }
 
 
@@ -177,7 +199,6 @@ function MovimentoStockForm() {
 
                 movimento.quantidade =
                     Number(quantidade);
-
             }
 
 
@@ -188,7 +209,6 @@ function MovimentoStockForm() {
 
                 movimento.quantidadeAjuste =
                     Number(quantidadeAjuste);
-
             }
 
 
@@ -196,6 +216,11 @@ function MovimentoStockForm() {
                 movimento
             );
 
+
+            /*
+             * Avisar outras partes da aplicação
+             * que o stock foi atualizado.
+             */
             window.dispatchEvent(
                 new CustomEvent("stock:atualizado", {
                     detail: {
@@ -206,15 +231,21 @@ function MovimentoStockForm() {
                                 ? Number(quantidadeAjuste)
                                 : Number(quantidade)
                     }
-                }));
+                })
+            );
+
+
             /*
              * Limpar formulário
              */
             setProdutoId("");
             setProdutoPesquisa("");
             setProdutoSelecionado(null);
+            setProdutos([]);
             setMostrarProdutos(false);
+
             setAcao("ENTRADA");
+
             setQuantidade("");
             setQuantidadeAjuste("");
             setDescricao("");
@@ -231,10 +262,6 @@ function MovimentoStockForm() {
                 error
             );
 
-            /*
-             * Se o backend devolver uma mensagem
-             * específica, tentamos mostrá-la.
-             */
             const mensagem =
                 error.response?.data?.message;
 
@@ -248,17 +275,6 @@ function MovimentoStockForm() {
             setEnviando(false);
 
         }
-    }
-
-
-    if (carregando) {
-
-        return (
-            <p>
-                Carregando produtos...
-            </p>
-        );
-
     }
 
 
@@ -289,102 +305,141 @@ function MovimentoStockForm() {
 
             {/* PRODUTO */}
 
-            <div className="form-group">
+            <div className="form-group produto-search-group">
 
                 <label htmlFor="produto">
                     Produto
                 </label>
-                <div className="form-group produto-search-group">
 
-                    <label htmlFor="produto">
-                        Produto
-                    </label>
+                <div className="produto-search">
 
-                    <div className="produto-search">
+                    <input
+                        id="produto"
+                        type="text"
+                        value={produtoPesquisa}
+                        onChange={(event) => {
 
-                        <input
-                            id="produto"
-                            type="text"
-                            value={produtoPesquisa}
-                            onChange={(event) => {
+                            setProdutoPesquisa(
+                                event.target.value
+                            );
 
-                                setProdutoPesquisa(
-                                    event.target.value
-                                );
+                            setProdutoSelecionado(null);
+                            setProdutoId("");
 
-                                setProdutoSelecionado(null);
-                                setProdutoId("");
+                            setMostrarProdutos(true);
 
+                            setErro("");
+                        }}
+                        onFocus={() => {
+
+                            if (
+                                produtoPesquisa.trim() !== ""
+                            ) {
                                 setMostrarProdutos(true);
-                            }}
-                            onFocus={() => {
-                                setMostrarProdutos(true);
-                            }}
-                            placeholder="Pesquisar produto..."
-                            autoComplete="off"
-                        />
+                            }
 
-                        {mostrarProdutos &&
-                            produtoPesquisa.trim() !== "" &&
-                            produtosFiltrados.length > 0 && (
+                        }}
+                        placeholder="Pesquisar produto..."
+                        autoComplete="off"
+                    />
 
-                                <div className="produto-resultados">
 
-                                    {produtosFiltrados.map(
-                                        (produto) => (
+                    {/* CARREGANDO */}
 
-                                            <button
-                                                key={produto.id}
-                                                type="button"
-                                                className="produto-resultado"
-                                                onClick={() => {
+                    {carregando &&
+                        mostrarProdutos &&
+                        produtoPesquisa.trim() !== "" && (
 
-                                                    setProdutoId(
-                                                        produto.id
-                                                    );
+                            <div className="produto-resultados">
 
-                                                    setProdutoPesquisa(
-                                                        produto.nome
-                                                    );
+                                <div className="produto-resultado">
 
-                                                    setProdutoSelecionado(
-                                                        produto
-                                                    );
-
-                                                    setMostrarProdutos(
-                                                        false
-                                                    );
-
-                                                    setErro("");
-                                                }}
-                                            >
-
-                                                <span className="produto-resultado-nome">
-                                                    {produto.nome}
-                                                </span>
-
-                                            </button>
-
-                                        )
-                                    )}
+                                    A pesquisar...
 
                                 </div>
-                            )}
 
-                    </div>
+                            </div>
 
-                    {produtoSelecionado && (
+                        )}
 
-                        <small className="produto-selecionado">
-                            Produto selecionado:{" "}
-                            <strong>
-                                {produtoSelecionado.nome}
-                            </strong>
-                        </small>
 
-                    )}
+                    {/* RESULTADOS */}
+
+                    {!carregando &&
+                        mostrarProdutos &&
+                        produtoPesquisa.trim() !== "" &&
+                        produtos.length > 0 && (
+
+                            <div className="produto-resultados">
+
+                                {produtos.map(
+                                    (produto) => (
+
+                                        <button
+                                            key={produto.id}
+                                            type="button"
+                                            className="produto-resultado"
+                                            onClick={() =>
+                                                selecionarProduto(
+                                                    produto
+                                                )
+                                            }
+                                        >
+
+                                            <span className="produto-resultado-nome">
+
+                                                {produto.nome}
+
+                                            </span>
+
+                                        </button>
+
+                                    )
+                                )}
+
+                            </div>
+
+                        )}
+
+
+                    {/* NENHUM RESULTADO */}
+
+                    {!carregando &&
+                        mostrarProdutos &&
+                        produtoPesquisa.trim() !== "" &&
+                        produtos.length === 0 && (
+
+                            <div className="produto-resultados">
+
+                                <div className="produto-resultado">
+
+                                    Nenhum produto encontrado.
+
+                                </div>
+
+                            </div>
+
+                        )}
 
                 </div>
+
+
+                {/* PRODUTO SELECIONADO */}
+
+                {produtoSelecionado && (
+
+                    <small className="produto-selecionado">
+
+                        Produto selecionado:{" "}
+
+                        <strong>
+                            {produtoSelecionado.nome}
+                        </strong>
+
+                    </small>
+
+                )}
+
             </div>
 
 
@@ -550,3 +605,4 @@ function MovimentoStockForm() {
 }
 
 export default MovimentoStockForm;
+

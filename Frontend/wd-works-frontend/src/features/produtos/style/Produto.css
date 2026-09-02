@@ -1142,3 +1142,98 @@
     }
 
 }
+/* =========================================
+   PAGINAÇÃO DOS PRODUTOS
+   ========================================= */
+
+.produto-paginacao {
+    width: 100%;
+    min-height: 70px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+
+    margin-top: 25px;
+    padding: 15px 20px;
+
+    box-sizing: border-box;
+
+    position: relative;
+    z-index: 10;
+
+    visibility: visible;
+    opacity: 1;
+}
+
+
+/* BOTÕES */
+
+.produto-paginacao button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 120px;
+    height: 42px;
+
+    padding: 0 18px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+
+    background-color: #ffffff;
+    color: #374151;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    visibility: visible;
+    opacity: 1;
+
+    transition: all 0.2s ease;
+}
+
+
+/* HOVER */
+
+.produto-paginacao button:hover:not(:disabled) {
+    background-color: #f3f4f6;
+    border-color: #9ca3af;
+
+    transform: translateY(-1px);
+}
+
+
+/* DESATIVADO */
+
+.produto-paginacao button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+
+/* TEXTO */
+
+.produto-paginacao span {
+    display: inline-block;
+
+    min-width: 130px;
+
+    text-align: center;
+
+    color: #374151;
+
+    font-size: 14px;
+}
+
+
+/* NÚMEROS */
+
+.produto-paginacao strong {
+    color: #111827;
+    font-weight: 600;
+}

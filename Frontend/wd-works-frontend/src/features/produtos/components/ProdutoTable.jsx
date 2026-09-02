@@ -2,6 +2,7 @@ function ProdutoTable({
     produtos,
     onEditar,
     onDesativar,
+    onAtivar,
     produtoAnimando,
     produtoRemovendo
 }) {
@@ -120,9 +121,23 @@ function ProdutoTable({
                                         >
                                             Desativar
                                         </button>
+                                        
 
                                     )}
+                                    {produto.status === "INATIVO" && (
 
+                                        <button
+                                            onClick={() =>
+                                                onAtivar(produto)
+                                            }
+                                            className="btn-sm btn-desativar"
+                                            type="button"
+                                        >
+                                            Ativar
+                                        </button>
+                                        
+
+                                    )}
                                 </td>
 
                             </tr>

@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 
 import { listarCategorias } from "../../categorias/services/categoriaService";
@@ -11,12 +12,17 @@ import {
     criarProduto,
     atualizarProduto,
     desativarProduto,
+    ativarProduto
 } from "../services/produtoService";
 
 
 function Produtos() {
 
     const [produtos, setProdutos] = useState([]);
+
+    const [totalProdutos, setTotalProdutos] = useState(0);
+
+    const [totalPaginas, setTotalPaginas] = useState(0);
 
     const [categoriasFiltro, setCategoriasFiltro] = useState([]);
 
@@ -26,28 +32,14 @@ function Produtos() {
 
     const [produtoEditando, setProdutoEditando] = useState(null);
 
-    /*
-     * Controla a abertura/fecho do formulário lateral
-     */
     const [formularioAberto, setFormularioAberto] = useState(false);
 
     const [formularioKey, setFormularioKey] = useState(0);
 
-    /*
-     * Produto que acabou de ser criado.
-     * Usado para destacar a nova linha da tabela.
-     */
     const [produtoAnimando, setProdutoAnimando] = useState(null);
 
-    /*
-     * Produto que está a ser removido.
-     * Usado para fazer a animação de eliminação.
-     */
     const [produtoRemovendo, setProdutoRemovendo] = useState(null);
 
-    /*
-     * Animação rápida do formulário depois de guardar.
-     */
     const [formFlash, setFormFlash] = useState(false);
 
 
@@ -60,6 +52,15 @@ function Produtos() {
         quantidadeMax: "",
     });
 
+
+    /*
+     * Página atual.
+     *
+     * Spring começa em 0:
+     *
+     * pagina 0 = página 1
+     * pagina 1 = página 2
+     */
     const [pagina, setPagina] = useState(0);
 
     const [carregando, setCarregando] = useState(true);
@@ -70,8 +71,11 @@ function Produtos() {
 
 
     /*
-     * Pesquisa de categorias para o filtro
+     * =========================================================
+     * PESQUISA DE CATEGORIAS
+     * =========================================================
      */
+
     useEffect(() => {
 
         const termo = pesquisaCategoria.trim();
@@ -97,7 +101,7 @@ function Produtos() {
                 }
 
                 setCategoriasFiltro(
-                    response.content
+                    response.content || []
                 );
 
             } catch (error) {
@@ -130,8 +134,11 @@ function Produtos() {
 
 
     /*
-     * Carregar produtos
+     * =========================================================
+     * CARREGAR PRODUTOS
+     * =========================================================
      */
+
     useEffect(() => {
 
         let ativo = true;
@@ -144,21 +151,61 @@ function Produtos() {
 
                 setErro("");
 
-                const response =
-                    await listarProdutos(
-                        pagina,
-                        10,
-                        pesquisa,
-                        filtros
-                    );
+                const response = await listarProdutos(
+                    pagina,
+                    10,
+                    pesquisa,
+                    filtros
+                );
+
+                console.log(
+                    "RESPOSTA DA API:",
+                    response
+                );
+
 
                 if (!ativo) {
                     return;
                 }
 
+
+                /*
+                 * Produtos da página atual.
+                 */
                 setProdutos(
-                    response.content
+                    response.content || []
                 );
+
+
+                /*
+                 * IMPORTANTE:
+                 *
+                 * totalElements e totalPages
+                 * estão dentro de response.page.
+                 */
+                setTotalProdutos(
+                    response.page?.totalElements || 0
+                );
+
+                setTotalPaginas(
+                    response.page?.totalPages || 0
+                );
+
+
+                /*
+                 * Caso a página atual tenha deixado
+                 * de existir.
+                 */
+                if (
+                    response.page?.totalPages > 0 &&
+                    pagina >= response.page.totalPages
+                ) {
+
+                    setPagina(
+                        response.page.totalPages - 1
+                    );
+
+                }
 
             } catch (error) {
 
@@ -172,6 +219,10 @@ function Produtos() {
                 }
 
                 setProdutos([]);
+
+                setTotalProdutos(0);
+
+                setTotalPaginas(0);
 
                 setErro(
                     "Não foi possível carregar os produtos."
@@ -204,12 +255,14 @@ function Produtos() {
 
 
     /*
-     * Pesquisa por nome
+     * =========================================================
+     * PESQUISA POR NOME
+     * =========================================================
      */
+
     function handlePesquisa(event) {
 
-        const valor =
-            event.target.value;
+        const valor = event.target.value;
 
         setPesquisa(valor);
 
@@ -221,8 +274,11 @@ function Produtos() {
 
 
     /*
-     * Alterar filtro
+     * =========================================================
+     * ALTERAR FILTRO
+     * =========================================================
      */
+
     function handleFiltro(event) {
 
         const {
@@ -245,8 +301,11 @@ function Produtos() {
 
 
     /*
-     * Limpar filtros
+     * =========================================================
+     * LIMPAR FILTROS
+     * =========================================================
      */
+
     function limparFiltros() {
 
         setPesquisa("");
@@ -266,12 +325,17 @@ function Produtos() {
 
         setPagina(0);
 
+        setMensagem("");
+
     }
 
 
     /*
-     * Abrir formulário para adicionar produto
+     * =========================================================
+     * ABRIR FORMULÁRIO
+     * =========================================================
      */
+
     function abrirFormulario() {
 
         setProdutoEditando(null);
@@ -280,14 +344,21 @@ function Produtos() {
 
         setMensagem("");
 
+        setFormularioKey(
+            (valor) => valor + 1
+        );
+
         setFormularioAberto(true);
 
     }
 
 
     /*
-     * Criar produto
+     * =========================================================
+     * CRIAR PRODUTO
+     * =========================================================
      */
+
     async function handleCriarProduto(event) {
 
         event.preventDefault();
@@ -296,8 +367,9 @@ function Produtos() {
 
         setMensagem("");
 
-        const formData =
-            new FormData(event.target);
+        const formData = new FormData(
+            event.target
+        );
 
 
         const produto = {
@@ -307,126 +379,96 @@ function Produtos() {
 
             precoCompra:
                 Number(
-                    formData.get(
-                        "precoCompra"
-                    )
+                    formData.get("precoCompra")
                 ),
 
             precoVenda:
                 Number(
-                    formData.get(
-                        "precoVenda"
-                    )
+                    formData.get("precoVenda")
                 ),
 
             categoriaId:
                 Number(
-                    formData.get(
-                        "categoriaId"
-                    )
+                    formData.get("categoriaId")
                 ),
+
         };
 
 
         try {
 
             const novoProduto =
-                await criarProduto(
-                    produto
-                );
+                await criarProduto(produto);
 
 
             /*
-             * Verifica se existem filtros reais.
-             *
-             * O status "ATIVO" é o estado padrão,
-             * portanto NÃO deve ser considerado
-             * como um filtro adicional.
+             * Voltar para a primeira página.
              */
-            const existemFiltros =
-                filtros.status !== "ATIVO" ||
-                filtros.categoriaId !== "" ||
-                filtros.precoMin !== "" ||
-                filtros.precoMax !== "" ||
-                filtros.quantidadeMin !== "" ||
-                filtros.quantidadeMax !== "";
+            setPagina(0);
 
 
             /*
-             * Se estamos na primeira página,
-             * sem pesquisa e sem filtros,
-             * colocamos o novo produto
-             * diretamente no topo da tabela.
+             * Se já estamos na primeira página,
+             * fazemos o carregamento manual.
              */
-            if (
-                pagina === 0 &&
-                !pesquisa.trim() &&
-                !existemFiltros
-            ) {
+            if (pagina === 0) {
+
+                const response =
+                    await listarProdutos(
+                        0,
+                        10,
+                        pesquisa,
+                        filtros
+                    );
+
 
                 setProdutos(
-                    (produtosAtuais) => [
-                        novoProduto,
-                        ...produtosAtuais,
-                    ]
+                    response.content || []
                 );
 
-                /*
-                 * Ativa o destaque visual
-                 * da nova linha.
-                 */
-                setProdutoAnimando(
-                    novoProduto.id
+                setTotalProdutos(
+                    response.page?.totalElements || 0
                 );
 
-                /*
-                 * Remove o destaque depois
-                 * de aproximadamente 1.6 segundos.
-                 */
-                setTimeout(() => {
-
-                    setProdutoAnimando(null);
-
-                }, 1600);
-
-            } else {
-
-                /*
-                 * Se houver pesquisa, filtros
-                 * ou estivermos noutra página,
-                 * o useEffect fará a listagem
-                 * novamente.
-                 *
-                 * Alterar para o mesmo valor
-                 * não provoca uma mudança desnecessária.
-                 */
-                setPagina(
-                    (paginaAtual) =>
-                        paginaAtual
+                setTotalPaginas(
+                    response.page?.totalPages || 0
                 );
 
             }
 
 
             /*
-             * Feedback de sucesso
+             * Anima o produto criado.
              */
+            if (
+                pagina === 0 &&
+                !pesquisa.trim()
+            ) {
+
+                setProdutoAnimando(
+                    novoProduto.id
+                );
+
+                setTimeout(() => {
+
+                    setProdutoAnimando(null);
+
+                }, 1600);
+
+            }
+
+
             setMensagem(
                 "Produto criado com sucesso."
             );
 
 
-            /*
-             * Limpa os campos do formulário.
-             */
             setFormularioKey(
-                (valorAtual) => valorAtual + 1
+                (valorAtual) =>
+                    valorAtual + 1
             );
 
 
-            /*
-             * Pequeno flash visual no formulário.
-             */
             setFormFlash(true);
 
             setTimeout(() => {
@@ -444,6 +486,7 @@ function Produtos() {
             );
 
             setErro(
+                error?.response?.data?.message ||
                 "Não foi possível criar o produto."
             );
 
@@ -453,22 +496,19 @@ function Produtos() {
 
 
     /*
-     * Começar edição
+     * =========================================================
+     * COMEÇAR EDIÇÃO
+     * =========================================================
      */
+
     function handleEditarProduto(produto) {
 
         setErro("");
 
         setMensagem("");
 
-        setProdutoEditando(
-            produto
-        );
+        setProdutoEditando(produto);
 
-        /*
-         * Abre automaticamente o painel
-         * quando o utilizador clica em editar.
-         */
         setFormularioAberto(true);
 
         window.scrollTo({
@@ -480,14 +520,16 @@ function Produtos() {
 
 
     /*
-     * Desativar produto
+     * =========================================================
+     * DESATIVAR PRODUTO
+     * =========================================================
      */
+
     async function handleDesativarProduto(produto) {
 
         const confirmar = window.confirm(
             `Tem certeza que deseja desativar o produto "${produto.nome}"?`
         );
-
 
         if (!confirmar) {
             return;
@@ -507,30 +549,20 @@ function Produtos() {
 
 
             /*
-             * Primeiro marcamos o produto
-             * como "a ser removido".
-             *
-             * O ProdutoTable poderá utilizar
-             * este ID para iniciar a animação.
+             * Animação de remoção.
              */
             setProdutoRemovendo(
                 produto.id
             );
 
 
-            /*
-             * Esperamos a animação terminar
-             * antes de remover realmente
-             * o produto do estado.
-             */
             setTimeout(() => {
 
                 setProdutos(
                     (produtosAtuais) =>
                         produtosAtuais.filter(
                             (item) =>
-                                item.id !==
-                                produto.id
+                                item.id !== produto.id
                         )
                 );
 
@@ -544,6 +576,62 @@ function Produtos() {
             );
 
 
+            /*
+             * Recarrega a página atual.
+             */
+            setTimeout(async () => {
+
+                try {
+
+                    const response =
+                        await listarProdutos(
+                            pagina,
+                            10,
+                            pesquisa,
+                            filtros
+                        );
+
+
+                    setProdutos(
+                        response.content || []
+                    );
+
+                    setTotalProdutos(
+                        response.page?.totalElements || 0
+                    );
+
+                    setTotalPaginas(
+                        response.page?.totalPages || 0
+                    );
+
+
+                    /*
+                     * Se a página atual deixou
+                     * de existir, volta para a última.
+                     */
+                    if (
+                        response.page?.totalPages > 0 &&
+                        pagina >= response.page.totalPages
+                    ) {
+
+                        setPagina(
+                            response.page.totalPages - 1
+                        );
+
+                    }
+
+                } catch (error) {
+
+                    console.error(
+                        "Erro ao atualizar paginação:",
+                        error
+                    );
+
+                }
+
+            }, 400);
+
+
         } catch (error) {
 
             console.error(
@@ -552,6 +640,7 @@ function Produtos() {
             );
 
             setErro(
+                error?.response?.data?.message ||
                 "Não foi possível desativar o produto."
             );
 
@@ -561,11 +650,126 @@ function Produtos() {
 
 
     /*
-     * Atualizar produto
+     * =========================================================
+     * ATIVAR PRODUTO
+     * =========================================================
      */
-    async function handleAtualizarProduto(
-        event
-    ) {
+
+    async function handleAtivarProduto(produto) {
+
+        const confirmar = window.confirm(
+            `Tem certeza que deseja ativar o produto "${produto.nome}"?`
+        );
+
+        if (!confirmar) {
+            return;
+        }
+
+
+        try {
+
+            setErro("");
+
+            setMensagem("");
+
+
+            await ativarProduto(
+                produto.id
+            );
+
+
+            /*
+             * Animação de remoção.
+             */
+            setProdutoRemovendo(
+                produto.id
+            );
+
+
+            setTimeout(() => {
+
+                setProdutos(
+                    (produtosAtuais) =>
+                        produtosAtuais.filter(
+                            (item) =>
+                                item.id !== produto.id
+                        )
+                );
+
+                setProdutoRemovendo(null);
+
+            }, 350);
+
+
+            setMensagem(
+                "Produto ativado com sucesso."
+            );
+
+
+            /*
+             * Recarrega a página.
+             */
+            setTimeout(async () => {
+
+                try {
+
+                    const response =
+                        await listarProdutos(
+                            pagina,
+                            10,
+                            pesquisa,
+                            filtros
+                        );
+
+
+                    setProdutos(
+                        response.content || []
+                    );
+
+                    setTotalProdutos(
+                        response.page?.totalElements || 0
+                    );
+
+                    setTotalPaginas(
+                        response.page?.totalPages || 0
+                    );
+
+                } catch (error) {
+
+                    console.error(
+                        "Erro ao atualizar produtos:",
+                        error
+                    );
+
+                }
+
+            }, 400);
+
+
+        } catch (error) {
+
+            console.error(
+                "Erro ao ativar produto:",
+                error
+            );
+
+            setErro(
+                error?.response?.data?.message ||
+                "Não foi possível ativar o produto."
+            );
+
+        }
+
+    }
+
+
+    /*
+     * =========================================================
+     * ATUALIZAR PRODUTO
+     * =========================================================
+     */
+
+    async function handleAtualizarProduto(event) {
 
         event.preventDefault();
 
@@ -581,9 +785,7 @@ function Produtos() {
 
 
         const formData =
-            new FormData(
-                event.target
-            );
+            new FormData(event.target);
 
 
         const produto = {
@@ -593,24 +795,19 @@ function Produtos() {
 
             precoCompra:
                 Number(
-                    formData.get(
-                        "precoCompra"
-                    )
+                    formData.get("precoCompra")
                 ),
 
             precoVenda:
                 Number(
-                    formData.get(
-                        "precoVenda"
-                    )
+                    formData.get("precoVenda")
                 ),
 
             categoriaId:
                 Number(
-                    formData.get(
-                        "categoriaId"
-                    )
+                    formData.get("categoriaId")
                 ),
+
         };
 
 
@@ -624,8 +821,7 @@ function Produtos() {
 
 
             /*
-             * Atualiza somente a linha
-             * correspondente na tabela.
+             * Atualiza somente a linha.
              */
             setProdutos(
                 (produtosAtuais) =>
@@ -639,15 +835,8 @@ function Produtos() {
             );
 
 
-            /*
-             * Sai do modo de edição.
-             */
             setProdutoEditando(null);
 
-
-            /*
-             * Fecha o painel.
-             */
             setFormularioAberto(false);
 
 
@@ -664,6 +853,7 @@ function Produtos() {
             );
 
             setErro(
+                error?.response?.data?.message ||
                 "Não foi possível atualizar o produto."
             );
 
@@ -673,8 +863,11 @@ function Produtos() {
 
 
     /*
-     * Cancelar edição
+     * =========================================================
+     * CANCELAR EDIÇÃO
+     * =========================================================
      */
+
     function cancelarEdicao() {
 
         setProdutoEditando(null);
@@ -689,8 +882,47 @@ function Produtos() {
 
 
     /*
-     * Estado inicial
+     * =========================================================
+     * PAGINAÇÃO
+     * =========================================================
      */
+
+    function paginaAnterior() {
+
+        if (pagina > 0) {
+
+            setPagina(
+                (paginaAtual) =>
+                    paginaAtual - 1
+            );
+
+        }
+
+    }
+
+
+    function proximaPagina() {
+
+        if (
+            pagina < totalPaginas - 1
+        ) {
+
+            setPagina(
+                (paginaAtual) =>
+                    paginaAtual + 1
+            );
+
+        }
+
+    }
+
+
+    /*
+     * =========================================================
+     * ESTADO INICIAL
+     * =========================================================
+     */
+
     if (
         carregando &&
         produtos.length === 0
@@ -704,6 +936,12 @@ function Produtos() {
 
     }
 
+
+    /*
+     * =========================================================
+     * ERRO
+     * =========================================================
+     */
 
     if (erro) {
 
@@ -721,7 +959,9 @@ function Produtos() {
         <div className="produtos-page">
 
 
-            {/* CABEÇALHO */}
+            {/* =================================================
+                CABEÇALHO
+            ================================================= */}
 
             <div className="page-header">
 
@@ -739,8 +979,6 @@ function Produtos() {
                 </div>
 
 
-                {/* BOTÃO ADICIONAR */}
-
                 <button
                     type="button"
                     className="button-primary"
@@ -754,7 +992,9 @@ function Produtos() {
             </div>
 
 
-            {/* MENSAGEM */}
+            {/* =================================================
+                MENSAGEM
+            ================================================= */}
 
             {mensagem && (
 
@@ -767,12 +1007,16 @@ function Produtos() {
             )}
 
 
-            {/* CONTEÚDO PRINCIPAL */}
+            {/* =================================================
+                CONTEÚDO PRINCIPAL
+            ================================================= */}
 
             <div className="produtos-content">
 
 
-                {/* FORMULÁRIO LATERAL */}
+                {/* =================================================
+                    FORMULÁRIO
+                ================================================= */}
 
                 <section
                     className={`
@@ -816,13 +1060,17 @@ function Produtos() {
                                 ? handleAtualizarProduto
                                 : handleCriarProduto
                         }
-                        onCancelar={cancelarEdicao}
+                        onCancelar={
+                            cancelarEdicao
+                        }
                     />
 
                 </section>
 
 
-                {/* LISTAGEM */}
+                {/* =================================================
+                    LISTAGEM
+                ================================================= */}
 
                 <section className="produtos-list-card">
 
@@ -845,14 +1093,16 @@ function Produtos() {
 
                         <span className="categoria-count">
 
-                            {produtos.length}
+                            {totalProdutos}
 
                         </span>
 
                     </div>
 
 
-                    {/* FILTROS */}
+                    {/* =================================================
+                        FILTROS
+                    ================================================= */}
 
                     <div className="produto-filtros">
 
@@ -940,66 +1190,62 @@ function Produtos() {
                                     setFiltros(
                                         (atual) => ({
                                             ...atual,
-                                            categoriaId:
-                                                "",
+                                            categoriaId: "",
                                         })
                                     );
+
+                                    setPagina(0);
 
                                 }}
                                 placeholder="Pesquisar categoria..."
                             />
 
 
-                            {categoriasFiltro.length >
-                                0 && (
+                            {categoriasFiltro.length > 0 && (
 
-                                    <div className="categoria-sugestoes">
+                                <div className="categoria-sugestoes">
 
-                                        {categoriasFiltro.map(
-                                            (categoria) => (
+                                    {categoriasFiltro.map(
+                                        (categoria) => (
 
-                                                <button
-                                                    key={
-                                                        categoria.id
-                                                    }
-                                                    type="button"
-                                                    onClick={() => {
+                                            <button
+                                                key={
+                                                    categoria.id
+                                                }
+                                                type="button"
+                                                onClick={() => {
 
-                                                        setPesquisaCategoria(
-                                                            categoria.nome
-                                                        );
-
-                                                        setFiltros(
-                                                            (atual) => ({
-                                                                ...atual,
-                                                                categoriaId:
-                                                                    categoria.id,
-                                                            })
-                                                        );
-
-                                                        setCategoriasFiltro(
-                                                            []
-                                                        );
-
-                                                        setPagina(
-                                                            0
-                                                        );
-
-                                                    }}
-                                                >
-
-                                                    {
+                                                    setPesquisaCategoria(
                                                         categoria.nome
-                                                    }
+                                                    );
 
-                                                </button>
+                                                    setFiltros(
+                                                        (atual) => ({
+                                                            ...atual,
+                                                            categoriaId:
+                                                                categoria.id,
+                                                        })
+                                                    );
 
-                                            )
-                                        )}
+                                                    setCategoriasFiltro([]);
 
-                                    </div>
+                                                    setPagina(0);
 
-                                )}
+                                                }}
+                                            >
+
+                                                {
+                                                    categoria.nome
+                                                }
+
+                                            </button>
+
+                                        )
+                                    )}
+
+                                </div>
+
+                            )}
 
                         </div>
 
@@ -1125,7 +1371,9 @@ function Produtos() {
                     </div>
 
 
-                    {/* LISTA */}
+                    {/* =================================================
+                        LISTA
+                    ================================================= */}
 
                     {carregando ? (
 
@@ -1146,28 +1394,81 @@ function Produtos() {
                     ) : (
 
                         <ProdutoTable
-
-                            produtos={
-                                produtos
-                            }
-
+                            produtos={produtos}
                             onEditar={
                                 handleEditarProduto
                             }
-
                             onDesativar={
                                 handleDesativarProduto
                             }
-
+                            onAtivar={
+                                handleAtivarProduto
+                            }
                             produtoAnimando={
                                 produtoAnimando
                             }
-
                             produtoRemovendo={
                                 produtoRemovendo
                             }
-
                         />
+
+                    )}
+
+
+                    {/* =================================================
+                        PAGINAÇÃO
+                    ================================================= */}
+
+                    {totalPaginas > 0 && (
+
+                        <div className="produto-paginacao">
+
+                            <button
+                                type="button"
+                                onClick={
+                                    paginaAnterior
+                                }
+                                disabled={
+                                    pagina === 0 ||
+                                    carregando
+                                }
+                            >
+                                ← Anterior
+                            </button>
+
+
+                            <span>
+
+                                Página{" "}
+
+                                <strong>
+                                    {pagina + 1}
+                                </strong>
+
+                                {" "}de{" "}
+
+                                <strong>
+                                    {totalPaginas}
+                                </strong>
+
+                            </span>
+
+
+                            <button
+                                type="button"
+                                onClick={
+                                    proximaPagina
+                                }
+                                disabled={
+                                    pagina >=
+                                    totalPaginas - 1 ||
+                                    carregando
+                                }
+                            >
+                                Próxima →
+                            </button>
+
+                        </div>
 
                     )}
 
@@ -1183,3 +1484,4 @@ function Produtos() {
 
 
 export default Produtos;
+
