@@ -1,9 +1,12 @@
+
 import { useEffect, useState } from "react";
 
 import {
     listarMovimentosStock
 } from "../services/MovimentoStockService";
+
 import "../style/MovimentoStock.css";
+
 
 function MovimentosStock() {
 
@@ -61,17 +64,42 @@ function MovimentosStock() {
                     return;
                 }
 
+
+                /*
+                 * Dados dos movimentos
+                 */
                 setMovimentos(
                     data.content || []
                 );
 
+
+                /*
+                 * IMPORTANTE:
+                 *
+                 * A paginação vem dentro de "page".
+                 */
                 setTotalPaginas(
-                    data.totalPages || 0
+                    data.page?.totalPages || 0
                 );
 
                 setTotalElementos(
-                    data.totalElements || 0
+                    data.page?.totalElements || 0
                 );
+
+
+                /*
+                 * Se a página atual deixar de existir,
+                 * voltamos para a última página válida.
+                 */
+                if (
+                    data.page?.totalPages > 0 &&
+                    pagina >= data.page.totalPages
+                ) {
+
+                    setPagina(
+                        data.page.totalPages - 1
+                    );
+                }
 
             } catch (error) {
 
@@ -133,7 +161,9 @@ function MovimentosStock() {
     function limparPesquisa() {
 
         setProdutoPesquisa("");
+
         setPesquisaAplicada("");
+
         setPagina(0);
     }
 
@@ -149,7 +179,8 @@ function MovimentosStock() {
         if (pagina > 0) {
 
             setPagina(
-                pagina - 1
+                (paginaAtual) =>
+                    paginaAtual - 1
             );
         }
     }
@@ -157,10 +188,14 @@ function MovimentosStock() {
 
     function proximaPagina() {
 
-        if (pagina < totalPaginas - 1) {
+        if (
+            pagina <
+            totalPaginas - 1
+        ) {
 
             setPagina(
-                pagina + 1
+                (paginaAtual) =>
+                    paginaAtual + 1
             );
         }
     }
@@ -303,7 +338,10 @@ function MovimentosStock() {
                             type="button"
                             className="button button-primary"
                             onClick={() => {
-                                setPagina(pagina);
+                                setPagina(
+                                    (paginaAtual) =>
+                                        paginaAtual
+                                );
                             }}
                         >
                             Tentar novamente
@@ -336,21 +374,37 @@ function MovimentosStock() {
 
                                     <tr>
 
-                                        <th>Data</th>
+                                        <th>
+                                            Data
+                                        </th>
 
-                                        <th>Produto</th>
+                                        <th>
+                                            Produto
+                                        </th>
 
-                                        <th>Ação</th>
+                                        <th>
+                                            Ação
+                                        </th>
 
-                                        <th>Quantidade</th>
+                                        <th>
+                                            Quantidade
+                                        </th>
 
-                                        <th>Antes</th>
+                                        <th>
+                                            Antes
+                                        </th>
 
-                                        <th>Depois</th>
+                                        <th>
+                                            Depois
+                                        </th>
 
-                                        <th>Utilizador</th>
+                                        <th>
+                                            Utilizador
+                                        </th>
 
-                                        <th>Descrição</th>
+                                        <th>
+                                            Descrição
+                                        </th>
 
                                     </tr>
 
@@ -448,45 +502,56 @@ function MovimentosStock() {
                             PAGINAÇÃO
                            ================================================= */}
 
-                        <div className="pagination">
+                        {totalPaginas > 0 && (
 
-                            <button
-                                type="button"
-                                className="button button-secondary"
-                                onClick={paginaAnterior}
-                                disabled={
-                                    pagina === 0 ||
-                                    carregando
-                                }
-                            >
-                                Anterior
-                            </button>
+                            <div className="pagination">
 
-
-                            <span className="pagination-info">
-
-                                Página{" "}
-                                {pagina + 1}
-                                {" "}de{" "}
-                                {totalPaginas || 1}
-
-                            </span>
+                                <button
+                                    type="button"
+                                    className="button button-secondary"
+                                    onClick={paginaAnterior}
+                                    disabled={
+                                        pagina === 0 ||
+                                        carregando
+                                    }
+                                >
+                                    ← Anterior
+                                </button>
 
 
-                            <button
-                                type="button"
-                                className="button button-secondary"
-                                onClick={proximaPagina}
-                                disabled={
-                                    pagina >=
-                                        totalPaginas - 1 ||
-                                    carregando
-                                }
-                            >
-                                Próxima
-                            </button>
+                                <span className="pagination-info">
 
-                        </div>
+                                    Página{" "}
+
+                                    <strong>
+                                        {pagina + 1}
+                                    </strong>
+
+                                    {" "}de{" "}
+
+                                    <strong>
+                                        {totalPaginas}
+                                    </strong>
+
+                                </span>
+
+
+                                <button
+                                    type="button"
+                                    className="button button-secondary"
+                                    onClick={proximaPagina}
+                                    disabled={
+                                        pagina >=
+                                            totalPaginas - 1 ||
+                                        carregando
+                                    }
+                                >
+                                    Próxima →
+                                </button>
+
+                            </div>
+
+                        )}
 
                     </>
 
@@ -512,3 +577,4 @@ function formatarData(data) {
 
 
 export default MovimentosStock;
+

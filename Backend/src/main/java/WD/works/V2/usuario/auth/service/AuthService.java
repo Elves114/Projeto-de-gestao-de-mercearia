@@ -2,6 +2,7 @@ package WD.works.V2.usuario.auth.service;
 
 import WD.works.V2.auditoria.dto.AuditoriaRequest;
 import WD.works.V2.auditoria.entity.Auditoria;
+import WD.works.V2.auditoria.gravidade.GravidadeAuditoria;
 import WD.works.V2.auditoria.repository.AuditoriaRepository;
 import WD.works.V2.auditoria.service.AuditoriaService;
 import WD.works.V2.auditoria.tipo.TipoAuditoria;
@@ -74,16 +75,7 @@ public class AuthService {
                         empresa.getId()
                 );
 
-        auditoriaService.registrar(
-                new AuditoriaRequest(
-                        TipoAuditoria.CRIACAO,
-                        "empresa",
-                        empresa.getId().toString(),
-                        "Empresa '" +
-                                empresa.getNome() +
-                                "' foi criada com sucesso"
-                )
-        );
+
 
         return login(
                 new AuthRequest(
@@ -139,20 +131,11 @@ public class AuthService {
             String token =
                     jwtService.gerarToken(usuarioDetails);
 
-            auditoriaService.registrar(
-                    new AuditoriaRequest(
-                            TipoAuditoria.LOGIN,
-                            "Usuario",
-                            usuario.getId().toString(),
-                            "O usuario " +
-                                    usuario.getNome() +
-                                    " fez login."
-                    ),
-                    usuario,
-                    usuario.getEmpresa()
-            );
+
+
 
             return new AuthResponse(token);
+
 
         } catch (org.springframework.security.core.AuthenticationException ex) {
 
