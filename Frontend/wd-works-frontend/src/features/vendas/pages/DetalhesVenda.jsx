@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { buscarVenda } from "../services/vendaService";
+import { obterMensagemErro } from "../../../services/api";
 import "../style/Venda.css";
 
 function formatarValor(valor) {
@@ -27,7 +28,7 @@ function DetalhesVenda() {
                 console.error(error);
 
                 setErro(
-                    "Não foi possível carregar os detalhes da venda."
+                    obterMensagemErro(error)
                 );
             } finally {
                 setCarregando(false);

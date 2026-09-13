@@ -71,5 +71,11 @@ export const PERMISSOES_ROTAS = {
 
     "/usuarios/:id/editar": [
         "ADMIN"
-    ]
+    ],
+
+        "/perfil": [
+        "ADMIN",
+        "GERENTE",
+        "FUNCIONARIO"
+    ],
 };

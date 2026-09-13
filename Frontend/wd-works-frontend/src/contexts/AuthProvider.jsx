@@ -98,6 +98,13 @@ export function AuthProvider({ children }) {
         setUsuario(null);
     }
 
+        function atualizarUsuarioLocal(dados) {
+
+        setUsuario((atual) => ({
+            ...(atual || {}),
+            ...dados,
+        }));
+    }
 
     const isAuthenticated = token !== null;
 
@@ -111,6 +118,7 @@ export function AuthProvider({ children }) {
                 carregando,
                 login,
                 logout,
+                atualizarUsuarioLocal, 
             }}
         >
             {children}

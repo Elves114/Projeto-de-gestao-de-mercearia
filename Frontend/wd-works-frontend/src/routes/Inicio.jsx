@@ -5,6 +5,7 @@ function Inicio() {
 
     const { usuario, carregando } = useAuth();
 
+
     if (carregando) {
         return <p>Carregando...</p>;
     }

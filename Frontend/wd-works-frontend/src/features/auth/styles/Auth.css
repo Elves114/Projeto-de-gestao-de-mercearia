@@ -762,3 +762,59 @@
   -webkit-appearance: none;
   -moz-appearance: none;
 }
+
+
+
+
+
+.auth-success {
+margin: 0;
+padding: 12px 14px;
+
+border: 1px solid #86efac;
+border-radius: 10px;
+
+background: #f0fdf4;
+color: #166534;
+
+font-size: 14px;
+line-height: 1.5;
+
+}
+
+.auth-forgot {
+display: flex;
+justify-content: flex-end;
+
+
+margin-top: -8px;
+margin-bottom: 8px;
+
+
+}
+
+.auth-forgot a {
+color: #00aeef;
+
+font-size: 14px;
+font-weight: 600;
+
+text-decoration: none;
+
+transition:
+    color 0.2s ease,
+    text-decoration-color 0.2s ease;
+
+
+}
+
+.auth-forgot a:hover {
+color: #008fc4;
+text-decoration: underline;
+}
+
+.auth-forgot a:focus-visible {
+outline: 2px solid #00aeef;
+outline-offset: 3px;
+border-radius: 4px;
+}

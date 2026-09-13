@@ -23,3 +23,31 @@ export async function cadastrar(dados) {
 
     return response.data;
 }
+export async function recuperarSenha(email) {
+
+const response = await api.post(
+    "/auth/recuperar-senha",
+    {
+        email
+    }
+);
+
+return response.data;
+
+
+}
+
+export async function redefinirSenha(token, novaSenha) {
+
+const response = await api.post(
+    "/auth/redefinir-senha",
+    {
+        token,
+        novaSenha
+    }
+);
+
+return response.data;
+
+
+}

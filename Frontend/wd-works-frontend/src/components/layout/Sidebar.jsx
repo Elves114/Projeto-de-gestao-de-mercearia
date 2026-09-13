@@ -1,4 +1,16 @@
 import { NavLink } from "react-router-dom";
+import {
+    LayoutDashboard,
+    ShoppingCart,
+    Package,
+    Tags,
+    Warehouse,
+    ArrowLeftRight,
+    AlertTriangle,
+    Users,
+    Building2,
+    ScrollText,
+} from "lucide-react";
 import { useAuth } from "../../contexts/useAuth";
 import { PERMISSOES_ROTAS } from "../../config/Permissions";
 import "../style/Sidebar.css";
@@ -25,9 +37,9 @@ function Sidebar({ aberto, setAberto }) {
                 {
                     to: "/dashboard",
                     label: "Dashboard",
-                    icon: "⌂"
-                }
-            ]
+                    icon: LayoutDashboard,
+                },
+            ],
         },
 
         {
@@ -36,34 +48,34 @@ function Sidebar({ aberto, setAberto }) {
                 {
                     to: "/vendas",
                     label: "Vendas",
-                    icon: "▣"
+                    icon: ShoppingCart,
                 },
                 {
                     to: "/produtos",
                     label: "Produtos",
-                    icon: "□"
+                    icon: Package,
                 },
                 {
                     to: "/categorias",
                     label: "Categorias",
-                    icon: "▦"
+                    icon: Tags,
                 },
                 {
                     to: "/estoque",
                     label: "Stock",
-                    icon: "▤"
+                    icon: Warehouse,
                 },
                 {
                     to: "/estoque/movimentos",
                     label: "Movimentos",
-                    icon: "↕"
+                    icon: ArrowLeftRight,
                 },
                 {
                     to: "/alertas-stock",
                     label: "Alertas de Stock",
-                    icon: "!"
-                }
-            ]
+                    icon: AlertTriangle,
+                },
+            ],
         },
 
         {
@@ -72,20 +84,20 @@ function Sidebar({ aberto, setAberto }) {
                 {
                     to: "/usuarios",
                     label: "Usuários",
-                    icon: "♙"
+                    icon: Users,
                 },
                 {
                     to: "/empresa",
                     label: "Empresa",
-                    icon: "▥"
+                    icon: Building2,
                 },
                 {
                     to: "/auditoria",
                     label: "Auditoria",
-                    icon: "◷"
-                }
-            ]
-        }
+                    icon: ScrollText,
+                },
+            ],
+        },
     ];
 
     const gruposPermitidos = grupos
@@ -99,7 +111,7 @@ function Sidebar({ aberto, setAberto }) {
                 }
 
                 return permissoes.includes(usuario?.perfil);
-            })
+            }),
         }))
         .filter((grupo) => grupo.links.length > 0);
 
@@ -163,29 +175,40 @@ function Sidebar({ aberto, setAberto }) {
 
                         <div className="sidebar-group-links">
 
-                            {grupo.links.map((link) => (
+                            {grupo.links.map((link) => {
 
-                                <NavLink
-                                    key={link.to}
-                                    to={link.to}
-                                    className={({ isActive }) =>
-                                        isActive
-                                            ? "sidebar-link active"
-                                            : "sidebar-link"
-                                    }
-                                >
+                                const Icone = link.icon;
 
-                                    <span className="sidebar-link-icon">
-                                        {link.icon}
-                                    </span>
+                                return (
+                                    <NavLink
+                                        key={link.to}
+                                        to={link.to}
+                                        title={
+                                            !aberto
+                                                ? link.label
+                                                : undefined
+                                        }
+                                        className={({ isActive }) =>
+                                            isActive
+                                                ? "sidebar-link active"
+                                                : "sidebar-link"
+                                        }
+                                    >
 
-                                    <span>
-                                        {link.label}
-                                    </span>
+                                        <span className="sidebar-link-icon">
+                                            <Icone
+                                                size={18}
+                                                strokeWidth={2}
+                                            />
+                                        </span>
 
-                                </NavLink>
+                                        <span className="sidebar-link-label">
+                                            {link.label}
+                                        </span>
 
-                            ))}
+                                    </NavLink>
+                                );
+                            })}
 
                         </div>
 
@@ -249,4 +272,3 @@ function formatarPerfil(perfil) {
 
 
 export default Sidebar;
-

@@ -1,446 +1,466 @@
 /* ============================================================
-   EMPRESA
-   Identidade premium / Bento / Smooth Motion
+   EMPRESA — Perfil da empresa
+   Identidade: WD Works — Light + Candy Blue
+   ============================================================ */
+
+:root {
+    /* Paleta */
+    --emp-primary: #00aeef;
+    --emp-primary-dark: #008fc5;
+    --emp-primary-soft: #e0f2fe;
+    --emp-primary-glow: rgba(0, 174, 239, 0.18);
+
+    --emp-success: #16a34a;
+    --emp-success-soft: #ecfdf3;
+    --emp-warning: #d97706;
+    --emp-danger: #dc2626;
+    --emp-danger-soft: #fef2f2;
+
+    --emp-text: #0f172a;
+    --emp-text-soft: #475569;
+    --emp-text-muted: #94a3b8;
+
+    --emp-bg: #f4f7fb;
+    --emp-bg-soft: #f8fafc;
+    --emp-bg-hover: #fafcff;
+    --emp-border: #e5eaf1;
+    --emp-border-soft: #eef2f7;
+
+    /* Sombras */
+    --emp-shadow-sm: 0 2px 6px rgba(15, 23, 42, 0.04);
+    --emp-shadow:
+        0 1px 2px rgba(15, 23, 42, 0.04),
+        0 4px 14px rgba(15, 23, 42, 0.04);
+    --emp-shadow-hover:
+        0 2px 4px rgba(15, 23, 42, 0.05),
+        0 12px 30px rgba(15, 23, 42, 0.08);
+
+    /* Motion */
+    --emp-ease: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    --emp-ease-bounce: 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+
+    /* Radius */
+    --emp-radius: 18px;
+    --emp-radius-md: 14px;
+    --emp-radius-sm: 10px;
+}
+
+
+/* ============================================================
+   PÁGINA
    ============================================================ */
 
 .empresa-page {
     width: 100%;
-    min-height: 100%;
-
-    padding: 28px;
-
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 28px 32px 40px;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    color: var(--emp-text);
+    animation: empPageIn 380ms var(--emp-ease-bounce) both;
+}
 
-    color: #172033;
+@keyframes empPageIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
 
 /* ============================================================
-   HEADER
+   CABEÇALHO DA PÁGINA
    ============================================================ */
 
 .empresa-header {
-    margin-bottom: 24px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+}
 
-    animation: empresaHeaderEntrada 450ms ease-out both;
+.empresa-header > div {
+    position: relative;
+}
+
+/* Overline decorativa antes do título */
+.empresa-header > div::before {
+    content: "PERFIL DA EMPRESA";
+    display: block;
+    margin-bottom: 6px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--emp-primary-dark);
 }
 
 .empresa-header h1 {
     margin: 0;
-
     font-size: 28px;
     font-weight: 800;
-
-    letter-spacing: -0.6px;
-
-    color: #172033;
+    letter-spacing: -0.02em;
+    color: var(--emp-text);
 }
 
 .empresa-header p {
-    margin: 7px 0 0;
-
-    color: #718096;
-
+    margin: 6px 0 0;
     font-size: 14px;
+    color: var(--emp-text-muted);
+    max-width: 520px;
+    line-height: 1.5;
 }
 
 
 /* ============================================================
-   MENSAGENS
+   MENSAGENS (erro / sucesso)
    ============================================================ */
 
 .empresa-message {
-    margin-bottom: 18px;
-
-    padding: 13px 16px;
-
-    border-radius: 12px;
-
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px;
+    border-radius: var(--emp-radius-sm);
     font-size: 13px;
     font-weight: 600;
+    animation: empMessageIn 300ms var(--emp-ease-bounce) both;
+}
 
-    animation:
-        mensagemEntrada 300ms ease-out both;
+@keyframes empMessageIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
 .empresa-message-error {
-    background: #fef2f2;
-
-    border: 1px solid #fecaca;
-
-    color: #b91c1c;
+    border: 1px solid rgba(220, 38, 38, 0.18);
+    background: var(--emp-danger-soft);
+    color: var(--emp-danger);
 }
 
 .empresa-message-success {
-    background: #ecfdf3;
-
-    border: 1px solid #bbf7d0;
-
-    color: #15803d;
+    border: 1px solid rgba(22, 163, 74, 0.18);
+    background: var(--emp-success-soft);
+    color: var(--emp-success);
 }
 
 
 /* ============================================================
-   CARTÃO PRINCIPAL
+   CARTÃO PRINCIPAL — HERO DA EMPRESA
    ============================================================ */
 
 .empresa-card {
     position: relative;
-
-    width: 100%;
-
-    padding: 26px;
-
-    box-sizing: border-box;
-
-    background:
-        linear-gradient(
-            145deg,
-            #ffffff 0%,
-            #fbfdff 100%
-        );
-
-    border: 1px solid #e7edf4;
-
-    border-radius: 20px;
-
-    box-shadow:
-        0 12px 35px rgba(15, 23, 42, 0.055);
-
     overflow: hidden;
 
-    animation:
-        empresaCardEntrada 500ms ease-out both;
+    display: flex;
+    flex-direction: column;
+
+    border: 1px solid var(--emp-border);
+    border-radius: var(--emp-radius);
+    background: #ffffff;
+    box-shadow: var(--emp-shadow);
 
     transition:
-        transform 300ms ease,
-        box-shadow 300ms ease,
-        border-color 300ms ease;
+        transform var(--emp-ease),
+        box-shadow var(--emp-ease);
 }
 
+.empresa-card:hover {
+    box-shadow: var(--emp-shadow-hover);
+}
 
-/*
- * Pequeno brilho decorativo.
- */
-
+/* Halo Candy Blue decorativo no canto superior direito */
 .empresa-card::before {
     content: "";
-
     position: absolute;
-
-    top: -100px;
-    right: -100px;
-
-    width: 240px;
-    height: 240px;
-
+    top: -120px;
+    right: -120px;
+    width: 340px;
+    height: 340px;
     border-radius: 50%;
-
-    background:
-        radial-gradient(
-            circle,
-            rgba(59, 130, 246, 0.07) 0%,
-            rgba(59, 130, 246, 0) 70%
-        );
-
+    background: radial-gradient(
+        circle,
+        rgba(0, 174, 239, 0.10) 0%,
+        rgba(0, 174, 239, 0) 70%
+    );
     pointer-events: none;
+}
+
+/* Linha Candy Blue no topo do cartão */
+.empresa-card::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--emp-primary) 30%,
+        var(--emp-primary-dark) 70%,
+        transparent
+    );
+    opacity: 0.85;
 }
 
 
 /* ============================================================
-   HEADER DO CARTÃO
+   CABEÇALHO DO CARTÃO (nome + status)
    ============================================================ */
 
 .empresa-card-header {
     position: relative;
-
     z-index: 1;
 
     display: flex;
-
-    align-items: flex-start;
-
+    align-items: center;
     justify-content: space-between;
-
     gap: 20px;
 
-    margin-bottom: 25px;
+    padding: 26px 28px 22px;
+    border-bottom: 1px solid var(--emp-border-soft);
+}
 
-    padding-bottom: 20px;
-
-    border-bottom: 1px solid #edf1f5;
+.empresa-card-header > div {
+    min-width: 0;
 }
 
 .empresa-card-header h2 {
     margin: 0;
-
-    font-size: 18px;
-
+    font-size: 20px;
     font-weight: 800;
-
-    letter-spacing: -0.2px;
-
-    color: #172033;
+    letter-spacing: -0.015em;
+    color: var(--emp-text);
 }
 
-.empresa-card-header span:not(.empresa-status) {
+.empresa-card-header > div > span {
     display: block;
-
-    margin-top: 5px;
-
-    color: #8a96a6;
-
-    font-size: 12px;
+    margin-top: 4px;
+    font-size: 13px;
+    color: var(--emp-text-muted);
 }
 
 
 /* ============================================================
-   STATUS
+   BADGE DE STATUS
    ============================================================ */
 
 .empresa-status {
     display: inline-flex;
-
     align-items: center;
-
-    justify-content: center;
-
-    min-width: 70px;
+    gap: 6px;
 
     padding: 7px 12px;
-
     border-radius: 999px;
 
     font-size: 10px;
-
     font-weight: 800;
-
-    letter-spacing: 0.04em;
-
+    letter-spacing: 0.06em;
     text-transform: uppercase;
+    white-space: nowrap;
+
+    transition:
+        box-shadow var(--emp-ease),
+        transform var(--emp-ease);
+}
+
+.empresa-status::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
 }
 
 .empresa-status.ativo {
-    background: #ecfdf3;
+    background: var(--emp-success-soft);
+    color: var(--emp-success);
+    border: 1px solid rgba(22, 163, 74, 0.20);
+    animation: empStatusPulse 2.8s ease-in-out infinite;
+}
 
-    border: 1px solid #bbf7d0;
-
-    color: #15803d;
-
-    box-shadow:
-        0 0 14px rgba(34, 197, 94, 0.08);
-
-    animation:
-        statusAtivoPulse 3s ease-in-out infinite;
+@keyframes empStatusPulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(22, 163, 74, 0);
+    }
+    50% {
+        box-shadow: 0 0 0 5px rgba(22, 163, 74, 0.08);
+    }
 }
 
 .empresa-status.inativo {
-    background: #fef2f2;
-
-    border: 1px solid #fecaca;
-
-    color: #b91c1c;
+    background: var(--emp-danger-soft);
+    color: var(--emp-danger);
+    border: 1px solid rgba(220, 38, 38, 0.20);
 }
 
 
 /* ============================================================
-   BENTO GRID
+   GRELHA DE INFORMAÇÕES
    ============================================================ */
 
 .empresa-info-grid {
     position: relative;
-
     z-index: 1;
 
     display: grid;
-
-    grid-template-columns:
-        repeat(3, minmax(0, 1fr));
-
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 14px;
+
+    padding: 24px 28px;
 }
-
-
-/* ============================================================
-   CARDS DE INFORMAÇÃO
-   ============================================================ */
 
 .empresa-info {
     position: relative;
-
-    min-height: 90px;
-
-    padding: 17px;
-
-    box-sizing: border-box;
-
-    display: flex;
-
-    flex-direction: column;
-
-    justify-content: center;
-
-    background:
-        linear-gradient(
-            145deg,
-            #ffffff,
-            #f9fbfd
-        );
-
-    border: 1px solid #e9eef4;
-
-    border-radius: 15px;
-
     overflow: hidden;
 
-    opacity: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-height: 82px;
+    padding: 16px 18px;
+    box-sizing: border-box;
 
-    animation:
-        empresaInfoEntrada 430ms ease-out forwards;
+    border: 1px solid var(--emp-border-soft);
+    border-radius: var(--emp-radius-md);
+    background: var(--emp-bg-soft);
 
     transition:
-        transform 220ms ease,
-        border-color 220ms ease,
-        box-shadow 220ms ease,
-        background-color 220ms ease;
+        transform var(--emp-ease),
+        border-color var(--emp-ease),
+        background var(--emp-ease),
+        box-shadow var(--emp-ease);
 }
-
-
-/*
- * Cascata de 40ms.
- */
-
-.empresa-info:nth-child(1) {
-    animation-delay: 40ms;
-}
-
-.empresa-info:nth-child(2) {
-    animation-delay: 80ms;
-}
-
-.empresa-info:nth-child(3) {
-    animation-delay: 120ms;
-}
-
-.empresa-info:nth-child(4) {
-    animation-delay: 160ms;
-}
-
-.empresa-info:nth-child(5) {
-    animation-delay: 200ms;
-}
-
-.empresa-info:nth-child(6) {
-    animation-delay: 240ms;
-}
-
-
-/* ============================================================
-   HOVER DOS BLOCOS
-   ============================================================ */
 
 .empresa-info:hover {
-    transform:
-        translateY(-3px);
-
-    border-color: #dbe5ef;
-
+    transform: translateY(-2px);
     background: #ffffff;
-
-    box-shadow:
-        0 10px 25px rgba(15, 23, 42, 0.07);
+    border-color: rgba(0, 174, 239, 0.20);
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
 }
 
-
-/*
- * Glint.
- */
-
-.empresa-info::after {
+/* Pequeno glint diagonal no hover */
+.empresa-info::before {
     content: "";
-
     position: absolute;
-
     top: 0;
     left: -120%;
-
     width: 80%;
     height: 100%;
-
-    background:
-        linear-gradient(
-            100deg,
-            transparent,
-            rgba(255, 255, 255, 0.65),
-            transparent
-        );
-
+    background: linear-gradient(
+        100deg,
+        transparent,
+        rgba(255, 255, 255, 0.7),
+        transparent
+    );
     transform: skewX(-20deg);
-
     pointer-events: none;
 }
 
-.empresa-info:hover::after {
-    animation:
-        empresaGlint 650ms ease-out;
+.empresa-info:hover::before {
+    animation: empInfoGlint 650ms ease-out;
 }
 
-
-/* ============================================================
-   LABEL
-   ============================================================ */
+@keyframes empInfoGlint {
+    from { left: -120%; }
+    to   { left: 140%; }
+}
 
 .empresa-info > span {
-    margin-bottom: 8px;
-
-    color: #8a96a6;
-
     font-size: 10px;
-
     font-weight: 800;
-
-    letter-spacing: 0.06em;
-
+    letter-spacing: 0.08em;
     text-transform: uppercase;
+    color: var(--emp-text-muted);
 }
 
-
-/* ============================================================
-   VALOR
-   ============================================================ */
-
 .empresa-info > strong {
-    color: #263247;
-
     font-size: 14px;
-
     font-weight: 700;
-
-    line-height: 1.45;
-
+    color: var(--emp-text);
+    line-height: 1.4;
     word-break: break-word;
 }
 
-
-/* ============================================================
-   ENDEREÇO FULL
-   ============================================================ */
-
+/* Campo grande — ocupa 2 colunas */
 .empresa-info-full {
     grid-column: span 2;
-
-    min-height: 100px;
 }
 
 
 /* ============================================================
-   DATA
+   FORMULÁRIO DE EDIÇÃO
    ============================================================ */
 
-.empresa-info:nth-child(6) > strong {
-    font-size: 12px;
+.empresa-form {
+    position: relative;
+    z-index: 1;
+    padding: 24px 28px 22px;
+}
 
-    color: #596579;
+.empresa-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.empresa-form .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.empresa-form .form-group-full {
+    grid-column: span 2;
+}
+
+.empresa-form .form-group label {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--emp-text-soft);
+}
+
+.empresa-form .form-group input {
+    width: 100%;
+    min-height: 46px;
+    padding: 0 14px;
+    box-sizing: border-box;
+
+    border: 1px solid var(--emp-border);
+    border-radius: var(--emp-radius-sm);
+    background: #ffffff;
+
+    color: var(--emp-text);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 500;
+
+    outline: none;
+    transition:
+        border-color var(--emp-ease),
+        box-shadow var(--emp-ease),
+        background var(--emp-ease);
+}
+
+.empresa-form .form-group input::placeholder {
+    color: var(--emp-text-muted);
+}
+
+.empresa-form .form-group input:hover {
+    border-color: #cbd5e1;
+}
+
+.empresa-form .form-group input:focus {
+    border-color: var(--emp-primary);
+    background: #ffffff;
+    box-shadow: 0 0 0 3px var(--emp-primary-glow);
 }
 
 
@@ -450,395 +470,131 @@
 
 .empresa-actions {
     position: relative;
-
     z-index: 2;
 
     display: flex;
-
     align-items: center;
-
     gap: 10px;
 
-    margin-top: 24px;
-
-    padding-top: 20px;
-
-    border-top: 1px solid #edf1f5;
+    padding: 18px 28px 24px;
+    border-top: 1px solid var(--emp-border-soft);
 }
 
 
-/* ============================================================
-   BOTÕES
-   ============================================================ */
+/* BOTÕES */
 
 .empresa-actions .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
     min-height: 42px;
-
-    padding: 0 17px;
-
-    border-radius: 11px;
-
+    padding: 0 18px;
     border: 1px solid transparent;
+    border-radius: var(--emp-radius-sm);
 
-    font-family: inherit;
-
+    font: inherit;
     font-size: 13px;
-
-    font-weight: 750;
+    font-weight: 700;
 
     cursor: pointer;
+    white-space: nowrap;
 
     transition:
-        transform 150ms ease,
-        box-shadow 180ms ease,
-        background-color 180ms ease,
-        border-color 180ms ease;
+        background var(--emp-ease),
+        border-color var(--emp-ease),
+        color var(--emp-ease),
+        box-shadow var(--emp-ease),
+        transform var(--emp-ease);
 }
 
 .empresa-actions .button:hover:not(:disabled) {
-    transform:
-        translateY(-2px);
+    transform: translateY(-2px);
 }
 
 .empresa-actions .button:active:not(:disabled) {
-    transform:
-        scale(0.95);
+    transform: translateY(0) scale(0.98);
 }
 
 .empresa-actions .button:disabled {
-    opacity: 0.55;
-
+    opacity: 0.6;
     cursor: not-allowed;
+    transform: none;
 }
 
 
-/* ============================================================
-   PRIMARY
-   ============================================================ */
+/* Primary — Candy Blue */
 
 .empresa-actions .button-primary {
-    background: #2563eb;
-
-    border-color: #2563eb;
-
+    background: var(--emp-primary);
+    border-color: var(--emp-primary);
     color: #ffffff;
-
-    box-shadow:
-        0 5px 14px rgba(37, 99, 235, 0.18);
+    box-shadow: 0 4px 12px rgba(0, 174, 239, 0.22);
 }
 
 .empresa-actions .button-primary:hover:not(:disabled) {
-    background: #1d4ed8;
-
-    box-shadow:
-        0 8px 20px rgba(37, 99, 235, 0.23);
+    background: var(--emp-primary-dark);
+    border-color: var(--emp-primary-dark);
+    box-shadow: 0 8px 20px rgba(0, 174, 239, 0.30);
 }
 
 
-/* ============================================================
-   DANGER
-   ============================================================ */
+/* Secondary */
+
+.empresa-actions .button-secondary {
+    background: #ffffff;
+    border-color: var(--emp-border);
+    color: var(--emp-text-soft);
+}
+
+.empresa-actions .button-secondary:hover:not(:disabled) {
+    background: var(--emp-bg-soft);
+    border-color: #cbd5e1;
+    color: var(--emp-text);
+}
+
+
+/* Danger */
 
 .empresa-actions .button-danger {
-    background: #fff1f2;
-
-    border-color: #fecdd3;
-
-    color: #be123c;
+    background: var(--emp-danger-soft);
+    border-color: rgba(220, 38, 38, 0.20);
+    color: var(--emp-danger);
 }
 
 .empresa-actions .button-danger:hover:not(:disabled) {
-    background: #ffe4e6;
-
-    box-shadow:
-        0 7px 18px rgba(225, 29, 72, 0.12);
+    background: #fde8e8;
+    border-color: rgba(220, 38, 38, 0.30);
+    box-shadow: 0 6px 16px rgba(220, 38, 38, 0.12);
 }
 
 
-/* ============================================================
-   SUCCESS
-   ============================================================ */
+/* Success */
 
 .empresa-actions .button-success {
-    background: #ecfdf3;
-
-    border-color: #bbf7d0;
-
-    color: #15803d;
+    background: var(--emp-success-soft);
+    border-color: rgba(22, 163, 74, 0.20);
+    color: var(--emp-success);
 }
 
 .empresa-actions .button-success:hover:not(:disabled) {
     background: #dcfce7;
-
-    box-shadow:
-        0 7px 18px rgba(22, 163, 74, 0.12);
+    border-color: rgba(22, 163, 74, 0.30);
+    box-shadow: 0 6px 16px rgba(22, 163, 74, 0.12);
 }
 
 
 /* ============================================================
-   SECONDARY
+   ESTADOS DE CARREGAMENTO / ERRO (fora do cartão)
    ============================================================ */
 
-.empresa-actions .button-secondary {
-    background: #ffffff;
-
-    border-color: #dce3eb;
-
-    color: #475569;
-}
-
-.empresa-actions .button-secondary:hover:not(:disabled) {
-    background: #f8fafc;
-
-    border-color: #cbd5e1;
-}
-
-
-/* ============================================================
-   FORMULÁRIO
-   ============================================================ */
-
-.empresa-form {
-    animation:
-        formularioEntrada 350ms ease-out both;
-}
-
-.empresa-form-grid {
-    display: grid;
-
-    grid-template-columns:
-        repeat(2, minmax(0, 1fr));
-
-    gap: 18px;
-}
-
-
-/* ============================================================
-   FORM GROUP
-   ============================================================ */
-
-.empresa-form .form-group {
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 7px;
-}
-
-.empresa-form .form-group label {
-    color: #526075;
-
-    font-size: 11px;
-
-    font-weight: 800;
-
-    letter-spacing: 0.03em;
-}
-
-.empresa-form .form-group input {
-    width: 100%;
-
-    min-height: 44px;
-
-    box-sizing: border-box;
-
-    padding: 0 13px;
-
-    border: 1px solid #dce3eb;
-
-    border-radius: 11px;
-
-    outline: none;
-
-    background: #ffffff;
-
-    color: #263247;
-
-    font-family: inherit;
-
-    font-size: 13px;
-
-    transition:
-        border-color 180ms ease,
-        box-shadow 180ms ease,
-        transform 180ms ease;
-}
-
-.empresa-form .form-group input:hover {
-    border-color: #cbd5e1;
-}
-
-.empresa-form .form-group input:focus {
-    border-color: #60a5fa;
-
-    box-shadow:
-        0 0 0 3px rgba(59, 130, 246, 0.10);
-
-    transform:
-        translateY(-1px);
-}
-
-
-/* ============================================================
-   CAMPO FULL
-   ============================================================ */
-
-.empresa-form .form-group-full {
-    grid-column: span 2;
-}
-
-
-/* ============================================================
-   ANIMAÇÃO DO BOTÃO DE GRAVAR
-   ============================================================ */
-
-.empresa-form .empresa-actions .button-primary {
-    animation:
-        buttonScaleIn 280ms cubic-bezier(
-            0.34,
-            1.56,
-            0.64,
-            1
-        ) both;
-}
-
-
-/* ============================================================
-   ANIMAÇÕES
-   ============================================================ */
-
-@keyframes empresaHeaderEntrada {
-
-    from {
-        opacity: 0;
-
-        transform:
-            translateY(10px);
-    }
-
-    to {
-        opacity: 1;
-
-        transform:
-            translateY(0);
-    }
-}
-
-
-@keyframes empresaCardEntrada {
-
-    from {
-        opacity: 0;
-
-        transform:
-            translateY(15px);
-    }
-
-    to {
-        opacity: 1;
-
-        transform:
-            translateY(0);
-    }
-}
-
-
-@keyframes empresaInfoEntrada {
-
-    from {
-        opacity: 0;
-
-        transform:
-            translateY(15px);
-    }
-
-    to {
-        opacity: 1;
-
-        transform:
-            translateY(0);
-    }
-}
-
-
-@keyframes formularioEntrada {
-
-    from {
-        opacity: 0;
-
-        transform:
-            translateY(8px);
-    }
-
-    to {
-        opacity: 1;
-
-        transform:
-            translateY(0);
-    }
-}
-
-
-@keyframes mensagemEntrada {
-
-    from {
-        opacity: 0;
-
-        transform:
-            translateY(-5px);
-    }
-
-    to {
-        opacity: 1;
-
-        transform:
-            translateY(0);
-    }
-}
-
-
-@keyframes buttonScaleIn {
-
-    from {
-        opacity: 0;
-
-        transform:
-            scale(0.75);
-    }
-
-    to {
-        opacity: 1;
-
-        transform:
-            scale(1);
-    }
-}
-
-
-@keyframes empresaGlint {
-
-    from {
-        left: -120%;
-    }
-
-    to {
-        left: 140%;
-    }
-}
-
-
-@keyframes statusAtivoPulse {
-
-    0%,
-    100% {
-        box-shadow:
-            0 0 0 rgba(34, 197, 94, 0);
-    }
-
-    50% {
-        box-shadow:
-            0 0 12px rgba(34, 197, 94, 0.12);
-    }
+.empresa-page > p {
+    margin: 30px 0;
+    padding: 24px;
+    text-align: center;
+    color: var(--emp-text-muted);
+    font-size: 14px;
 }
 
 
@@ -847,14 +603,12 @@
    ============================================================ */
 
 @media (max-width: 900px) {
-
     .empresa-page {
-        padding: 20px;
+        padding: 22px;
     }
 
     .empresa-info-grid {
-        grid-template-columns:
-            repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .empresa-info-full {
@@ -862,33 +616,35 @@
     }
 }
 
-
-@media (max-width: 600px) {
-
+@media (max-width: 640px) {
     .empresa-page {
-        padding: 14px;
+        padding: 16px;
+        gap: 16px;
     }
 
     .empresa-header h1 {
-        font-size: 23px;
-    }
-
-    .empresa-card {
-        padding: 18px;
-
-        border-radius: 16px;
+        font-size: 22px;
     }
 
     .empresa-card-header {
+        align-items: flex-start;
         flex-direction: column;
+        padding: 20px 20px 18px;
+        gap: 12px;
     }
 
     .empresa-info-grid {
         grid-template-columns: 1fr;
+        padding: 20px;
+        gap: 10px;
     }
 
     .empresa-info-full {
         grid-column: span 1;
+    }
+
+    .empresa-form {
+        padding: 20px;
     }
 
     .empresa-form-grid {
@@ -901,27 +657,41 @@
 
     .empresa-actions {
         flex-wrap: wrap;
+        padding: 16px 20px 20px;
     }
 
     .empresa-actions .button {
         flex: 1;
+        min-width: 140px;
     }
 }
 
 
 /* ============================================================
-   REDUÇÃO DE MOVIMENTO
+   ACESSIBILIDADE
    ============================================================ */
 
 @media (prefers-reduced-motion: reduce) {
+    .empresa-page,
+    .empresa-message,
+    .empresa-info::before {
+        animation: none !important;
+    }
 
-    .empresa-page *,
-    .empresa-page *::before,
-    .empresa-page *::after {
-        animation-duration: 0.01ms !important;
+    .empresa-card,
+    .empresa-info,
+    .empresa-status,
+    .empresa-actions .button,
+    .empresa-form .form-group input {
+        transition: none !important;
+    }
 
-        animation-iteration-count: 1 !important;
+    .empresa-info:hover,
+    .empresa-actions .button:hover:not(:disabled) {
+        transform: none;
+    }
 
-        transition-duration: 0.01ms !important;
+    .empresa-status.ativo {
+        animation: none;
     }
 }

@@ -9,6 +9,9 @@ import {
 } from "../services/usuarioService";
 
 import UsuarioTabela from "../components/UsuarioTabela";
+import {
+    obterMensagemErro
+} from "../../../services/api";
 
 import { useNavigate } from "react-router-dom";
 import "../style/Usuario.css";
@@ -53,9 +56,8 @@ function Usuarios() {
             console.error(error);
 
             setErro(
-                "Não foi possível carregar os usuários."
+                obterMensagemErro(error)
             );
-
         } finally {
 
             setCarregando(false);
@@ -307,7 +309,7 @@ function Usuarios() {
                 <div className="usuario-search-input-wrapper">
 
                     <span className="usuario-search-icon">
-                        
+
                     </span>
 
                     <input

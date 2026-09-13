@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { atualizarUsuario } from "../services/usuarioService";
+import {
+    obterMensagemErro
+} from "../../../services/api";
+import {
+    atualizarUsuario,
+    alterarPerfil,
+} from "../services/usuarioService";
 
 function UsuarioTabela({
     usuarios,
@@ -38,7 +44,19 @@ function UsuarioTabela({
         setErro("");
     }
 
-    // restante do componente...
+
+    /* ============================================================
+       GUARDAR EDIÇÃO
+       ============================================================
+       *
+       * O backend tem dois endpoints distintos:
+       *
+       *   PUT   /api/usuarios/{id}          → nome + email
+       *   PATCH /api/usuarios/{id}/perfil   → perfil
+       *
+       * O PUT ignora o campo "perfil", por isso temos de
+       * chamar o PATCH separadamente quando o perfil muda.
+       */
 
     async function salvarEdicao() {
 
@@ -51,14 +69,34 @@ function UsuarioTabela({
 
         try {
 
-            const usuarioAtualizado = await atualizarUsuario(
-                usuarioEditando.id,
-                {
-                    nome,
-                    email,
-                    perfil
-                }
-            );
+            /*
+             * 1) Atualizar nome + email.
+             */
+            let usuarioAtualizado =
+                await atualizarUsuario(
+                    usuarioEditando.id,
+                    {
+                        nome,
+                        email,
+                    }
+                );
+
+
+            /*
+             * 2) Se o perfil mudou, chamar o endpoint dedicado.
+             *
+             * A resposta do PATCH é a versão final e autoritativa
+             * do utilizador, por isso substitui a do PUT.
+             */
+            if (perfil !== usuarioEditando.perfil) {
+
+                usuarioAtualizado =
+                    await alterarPerfil(
+                        usuarioEditando.id,
+                        perfil
+                    );
+            }
+
 
             onUsuarioAtualizado(usuarioAtualizado);
 
@@ -69,15 +107,15 @@ function UsuarioTabela({
             console.error(error);
 
             setErro(
-                "Não foi possível atualizar o usuário."
+                obterMensagemErro(error)
             );
-
         } finally {
 
             setSalvando(false);
 
         }
     }
+
 
     function obterClassePerfil(perfil) {
 
@@ -97,6 +135,7 @@ function UsuarioTabela({
         }
     }
 
+
     function formatarPerfil(perfil) {
 
         switch (perfil) {
@@ -114,6 +153,7 @@ function UsuarioTabela({
                 return perfil;
         }
     }
+
 
     return (
         <div className="table-container">

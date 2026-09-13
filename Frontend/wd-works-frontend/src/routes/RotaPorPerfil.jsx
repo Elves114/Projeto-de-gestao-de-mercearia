@@ -11,19 +11,19 @@ function RotaPorPerfil() {
     const perfil = usuario?.perfil;
 
     if (!perfil) {
-        return <Navigate to="/dashboard" replace />;
+        return <Navigate to="/login" replace />;
     }
 
     const permissoes = obterPermissoes(location.pathname);
 
     // Rota sem configuração
     if (!permissoes) {
-        return <Navigate to="/dashboard" replace />;
+        return <Navigate to="/" replace />;
     }
 
     // Perfil sem permissão
     if (!permissoes.includes(perfil)) {
-        return <Navigate to="/dashboard" replace />;
+        return <Navigate to="/" replace />;
     }
 
     return <Outlet />;

@@ -14,9 +14,11 @@ export async function listarVendas(
     /*
      * ID da venda
      */
-    if (filtros.vendaId) {
+    if (filtros.vendaId !== "" && filtros.vendaId != null) {
         params.vendaId = filtros.vendaId;
     }
+
+
 
     /*
      * Data/hora inicial
@@ -35,7 +37,7 @@ export async function listarVendas(
     /*
      * Vendedor
      */
-    if (filtros.usuarioId) {
+    if (filtros.usuarioId !== "" && filtros.usuarioId != null) {
         params.usuarioId = filtros.usuarioId;
     }
 

@@ -8,6 +8,7 @@ import {
     listarCategorias,
     atualizarCategoria,
     eliminarCategoria,
+    contarProdutosPorCategoria,
 } from "../services/categoriaService";
 
 import {
@@ -19,13 +20,18 @@ import CategoriaForm from "../components/CategoriaForm";
 import "../style/Categoria.css";
 
 
+/* ============================================================
+   NÚMERO DE CATEGORIAS POR PÁGINA
+   ============================================================ */
+
+const TAMANHO_PAGINA = 10;
+
+
 function Categorias() {
 
-    /*
-     * ============================================================
-     * ESTADO DAS CATEGORIAS
-     * ============================================================
-     */
+    /* ============================================================
+       ESTADO
+       ============================================================ */
 
     const [estado, setEstado] = useState({
         carregando: true,
@@ -33,89 +39,119 @@ function Categorias() {
         erro: "",
     });
 
-
-    /*
-     * ============================================================
-     * PESQUISA
-     * ============================================================
-     */
+    const [pagina, setPagina] = useState(0);
+    const [totalPaginas, setTotalPaginas] = useState(0);
+    const [totalElementos, setTotalElementos] = useState(0);
 
     const [pesquisa, setPesquisa] = useState("");
+    const [pesquisaAplicada, setPesquisaAplicada] = useState("");
 
-    const [pesquisaAplicada, setPesquisaAplicada] =
-        useState("");
+    const [editandoId, setEditandoId] = useState(null);
+    const [nomeEditado, setNomeEditado] = useState("");
 
-
-    /*
-     * ============================================================
-     * EDIÇÃO
-     * ============================================================
-     */
-
-    const [editandoId, setEditandoId] =
-        useState(null);
-
-    const [nomeEditado, setNomeEditado] =
-        useState("");
+    const [contadores, setContadores] = useState({});
+    const contadoresRef = useRef({});
 
 
-    /*
-     * ============================================================
-     * CARD EXPANDIDO
-     *
-     * Usaremos este estado futuramente para as
-     * subcategorias.
-     * ============================================================
-     */
+    /* ============================================================
+       CARREGAR CATEGORIAS + CONTAGENS
 
-    const [categoriaExpandida, setCategoriaExpandida] =
-        useState(null);
+       NOTA IMPORTANTE:
+       Esta função NÃO escreve estado antes do primeiro await.
+       Todo o setState acontece depois da fronteira assíncrona,
+       evitando o aviso do React Compiler sobre setState
+       síncrono dentro de um efeito.
+       ============================================================ */
 
-
-    /*
-     * ============================================================
-     * CONTADOR ANIMADO
-     *
-     * Guarda os valores que estão sendo mostrados
-     * visualmente nos cards.
-     * ============================================================
-     */
-
-    const [contadores, setContadores] =
-        useState({});
-    const contadoresRef =
-        useRef({});
-    /*
-     * ============================================================
-     * CARREGAR CATEGORIAS
-     * ============================================================
-     */
-
-    async function carregarCategorias(nome = "") {
+    async function carregarCategorias(
+        nome,
+        paginaAlvo
+    ) {
 
         try {
 
-            setEstado((atual) => ({
-                ...atual,
-                carregando: true,
-                erro: "",
-            }));
-
+            /* -------- 1) Lista de categorias -------- */
 
             const response =
                 await listarCategorias(
-                    0,
-                    10,
+                    paginaAlvo,
+                    TAMANHO_PAGINA,
                     nome
                 );
 
+            const categorias =
+                response.content || [];
+
+
+            /* -------- 2) Contagens em paralelo -------- */
+
+            const contagens =
+                await Promise.all(
+                    categorias.map(async (categoria) => {
+
+                        try {
+
+                            const total =
+                                await contarProdutosPorCategoria(
+                                    categoria.id
+                                );
+
+                            return {
+                                id: categoria.id,
+                                total,
+                            };
+
+                        } catch (error) {
+
+                            console.error(
+                                "Erro ao contar produtos da categoria " +
+                                categoria.id,
+                                error
+                            );
+
+                            return {
+                                id: categoria.id,
+                                total: 0,
+                            };
+                        }
+                    })
+                );
+
+
+            /* -------- 3) Composto final -------- */
+
+            const mapaContagens =
+                Object.fromEntries(
+                    contagens.map((c) => [
+                        c.id,
+                        c.total,
+                    ])
+                );
+
+
+            const categoriasComContagem =
+                categorias.map((categoria) => ({
+                    ...categoria,
+                    quantidadeProdutos:
+                        mapaContagens[categoria.id] ?? 0,
+                }));
+
+
+            /* -------- 4) setState (após awaits) -------- */
 
             setEstado({
                 carregando: false,
-                categorias:
-                    response.content || [],
+                categorias: categoriasComContagem,
                 erro: "",
             });
+
+            setTotalPaginas(
+                response.page?.totalPages || 0
+            );
+
+            setTotalElementos(
+                response.page?.totalElements || 0
+            );
 
 
         } catch (error) {
@@ -125,7 +161,6 @@ function Categorias() {
                 error
             );
 
-
             setEstado({
                 carregando: false,
                 categorias: [],
@@ -134,92 +169,39 @@ function Categorias() {
             });
 
         }
-
     }
 
 
-    /*
-     * ============================================================
-     * CARREGAMENTO INICIAL
-     * ============================================================
-     */
+    /* ============================================================
+       CARREGAMENTO INICIAL E POR MUDANÇA DE FILTRO / PÁGINA
+       ============================================================ */
 
     useEffect(() => {
 
         let ativo = true;
 
-
         async function carregar() {
-
-            try {
-
-                const response =
-                    await listarCategorias();
-
-
-                if (!ativo) {
-                    return;
-                }
-
-
-                setEstado({
-                    carregando: false,
-                    categorias:
-                        response.content || [],
-                    erro: "",
-                });
-
-
-            } catch (error) {
-
-                console.error(
-                    "Erro ao carregar categorias:",
-                    error
-                );
-
-
-                if (!ativo) {
-                    return;
-                }
-
-
-                setEstado({
-                    carregando: false,
-                    categorias: [],
-                    erro:
-                        "Não foi possível carregar as categorias.",
-                });
-
+            if (!ativo) {
+                return;
             }
 
+            await carregarCategorias(
+                pesquisaAplicada,
+                pagina
+            );
         }
-
 
         carregar();
 
-
         return () => {
-
             ativo = false;
-
         };
+    }, [pesquisaAplicada, pagina]);
 
-    }, []);
 
-
-    /*
-     * ============================================================
-     * ANIMAÇÃO DOS CONTADORES
-     * ============================================================
-     *
-     * Neste momento usamos:
-     *
-     * categoria.quantidadeProdutos
-     *
-     * Caso o backend ainda não envie esse campo,
-     * o valor será 0.
-     * ============================================================
-     */
+    /* ============================================================
+       ANIMAÇÃO DOS CONTADORES
+       ============================================================ */
 
     useEffect(() => {
 
@@ -319,56 +301,56 @@ function Categorias() {
     }, [estado.categorias]);
 
 
-    /*
-     * ============================================================
-     * PESQUISAR
-     * ============================================================
-     */
+    /* ============================================================
+       PESQUISAR
+
+       O setEstado com "carregando: true" é feito AQUI,
+       no handler do evento — onde é perfeitamente seguro.
+       ============================================================ */
 
     function pesquisar(event) {
 
         event.preventDefault();
 
+        setEstado((atual) => ({
+            ...atual,
+            carregando: true,
+            erro: "",
+        }));
 
-        const nome =
-            pesquisa.trim();
-
+        setPagina(0);
 
         setPesquisaAplicada(
-            nome
-        );
-
-
-        carregarCategorias(
-            nome
+            pesquisa.trim()
         );
 
     }
 
 
-    /*
-     * ============================================================
-     * LIMPAR PESQUISA
-     * ============================================================
-     */
+    /* ============================================================
+       LIMPAR PESQUISA
+       ============================================================ */
 
     function limparPesquisa() {
 
+        setEstado((atual) => ({
+            ...atual,
+            carregando: true,
+            erro: "",
+        }));
+
         setPesquisa("");
 
+        setPagina(0);
+
         setPesquisaAplicada("");
-
-
-        carregarCategorias("");
 
     }
 
 
-    /*
-     * ============================================================
-     * CRIAÇÃO DE CATEGORIA
-     * ============================================================
-     */
+    /* ============================================================
+       CRIAÇÃO DE CATEGORIA
+       ============================================================ */
 
     function handleCategoriaCriada(
         categoria
@@ -379,17 +361,15 @@ function Categorias() {
             ...atual,
 
             categorias: [
-                categoria,
+                {
+                    ...categoria,
+                    quantidadeProdutos: 0,
+                },
                 ...atual.categorias,
             ],
 
         }));
 
-
-        /*
-         * Começa o contador da nova categoria
-         * em 0.
-         */
 
         setContadores((atual) => ({
 
@@ -399,14 +379,17 @@ function Categorias() {
 
         }));
 
+
+        setTotalElementos(
+            (total) => total + 1
+        );
+
     }
 
 
-    /*
-     * ============================================================
-     * INICIAR EDIÇÃO
-     * ============================================================
-     */
+    /* ============================================================
+       INICIAR EDIÇÃO
+       ============================================================ */
 
     function iniciarEdicao(
         categoria
@@ -423,11 +406,9 @@ function Categorias() {
     }
 
 
-    /*
-     * ============================================================
-     * CANCELAR EDIÇÃO
-     * ============================================================
-     */
+    /* ============================================================
+       CANCELAR EDIÇÃO
+       ============================================================ */
 
     function cancelarEdicao() {
 
@@ -438,11 +419,9 @@ function Categorias() {
     }
 
 
-    /*
-     * ============================================================
-     * GUARDAR EDIÇÃO
-     * ============================================================
-     */
+    /* ============================================================
+       GUARDAR EDIÇÃO
+       ============================================================ */
 
     async function salvarEdicao(
         id
@@ -474,7 +453,11 @@ function Categorias() {
                     atual.categorias.map(
                         (categoria) =>
                             categoria.id === id
-                                ? categoriaAtualizada
+                                ? {
+                                    ...categoriaAtualizada,
+                                    quantidadeProdutos:
+                                        categoria.quantidadeProdutos ?? 0,
+                                }
                                 : categoria
                     ),
 
@@ -500,11 +483,9 @@ function Categorias() {
     }
 
 
-    /*
-     * ============================================================
-     * ELIMINAR
-     * ============================================================
-     */
+    /* ============================================================
+       ELIMINAR
+       ============================================================ */
 
     async function eliminar(
         id
@@ -528,52 +509,57 @@ function Categorias() {
             );
 
 
+            /*
+             * Se a página actual ficar sem elementos,
+             * retrocedemos uma página. Caso contrário,
+             * recarregamos a página actual com o filtro.
+             */
+
+            const proximaPagina =
+                estado.categorias.length === 1 &&
+                    pagina > 0
+                    ? pagina - 1
+                    : pagina;
+
+
             setEstado((atual) => ({
-
                 ...atual,
-
-                categorias:
-                    atual.categorias.filter(
-                        (categoria) =>
-                            categoria.id !== id
-                    ),
-
+                carregando: true,
+                erro: "",
             }));
 
 
+            if (proximaPagina !== pagina) {
+
+                setPagina(proximaPagina);
+
+            } else {
+
+                await carregarCategorias(
+                    pesquisaAplicada,
+                    proximaPagina
+                );
+
+            }
+
+
             /*
-             * Remove também o contador.
+             * Remove o contador associado.
              */
 
             setContadores((atual) => {
 
-                const novosContadores = {
-                    ...atual,
-                };
+                const novos = { ...atual };
 
+                delete novos[id];
 
-                delete novosContadores[id];
-
-
-                return novosContadores;
-
+                return novos;
             });
 
 
-            /*
-             * Se a categoria eliminada estava
-             * expandida, fechamos o card.
-             */
-
-            if (
-                categoriaExpandida === id
-            ) {
-
-                setCategoriaExpandida(
-                    null
-                );
-
-            }
+            setTotalElementos(
+                (total) => Math.max(0, total - 1)
+            );
 
 
         } catch (error) {
@@ -593,31 +579,37 @@ function Categorias() {
     }
 
 
-    /*
-     * ============================================================
-     * EXPANDIR / FECHAR CATEGORIA
-     * ============================================================
-     */
+    /* ============================================================
+       PAGINAÇÃO
 
-    function alternarCategoria(
-        id
-    ) {
+       O "carregando: true" também é definido aqui,
+       no handler do clique — não no efeito.
+       ============================================================ */
 
-        setCategoriaExpandida(
-            (atual) =>
-                atual === id
-                    ? null
-                    : id
-        );
+    function irParaPagina(numero) {
+
+        if (
+            numero >= 0 &&
+            numero < totalPaginas &&
+            numero !== pagina
+        ) {
+
+            setEstado((atual) => ({
+                ...atual,
+                carregando: true,
+                erro: "",
+            }));
+
+            setPagina(numero);
+
+        }
 
     }
 
 
-    /*
-     * ============================================================
-     * ESTADO DE CARREGAMENTO
-     * ============================================================
-     */
+    /* ============================================================
+       ESTADO DE CARREGAMENTO
+       ============================================================ */
 
     if (
         estado.carregando &&
@@ -663,11 +655,9 @@ function Categorias() {
     }
 
 
-    /*
-     * ============================================================
-     * ERRO
-     * ============================================================
-     */
+    /* ============================================================
+       ERRO
+       ============================================================ */
 
     if (estado.erro) {
 
@@ -706,11 +696,9 @@ function Categorias() {
     }
 
 
-    /*
-     * ============================================================
-     * RENDER
-     * ============================================================
-     */
+    /* ============================================================
+       RENDER
+       ============================================================ */
 
     return (
 
@@ -799,9 +787,7 @@ function Categorias() {
 
                     <span className="categoria-count">
 
-                        {
-                            estado.categorias.length
-                        }
+                        {totalElementos}
 
                     </span>
 
@@ -884,19 +870,6 @@ function Categorias() {
                                 index
                             ) => {
 
-                                const expandida =
-                                    categoriaExpandida ===
-                                    categoria.id;
-
-
-                                const subcategorias =
-                                    Array.isArray(
-                                        categoria.subcategorias
-                                    )
-                                        ? categoria.subcategorias
-                                        : [];
-
-
                                 const quantidadeProdutos =
                                     Number(
                                         contadores[
@@ -913,29 +886,17 @@ function Categorias() {
                                         key={
                                             categoria.id
                                         }
-                                        className={`
-                                            categoria-card
-                                            ${expandida
-                                                ? "categoria-card-expandida"
-                                                : ""
-                                            }
-                                        `}
+                                        className="categoria-card"
                                         style={{
                                             "--stagger-delay":
                                                 `${index * 30}ms`,
                                         }}
                                     >
 
-
-                                        {/* ==================================================
-                                            PARTE PRINCIPAL
-                                            ================================================== */}
-
                                         <div className="categoria-card-main">
 
 
                                             <div className="categoria-card-top">
-
 
                                                 <div className="categoria-icon">
 
@@ -985,7 +946,6 @@ function Categorias() {
                                                     )}
 
                                                 </div>
-
 
                                             </div>
 
@@ -1084,26 +1044,6 @@ function Categorias() {
                                                             Eliminar
                                                         </button>
 
-
-                                                        <button
-                                                            type="button"
-                                                            className="categoria-action categoria-action-expand"
-                                                            onClick={() =>
-                                                                alternarCategoria(
-                                                                    categoria.id
-                                                                )
-                                                            }
-                                                            aria-expanded={
-                                                                expandida
-                                                            }
-                                                        >
-
-                                                            {expandida
-                                                                ? "Fechar"
-                                                                : "Abrir"}
-
-                                                        </button>
-
                                                     </>
 
                                                 )}
@@ -1111,82 +1051,6 @@ function Categorias() {
                                             </div>
 
                                         </div>
-
-
-                                        {/* ==================================================
-                                            SUBCATEGORIAS
-                                            ================================================== */}
-
-                                        <div
-                                            className={`
-                                                categoria-subcategorias-wrapper
-                                                ${expandida
-                                                    ? "aberta"
-                                                    : ""
-                                                }
-                                            `}
-                                        >
-
-                                            <div className="categoria-subcategorias">
-
-                                                {subcategorias.length >
-                                                    0 ? (
-
-                                                    <div className="subcategorias-lista">
-
-                                                        {subcategorias.map(
-                                                            (
-                                                                subcategoria
-                                                            ) => (
-
-                                                                <div
-                                                                    key={
-                                                                        subcategoria.id
-                                                                    }
-                                                                    className="subcategoria-item"
-                                                                >
-
-                                                                    <span>
-
-                                                                        {
-                                                                            subcategoria.nome
-                                                                        }
-
-                                                                    </span>
-
-                                                                    <span>
-
-                                                                        {
-                                                                            subcategoria.quantidadeProdutos ??
-                                                                            0
-                                                                        }{" "}
-                                                                        produtos
-
-                                                                    </span>
-
-                                                                </div>
-
-                                                            )
-                                                        )}
-
-                                                    </div>
-
-                                                ) : (
-
-                                                    <div className="subcategorias-vazio">
-
-                                                        <span>
-                                                            Esta categoria não possui subcategorias.
-                                                        </span>
-
-                                                    </div>
-
-                                                )}
-
-                                            </div>
-
-                                        </div>
-
 
                                     </article>
 
@@ -1199,6 +1063,73 @@ function Categorias() {
 
                 )}
 
+
+                {/* ==================================================
+                    PAGINAÇÃO
+                    ================================================== */}
+
+                {totalPaginas > 1 && (
+
+                    <div className="categoria-pagination">
+
+                        <div className="categoria-pagination-info">
+
+                            <span>
+                                Página
+                            </span>
+
+                            <strong>
+                                {pagina + 1}
+                            </strong>
+
+                            <span>
+                                de {totalPaginas}
+                            </span>
+
+                        </div>
+
+
+                        <div className="categoria-pagination-actions">
+
+                            <button
+                                type="button"
+                                className="categoria-pagination-btn"
+                                disabled={pagina === 0}
+                                onClick={() =>
+                                    irParaPagina(pagina - 1)
+                                }
+                            >
+                                <span className="categoria-pagination-icon">
+                                    ←
+                                </span>
+
+                                Anterior
+                            </button>
+
+
+                            <button
+                                type="button"
+                                className="categoria-pagination-btn"
+                                disabled={
+                                    pagina >= totalPaginas - 1
+                                }
+                                onClick={() =>
+                                    irParaPagina(pagina + 1)
+                                }
+                            >
+                                Próxima
+
+                                <span className="categoria-pagination-icon">
+                                    →
+                                </span>
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                )}
+
             </section>
 
         </div>
@@ -1206,6 +1137,4 @@ function Categorias() {
     );
 
 }
-
-
 export default Categorias;

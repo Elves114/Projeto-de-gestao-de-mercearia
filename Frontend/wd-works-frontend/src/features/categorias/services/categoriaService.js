@@ -41,3 +41,30 @@ export async function atualizarCategoria(id, nome) {
 export async function eliminarCategoria(id) {
     await api.delete(`/api/categorias/${id}`);
 }
+
+
+/* ============================================================
+   CONTAGEM DE PRODUTOS POR CATEGORIA
+   ============================================================
+ *
+ * O endpoint /api/categorias não devolve a quantidade de
+ * produtos por categoria. Para obter essa contagem sem
+ * alterar o backend, usamos /api/produtos com filtro
+ * categoriaId e size=1 — só lemos o page.totalElements.
+ *
+ * Faz N pedidos (um por categoria) — aceitável até ~20.
+ * Se um dia crescer muito, vale a pena criar um endpoint
+ * dedicado no backend que devolva já a contagem agregada.
+ */
+
+export async function contarProdutosPorCategoria(categoriaId) {
+    const response = await api.get("/api/produtos", {
+        params: {
+            categoriaId,
+            page: 0,
+            size: 1,
+        },
+    });
+
+    return response.data.page?.totalElements ?? 0;
+}

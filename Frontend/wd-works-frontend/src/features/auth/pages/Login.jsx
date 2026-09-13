@@ -178,6 +178,16 @@ function Login() {
 
                         </div>
 
+                        <div className="auth-forgot">
+                            <span>
+
+                            </span>
+                            <Link to="/recuperar-senha">
+                                Esqueceu a sua senha?
+                            </Link>
+
+
+                        </div>
 
                         {/* ERRO */}
 
@@ -222,7 +232,9 @@ function Login() {
 
                     </div>
 
+
                 </div>
+
 
             </div>
 
