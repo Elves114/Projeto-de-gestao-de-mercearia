@@ -1,8 +1,8 @@
-
 import { useEffect, useState } from "react";
 import { listarEstoque } from "../services/estoqueService";
 import EstoqueTable from "../components/EstoqueTable";
 import { Link } from "react-router-dom";
+import { obterMensagemErro } from "../../../services/api";
 import "../style/Estoque.css";
 
 
@@ -149,11 +149,9 @@ function Estoque() {
                     error
                 );
 
-
                 if (!ativo) {
                     return;
                 }
-
 
                 setEstoques([]);
 
@@ -162,7 +160,7 @@ function Estoque() {
                 setTotalPaginas(0);
 
                 setErro(
-                    "Não foi possível carregar o estoque."
+                    obterMensagemErro(error)
                 );
 
             } finally {
@@ -172,7 +170,6 @@ function Estoque() {
                 }
 
             }
-
         }
 
 

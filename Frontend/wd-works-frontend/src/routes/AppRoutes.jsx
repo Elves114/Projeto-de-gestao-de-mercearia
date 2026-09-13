@@ -21,6 +21,9 @@ import EditarUsuario from "../features/usuarios/pages/EditarUsuario";
 import Cadastro from "../features/auth/pages/Cadastro";
 import MovimentosStock from "../features/estoque/pages/MovimentoStock";
 import AlertasStock from "../features/alertaStock/pages/AlertaStock";
+import RecuperarSenha from "../features/auth/pages/RecuperarSenha";
+import RedefinirSenha from "../features/auth/pages/RedefinirSenha";
+import Perfil from "../features/perfil/pages/Perfil";
 import Inicio from "./Inicio";
 
 
@@ -44,6 +47,15 @@ function AppRoutes() {
                 <Route
                     path="/cadastro"
                     element={<Cadastro />}
+                />
+                <Route
+                    path="/recuperar-senha"
+                    element={<RecuperarSenha />}
+                />
+
+                <Route
+                    path="/redefinir-senha"
+                    element={<RedefinirSenha />}
                 />
 
 
@@ -126,6 +138,11 @@ function AppRoutes() {
                             <Route
                                 path="/auditoria"
                                 element={<Auditoria />}
+                            />
+
+                            <Route
+                                path="/perfil"
+                                element={<Perfil />}
                             />
 
                         </Route>

@@ -1,9 +1,12 @@
-
 import { useEffect, useState } from "react";
 
 import {
     listarMovimentosStock
 } from "../services/MovimentoStockService";
+
+import {
+    obterMensagemErro
+} from "../../../services/api";
 
 import "../style/MovimentoStock.css";
 
@@ -113,7 +116,7 @@ function MovimentosStock() {
                 }
 
                 setErro(
-                    "Não foi possível carregar o histórico de stock."
+                    obterMensagemErro(error)
                 );
 
             } finally {
@@ -542,7 +545,7 @@ function MovimentosStock() {
                                     onClick={proximaPagina}
                                     disabled={
                                         pagina >=
-                                            totalPaginas - 1 ||
+                                        totalPaginas - 1 ||
                                         carregando
                                     }
                                 >

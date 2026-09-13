@@ -4,6 +4,10 @@ import { Link } from "react-router-dom";
 import { listarVendas } from "../services/vendaService";
 import VendaTabela from "../components/VendaTabela";
 
+import {
+    obterMensagemErro
+} from "../../../services/api";
+
 import "../style/Venda.css";
 
 
@@ -66,6 +70,8 @@ function Vendas() {
 
     const [filtrosAplicados, setFiltrosAplicados] =
         useState({});
+
+        
 
 
     /*
@@ -149,7 +155,7 @@ function Vendas() {
                 );
 
                 setErro(
-                    "Não foi possível carregar as vendas."
+                    obterMensagemErro(error)
                 );
 
             } finally {

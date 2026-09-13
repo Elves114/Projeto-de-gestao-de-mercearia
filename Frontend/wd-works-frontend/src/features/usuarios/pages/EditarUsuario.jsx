@@ -6,6 +6,7 @@ import {
     buscarUsuario,
     atualizarUsuario
 } from "../services/usuarioService";
+import { obterMensagemErro } from "../../../services/api";
 import "../style/Usuario.css";
 
 
@@ -94,9 +95,8 @@ function EditarUsuario() {
             console.error(error);
 
             setErro(
-                "Não foi possível atualizar o usuário."
+                obterMensagemErro(error)
             );
-
         } finally {
 
             setSalvando(false);

@@ -1,109 +1,304 @@
 /* ============================================================
-   EDIÇÃO INLINE DO UTILIZADOR
+   USUARIO.CSS
+   Página de gestão de utilizadores
+   Identidade: WD Works — Light + Candy Blue
+   ============================================================ */
+
+
+/* ============================================================
+   VARIÁVEIS
+   ============================================================ */
+
+:root {
+    /* Paleta */
+    --usuario-primary: #00aeef;
+    --usuario-primary-dark: #008fc5;
+    --usuario-primary-soft: #e0f2fe;
+    --usuario-primary-glow: rgba(0, 174, 239, 0.18);
+
+    --usuario-text: #0f172a;
+    --usuario-text-soft: #475569;
+    --usuario-text-muted: #94a3b8;
+
+    --usuario-bg: #f4f7fb;
+    --usuario-bg-soft: #f8fafc;
+    --usuario-border: #e5eaf1;
+    --usuario-border-soft: #eef2f7;
+
+    --usuario-success: #16a34a;
+    --usuario-success-soft: #ecfdf3;
+    --usuario-warning: #d97706;
+    --usuario-danger: #dc2626;
+    --usuario-danger-soft: #fef2f2;
+
+    /* Cores semânticas para perfis */
+    --role-funcionario: #008fc5;
+    --role-funcionario-bg: rgba(0, 174, 239, 0.10);
+    --role-funcionario-border: rgba(0, 174, 239, 0.20);
+
+    --role-gerente: #7c3aed;
+    --role-gerente-bg: rgba(124, 58, 237, 0.10);
+    --role-gerente-border: rgba(124, 58, 237, 0.20);
+
+    --role-admin: #6d28d9;
+    --role-admin-bg: rgba(109, 40, 217, 0.12);
+    --role-admin-border: rgba(109, 40, 217, 0.22);
+
+    /* Sombras */
+    --usuario-shadow-sm: 0 2px 6px rgba(15, 23, 42, 0.04);
+    --usuario-shadow:
+        0 1px 2px rgba(15, 23, 42, 0.04),
+        0 4px 14px rgba(15, 23, 42, 0.04);
+
+    /* Motion */
+    --usuario-ease: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    --usuario-ease-bounce: 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+/* ============================================================
+   LINHA DA TABELA
    ============================================================ */
 
 .usuario-row {
     transition:
-        background var(--sb-transition, 180ms ease),
-        transform var(--sb-transition, 180ms ease);
+        background var(--usuario-ease),
+        box-shadow var(--usuario-ease);
 }
 
-.usuario-row-editando {
-    background: rgba(255, 255, 255, 0.92);
+.usuario-row:hover {
+    background: #fafcff;
 }
+
+/* Linha em modo de edição — acento Candy Blue à esquerda */
+.usuario-row-editando {
+    background: var(--usuario-bg-soft);
+}
+
+.usuario-row-editando td:first-child {
+    box-shadow: inset 3px 0 0 var(--usuario-primary);
+}
+
+
+/* ============================================================
+   EDIÇÃO INLINE
+   ============================================================ */
 
 .usuario-inline-edit {
-    animation: usuarioInlineExpand 220ms cubic-bezier(.22, 1, .36, 1);
-    padding: 20px;
+    padding: 20px 22px;
+
+    animation: usuarioInlineExpand
+        260ms var(--usuario-ease-bounce);
+
     will-change: transform, opacity;
 }
 
 @keyframes usuarioInlineExpand {
     from {
         opacity: 0;
-        transform: scale(0.97); /* Suavizado de 0.96 para evitar efeito tremido */
+        transform: translateY(-6px) scale(0.98);
     }
     to {
         opacity: 1;
-        transform: scale(1);
+        transform: translateY(0) scale(1);
     }
 }
 
-/* Melhorado com Auto-Fit e Container Queries implícitos para não quebrar em ecrãs médios */
+
+/* ============================================================
+   CAMPOS — GRID
+   ============================================================ */
+
 .inline-edit-fields {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+
+    /*
+     * Nome estreito, email largo, perfil estreito,
+     * preview do badge ocupa o que sobrar.
+     */
+    grid-template-columns:
+        minmax(180px, 1fr)
+        minmax(200px, 1.4fr)
+        minmax(160px, 0.9fr)
+        auto;
+
     gap: 16px;
     align-items: end;
 }
 
-/* Força o botão de ações a ocupar a linha toda se o ecrã encolher demais */
-@media (max-width: 768px) {
+@media (max-width: 900px) {
+    .inline-edit-fields {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .inline-role-preview {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 600px) {
     .inline-edit-fields {
         grid-template-columns: 1fr;
     }
+
+    .inline-role-preview {
+        grid-column: auto;
+    }
 }
+
+
+/* ============================================================
+   CAMPO INDIVIDUAL
+   ============================================================ */
 
 .inline-field {
     display: flex;
     flex-direction: column;
     gap: 7px;
+    min-width: 0;
 }
 
 .inline-field label {
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 800;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--sb-text-muted, #8a94a6);
+    color: var(--usuario-text-muted);
 }
 
 .inline-field input,
 .inline-field select {
     width: 100%;
     min-height: 42px;
-    padding-inline: 13px;
+    padding: 0 13px;
+    box-sizing: border-box;
 
-    border: 1px solid rgba(22, 32, 51, 0.12);
+    border: 1px solid var(--usuario-border);
     border-radius: 10px;
     background: #ffffff;
+
+    color: var(--usuario-text);
     font: inherit;
+    font-size: 13px;
+    font-weight: 500;
+
     outline: none;
 
     transition:
-        border-color 160ms ease,
-        box-shadow 160ms ease,
-        transform 160ms ease;
+        border-color var(--usuario-ease),
+        box-shadow var(--usuario-ease),
+        background var(--usuario-ease);
+}
+
+.inline-field input::placeholder {
+    color: var(--usuario-text-muted);
+}
+
+.inline-field input:hover,
+.inline-field select:hover {
+    border-color: #cbd5e1;
 }
 
 .inline-field input:focus,
 .inline-field select:focus {
-    border-color: var(--sb-primary, #00aeef);
-    box-shadow: 0 0 0 3px rgba(0, 174, 239, 0.12);
-    transform: translateY(-1px);
+    border-color: var(--usuario-primary);
+    background: #ffffff;
+    box-shadow: 0 0 0 3px var(--usuario-primary-glow);
 }
+
+/* Select com seta customizada */
+.inline-field select {
+    appearance: none;
+    -webkit-appearance: none;
+    padding-right: 36px;
+
+    background-image:
+        linear-gradient(45deg, transparent 50%, #64748b 50%),
+        linear-gradient(135deg, #64748b 50%, transparent 50%);
+    background-position:
+        calc(100% - 16px) 50%,
+        calc(100% - 11px) 50%;
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+
+    cursor: pointer;
+}
+
+
+/* ============================================================
+   PREVIEW DO PERFIL
+   ============================================================ */
 
 .inline-role-preview {
     display: flex;
     align-items: center;
     height: 42px;
+    padding-bottom: 0;
 }
+
+/*
+ * Nota: se um dia adicionares um <label> ao preview,
+ * ele vai precisar de alinhamento igual ao resto.
+ * Como está agora, o preview já se alinha pela base
+ * graças ao align-items: end do grid.
+ */
+
+
+/* ============================================================
+   AÇÕES DA EDIÇÃO
+   ============================================================ */
 
 .inline-edit-actions {
     display: flex;
     justify-content: flex-end;
+    align-items: center;
     gap: 10px;
     margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid var(--usuario-border-soft);
 }
+
+
+/* ============================================================
+   ERRO DA EDIÇÃO
+   ============================================================ */
 
 .inline-edit-error {
     margin-top: 12px;
-    padding: 10px 12px;
+    padding: 10px 14px;
+
+    border: 1px solid rgba(220, 38, 38, 0.18);
     border-radius: 9px;
-    background: rgba(220, 53, 69, 0.08);
-    color: #c62828;
-    font-size: 13px;
+    background: var(--usuario-danger-soft);
+    color: var(--usuario-danger);
+
+    font-size: 12px;
     font-weight: 600;
+
+    animation: usuarioErrorIn 240ms var(--usuario-ease-bounce);
+}
+
+@keyframes usuarioErrorIn {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* ============================================================
+   AÇÕES DA LINHA (fora da edição)
+   ============================================================ */
+
+.usuario-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
 
@@ -115,40 +310,70 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 6px;
 
-    min-height: 30px;
-    padding: 5px 11px;
+    min-height: 28px;
+    padding: 4px 11px;
+
+    border: 1px solid transparent;
     border-radius: 999px;
 
     font-size: 11px;
     font-weight: 800;
+    letter-spacing: 0.03em;
     white-space: nowrap;
 
     transition:
-        background-color 220ms ease,
-        color 220ms ease,
-        box-shadow 220ms ease,
-        transform 220ms cubic-bezier(.22, 1, .36, 1);
+        background var(--usuario-ease),
+        border-color var(--usuario-ease),
+        color var(--usuario-ease),
+        box-shadow var(--usuario-ease),
+        transform var(--usuario-ease-bounce);
 }
 
-/* Uniformizado com o tom CandyBlue do sistema */
-.role-funcionario {
-    background: rgba(0, 174, 239, 0.10);
-    color: var(--sb-active-color, #008fc5);
+.role-badge::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
 }
+
+
+/* FUNCIONÁRIO — Candy Blue */
+
+.role-funcionario {
+    background: var(--role-funcionario-bg);
+    border-color: var(--role-funcionario-border);
+    color: var(--role-funcionario);
+}
+
+
+/* GERENTE — Violeta */
 
 .role-gerente {
-    background: rgba(139, 92, 246, 0.12);
-    color: #6d28d9;
+    background: var(--role-gerente-bg);
+    border-color: var(--role-gerente-border);
+    color: var(--role-gerente);
 }
+
+
+/* ADMIN — Violeta profundo */
 
 .role-admin {
-    background: rgba(168, 85, 247, 0.14);
-    color: #7c3aed;
+    background: var(--role-admin-bg);
+    border-color: var(--role-admin-border);
+    color: var(--role-admin);
 }
 
+
+/* ============================================================
+   MORPH (transição entre perfis)
+   ============================================================ */
+
 .role-badge-morph {
-    animation: roleMorph 260ms cubic-bezier(.22, 1, .36, 1);
+    animation: roleMorph 280ms var(--usuario-ease-bounce);
     will-change: transform, opacity, filter;
 }
 
@@ -160,7 +385,7 @@
     }
     55% {
         opacity: 1;
-        transform: translateX(2px) scale(1.04);
+        transform: translateX(2px) scale(1.05);
         filter: blur(0);
     }
     100% {
@@ -176,10 +401,10 @@
 
 .password-strength {
     margin-top: 10px;
-    animation: passwordStrengthEnter 180ms ease-out;
+    animation: passwordStrengthIn 200ms var(--usuario-ease-bounce);
 }
 
-@keyframes passwordStrengthEnter {
+@keyframes passwordStrengthIn {
     from {
         opacity: 0;
         transform: translateY(-3px);
@@ -195,36 +420,58 @@
     height: 5px;
     overflow: hidden;
     border-radius: 999px;
-    background: rgba(22, 32, 51, 0.08);
+    background: var(--usuario-border-soft);
 }
 
 .password-strength-bar {
     height: 100%;
     border-radius: inherit;
     will-change: width;
+
     transition:
-        width 300ms cubic-bezier(.22, 1, .36, 1),
+        width 300ms var(--usuario-ease-bounce),
         background-color 250ms ease,
         box-shadow 250ms ease;
 }
 
-.senha-fraca { color: #dc3545; }
-.password-strength-bar.senha-fraca {
-    background: #dc3545;
-    box-shadow: 0 0 8px rgba(220, 53, 69, 0.25);
+
+/* FRACA */
+
+.senha-fraca {
+    color: var(--usuario-danger);
 }
 
-.senha-media { color: #d97706; } /* Tom de laranja com melhor contraste acessível */
+.password-strength-bar.senha-fraca {
+    background: var(--usuario-danger);
+    box-shadow: 0 0 8px rgba(220, 38, 38, 0.25);
+}
+
+
+/* MÉDIA */
+
+.senha-media {
+    color: var(--usuario-warning);
+}
+
 .password-strength-bar.senha-media {
-    background: #d97706;
+    background: var(--usuario-warning);
     box-shadow: 0 0 9px rgba(217, 119, 6, 0.25);
 }
 
-.senha-forte { color: #16a34a; } /* Verde padronizado */
-.password-strength-bar.senha-forte {
-    background: #16a34a;
-    box-shadow: 0 0 8px rgba(22, 163, 74, 0.3);
+
+/* FORTE */
+
+.senha-forte {
+    color: var(--usuario-success);
 }
+
+.password-strength-bar.senha-forte {
+    background: var(--usuario-success);
+    box-shadow: 0 0 8px rgba(22, 163, 74, 0.30);
+}
+
+
+/* INFO */
 
 .password-strength-info {
     display: flex;
@@ -234,7 +481,7 @@
 }
 
 .password-strength-info span {
-    color: var(--sb-text-muted, #8a94a6);
+    color: var(--usuario-text-muted);
 }
 
 .password-strength-info strong {
@@ -254,29 +501,37 @@
     margin-bottom: 26px;
     padding: 6px;
 
-    border: 1px solid rgba(22, 32, 51, 0.08);
+    border: 1px solid var(--usuario-border);
     border-radius: 14px;
     background: #ffffff;
-    box-shadow: 0 4px 16px rgba(22, 32, 51, 0.045);
+    box-shadow: var(--usuario-shadow);
 
     transition:
-        border-color 180ms ease,
-        box-shadow 180ms ease,
-        transform 180ms ease;
+        border-color var(--usuario-ease),
+        box-shadow var(--usuario-ease),
+        transform var(--usuario-ease-bounce);
 }
 
 .usuario-search:hover {
-    border-color: rgba(22, 32, 51, 0.15);
-    box-shadow: 0 7px 22px rgba(22, 32, 51, 0.065);
+    border-color: #cbd5e1;
+    box-shadow:
+        0 2px 4px rgba(15, 23, 42, 0.05),
+        0 8px 24px rgba(15, 23, 42, 0.06);
 }
 
 .usuario-search:focus-within {
-    border-color: rgba(0, 174, 239, 0.4);
+    border-color: rgba(0, 174, 239, 0.45);
     box-shadow:
-        0 7px 24px rgba(22, 32, 51, 0.06),
-        0 0 0 4px rgba(0, 174, 239, 0.08);
+        0 2px 4px rgba(15, 23, 42, 0.04),
+        0 8px 24px rgba(15, 23, 42, 0.06),
+        0 0 0 4px var(--usuario-primary-glow);
     transform: translateY(-1px);
 }
+
+
+/* ============================================================
+   INPUT DA PESQUISA
+   ============================================================ */
 
 .usuario-search-input-wrapper {
     position: relative;
@@ -286,45 +541,69 @@
     min-width: 0;
 }
 
-/* Ícone de Pesquisa Nativo SVG/Font-icon (Substituindo a Lupa CSS Manual) */
+
+/* ÍCONE (Lupa) */
+
 .usuario-search-icon {
     position: absolute;
     left: 14px;
+
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #8993a4;
-    font-size: 18px;
+
+    width: 20px;
+    height: 20px;
+
+    color: var(--usuario-text-muted);
+    font-size: 20px;
+    line-height: 1;
+
     pointer-events: none;
-    transition: color 180ms ease, transform 180ms ease;
+
+    transition:
+        color var(--usuario-ease),
+        transform var(--usuario-ease-bounce);
+}
+
+/*
+ * Ícone nativo (caso o JSX não envie conteúdo).
+ * Basta o <span className="usuario-search-icon" /> vazio.
+ */
+.usuario-search-icon::before {
+    content: "⌕";
 }
 
 .usuario-search:focus-within .usuario-search-icon {
-    color: var(--sb-primary, #00aeef);
-    transform: scale(1.05);
+    color: var(--usuario-primary);
+    transform: scale(1.08);
 }
+
+
+/* INPUT */
 
 .usuario-search-input-wrapper input {
     width: 100%;
     height: 46px;
-    padding-inline: 42px; /* Propriedade Lógica */
+    padding: 0 42px;
+
     border: none;
     outline: none;
     background: transparent;
 
-    color: var(--sb-text-dark, #111827);
+    color: var(--usuario-text);
     font-family: inherit;
     font-size: 14px;
     font-weight: 500;
 }
 
 .usuario-search-input-wrapper input::placeholder {
-    color: #9aa3b2;
+    color: var(--usuario-text-muted);
     transition: color 160ms ease;
 }
 
 .usuario-search-input-wrapper input:focus::placeholder {
-    color: #b1b8c4;
+    color: #cbd5e1;
 }
 
 
@@ -334,7 +613,8 @@
 
 .usuario-search-clear {
     position: absolute;
-    right: 13px;
+    right: 12px;
+
     display: flex;
     align-items: center;
     justify-content: center;
@@ -345,23 +625,287 @@
 
     border: none;
     border-radius: 50%;
-    background: #f0f2f5;
-    color: #70798a;
+    background: var(--usuario-border-soft);
+    color: var(--usuario-text-soft);
+
     font-size: 16px;
+    line-height: 1;
+
     cursor: pointer;
 
     transition:
-        background-color 150ms ease,
-        color 150ms ease,
-        transform 150ms ease;
+        background var(--usuario-ease),
+        color var(--usuario-ease),
+        transform var(--usuario-ease-bounce);
 }
 
 .usuario-search-clear:hover {
-    background: #e7eaf0;
-    color: #172033;
+    background: var(--usuario-primary-soft);
+    color: var(--usuario-primary-dark);
     transform: scale(1.08);
 }
 
 .usuario-search-clear:active {
     transform: scale(0.95);
+}
+
+
+/* ============================================================
+   ACESSIBILIDADE
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .usuario-inline-edit,
+    .inline-edit-error,
+    .role-badge-morph,
+    .password-strength,
+    .usuario-search {
+        animation: none !important;
+    }
+
+    .usuario-row,
+    .inline-field input,
+    .inline-field select,
+    .role-badge,
+    .password-strength-bar,
+    .usuario-search,
+    .usuario-search-icon,
+    .usuario-search-clear {
+        transition: none !important;
+    }
+
+    .usuario-search:focus-within {
+        transform: none;
+    }
+
+    .usuario-search:focus-within .usuario-search-icon {
+        transform: none;
+    }
+
+    .usuario-search-clear:hover {
+        transform: none;
+    }
+}
+
+/* ============================================================
+   BOTÃO DE PESQUISA
+   ============================================================ */
+
+.usuario-search-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    min-height: 46px;
+    padding: 0 22px;
+    margin-left: 6px;
+
+    border: 1px solid var(--usuario-primary);
+    border-radius: 10px;
+
+    background: var(--usuario-primary);
+    color: #ffffff;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    box-shadow: 0 4px 12px rgba(0, 174, 239, 0.22);
+
+    transition:
+        background var(--usuario-ease),
+        border-color var(--usuario-ease),
+        box-shadow var(--usuario-ease),
+        transform var(--usuario-ease-bounce);
+}
+
+.usuario-search-button:hover:not(:disabled) {
+    background: var(--usuario-primary-dark);
+    border-color: var(--usuario-primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(0, 174, 239, 0.30);
+}
+
+.usuario-search-button:active:not(:disabled) {
+    transform: translateY(0) scale(0.98);
+    box-shadow: 0 4px 10px rgba(0, 174, 239, 0.22);
+}
+
+.usuario-search-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+
+/* ============================================================
+   SPINNER DO BOTÃO
+   ============================================================ */
+
+.search-spinner {
+    display: inline-block;
+    width: 13px;
+    height: 13px;
+
+    border: 2px solid rgba(255, 255, 255, 0.35);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+
+    animation: usuarioSearchSpin 700ms linear infinite;
+}
+
+@keyframes usuarioSearchSpin {
+    to { transform: rotate(360deg); }
+}
+
+
+/* ============================================================
+   INFO DA PESQUISA ACTIVA
+   ============================================================ */
+
+.usuario-search-info {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    margin: -10px 0 20px;
+    padding: 8px 14px;
+
+    border: 1px solid rgba(0, 174, 239, 0.18);
+    border-radius: 999px;
+    background: var(--usuario-primary-soft);
+
+    color: var(--usuario-primary-dark);
+    font-size: 12px;
+    font-weight: 600;
+
+    animation: usuarioSearchInfoIn
+        240ms var(--usuario-ease-bounce);
+}
+
+.usuario-search-info strong {
+    font-weight: 800;
+    color: var(--usuario-primary-dark);
+}
+
+@keyframes usuarioSearchInfoIn {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.search-active-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+
+    background: var(--usuario-primary);
+
+    animation: usuarioSearchDotPulse
+        1.8s ease-in-out infinite;
+}
+
+@keyframes usuarioSearchDotPulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(0, 174, 239, 0);
+        opacity: 0.7;
+    }
+    50% {
+        box-shadow: 0 0 0 4px rgba(0, 174, 239, 0.15);
+        opacity: 1;
+    }
+}
+
+
+/* ============================================================
+   ESTADO VAZIO (lista sem resultados)
+   ============================================================ */
+
+.usuarios-page .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    min-height: 200px;
+    padding: 32px 24px;
+
+    border: 1px dashed #cbd5e1;
+    border-radius: 14px;
+    background: #fafcff;
+
+    text-align: center;
+}
+
+.usuarios-page .empty-state h2 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: var(--usuario-text);
+}
+
+.usuarios-page .empty-state p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--usuario-text-muted);
+    max-width: 380px;
+    line-height: 1.5;
+}
+
+
+/* ============================================================
+   MENSAGEM DE ERRO (fallback local)
+   ============================================================ */
+
+.usuarios-page .message.message-error {
+    padding: 12px 16px;
+    margin-bottom: 18px;
+
+    border: 1px solid rgba(220, 38, 38, 0.18);
+    border-radius: 10px;
+    background: var(--usuario-danger-soft);
+    color: var(--usuario-danger);
+
+    font-size: 13px;
+    font-weight: 600;
+
+    animation: usuarioErrorIn 240ms var(--usuario-ease-bounce);
+}
+
+
+/* ============================================================
+   RESPONSIVO — botão da pesquisa
+   ============================================================ */
+
+@media (max-width: 640px) {
+    .usuario-search {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 8px;
+        gap: 8px;
+    }
+
+    .usuario-search-button {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .usuario-search-info {
+        font-size: 11px;
+        padding: 6px 12px;
+    }
 }

@@ -1,6 +1,6 @@
 
-import { useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/useAuth";
+import { Link, useLocation } from "react-router-dom";
 import "../style/Header.css";
 
 function Header() {
@@ -81,7 +81,11 @@ function Header() {
                 <div className="header-divider" />
 
 
-                <div className="header-user">
+                                <Link
+                    to="/perfil"
+                    className="header-user"
+                    aria-label="Ir para o meu perfil"
+                >
 
                     <div className="header-user-avatar">
                         {inicial}
@@ -103,7 +107,7 @@ function Header() {
                         ▾
                     </span>
 
-                </div>
+                </Link>
 
             </div>
 

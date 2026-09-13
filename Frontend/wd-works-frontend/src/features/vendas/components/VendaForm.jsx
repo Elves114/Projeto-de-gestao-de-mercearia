@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { criarVenda } from "../services/vendaService";
+import { obterMensagemErro } from "../../../services/api";
 import ItemVendaForm from "./ItemVendaForm";
 
 function VendaForm() {
@@ -105,9 +106,7 @@ function VendaForm() {
                 error
             );
 
-            setErro(
-                "Não foi possível registar a venda."
-            );
+            setErro(obterMensagemErro(error));
 
         } finally {
 
@@ -153,10 +152,9 @@ function VendaForm() {
 
         <div
             className={
-                `venda-form ${
-                    formularioEmFoco
-                        ? "venda-form-focus"
-                        : ""
+                `venda-form ${formularioEmFoco
+                    ? "venda-form-focus"
+                    : ""
                 }`
             }
         >
@@ -204,10 +202,9 @@ function VendaForm() {
 
             <section
                 className={
-                    `sale-items-section ${
-                        formularioEmFoco
-                            ? "sale-items-focus-secondary"
-                            : ""
+                    `sale-items-section ${formularioEmFoco
+                        ? "sale-items-focus-secondary"
+                        : ""
                     }`
                 }
             >

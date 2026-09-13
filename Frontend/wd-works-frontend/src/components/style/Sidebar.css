@@ -1,6 +1,6 @@
 /* =========================================================
    WD WORKS — SIDEBAR
-   Identidade: Onyx + CandyBlue
+   Identidade: Onyx + Candy Blue
    ========================================================= */
 
 :root {
@@ -13,11 +13,19 @@
     --sb-active-bg-hover: rgba(0, 174, 239, 0.14);
     --sb-active-color: #008fc5;
     --sb-primary: #00aeef;
-    
+    --sb-primary-glow: rgba(0, 174, 239, 0.35);
+
     --sb-width-open: 260px;
     --sb-width-closed: 78px;
-    --sb-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+    --sb-transition: 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    --sb-ease-bounce: cubic-bezier(0.22, 1, 0.36, 1);
 }
+
+
+/* =========================================================
+   SIDEBAR — CONTAINER
+   ========================================================= */
 
 .sidebar {
     position: fixed;
@@ -34,7 +42,10 @@
 
     background: var(--sb-bg);
     border-right: 1px solid var(--sb-border);
-    box-shadow: 8px 0 30px rgba(20, 30, 50, 0.04);
+
+    box-shadow:
+        8px 0 30px rgba(20, 30, 50, 0.04),
+        1px 0 0 rgba(20, 30, 50, 0.02);
 
     z-index: 1000;
     will-change: width;
@@ -94,6 +105,9 @@
     transform: scale(0.98);
 }
 
+
+/* LOGO */
+
 .sidebar-logo {
     width: 42px;
     height: 42px;
@@ -104,29 +118,48 @@
     justify-content: center;
 
     border-radius: 13px;
-    background: var(--sb-text-dark);
+
+    background: linear-gradient(
+        135deg,
+        #1e293b 0%,
+        #0f172a 100%
+    );
+
     color: #ffffff;
 
     font-size: 19px;
     font-weight: 800;
+    letter-spacing: -0.5px;
 
-    box-shadow: 0 8px 18px rgba(17, 24, 39, 0.16);
+    box-shadow:
+        0 8px 18px rgba(17, 24, 39, 0.16),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
 
     transition:
-        transform var(--sb-transition),
-        box-shadow var(--sb-transition);
+        transform 320ms var(--sb-ease-bounce),
+        box-shadow 320ms ease;
 }
 
 .sidebar-brand:hover .sidebar-logo {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 22px rgba(17, 24, 39, 0.20);
+    transform: translateY(-2px) rotate(-4deg);
+    box-shadow:
+        0 12px 24px rgba(17, 24, 39, 0.22),
+        0 0 0 4px rgba(0, 174, 239, 0.08);
 }
+
+
+/* TEXTO DA MARCA */
 
 .sidebar-brand-text {
     display: flex;
     flex-direction: column;
     gap: 2px;
     min-width: 0;
+
+    transition:
+        opacity 180ms ease,
+        width 220ms ease,
+        visibility 220ms ease;
 }
 
 .sidebar-brand-text strong {
@@ -157,6 +190,7 @@
     overflow-x: hidden;
 
     padding: 2px 2px 14px;
+
     scrollbar-width: thin;
     scrollbar-color: #dce3ec transparent;
 }
@@ -185,15 +219,42 @@
     gap: 8px;
 }
 
+
+/* TÍTULO DO GRUPO + linha gradiente ao lado */
+
 .sidebar-group-title {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
     padding: 0 11px;
+
     color: #9aa4b2;
 
     font-size: 10px;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.9px;
+
+    transition:
+        opacity 180ms ease,
+        width 220ms ease,
+        visibility 220ms ease;
 }
+
+.sidebar-group-title::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+
+    background: linear-gradient(
+        to right,
+        var(--sb-border),
+        transparent
+    );
+}
+
 
 .sidebar-group-links {
     display: flex;
@@ -229,6 +290,9 @@
         transform var(--sb-transition);
 }
 
+
+/* ICONE DO LINK */
+
 .sidebar-link-icon {
     width: 24px;
     height: 24px;
@@ -239,12 +303,24 @@
     justify-content: center;
 
     color: #7c8797;
-    font-size: 17px;
 
     transition:
         color var(--sb-transition),
-        transform var(--sb-transition);
+        transform 280ms var(--sb-ease-bounce);
 }
+
+
+/* LABEL DO LINK */
+
+.sidebar-link-label {
+    transition:
+        opacity 180ms ease,
+        width 220ms ease,
+        visibility 220ms ease;
+}
+
+
+/* HOVER */
 
 .sidebar-link:hover {
     background: #f4f7fb;
@@ -254,7 +330,7 @@
 
 .sidebar-link:hover .sidebar-link-icon {
     color: var(--sb-text-dark);
-    transform: scale(1.08);
+    transform: scale(1.1) rotate(-3deg);
 }
 
 
@@ -268,6 +344,9 @@
     font-weight: 700;
 }
 
+
+/* Indicador Candy Blue animado */
+
 .sidebar-link.active::before {
     content: "";
     position: absolute;
@@ -278,6 +357,27 @@
 
     border-radius: 0 4px 4px 0;
     background: var(--sb-primary);
+
+    box-shadow:
+        0 0 10px var(--sb-primary-glow),
+        0 0 20px rgba(0, 174, 239, 0.15);
+
+    transform-origin: center;
+    animation: sidebarIndicatorIn
+        380ms var(--sb-ease-bounce) both;
+}
+
+@keyframes sidebarIndicatorIn {
+
+    from {
+        opacity: 0;
+        transform: scaleY(0.2);
+    }
+
+    to {
+        opacity: 1;
+        transform: scaleY(1);
+    }
 }
 
 .sidebar-link.active .sidebar-link-icon {
@@ -290,21 +390,54 @@
     transform: none;
 }
 
+.sidebar-link.active:hover .sidebar-link-icon {
+    transform: scale(1.08);
+}
+
 
 /* =========================================================
    UTILIZADOR
    ========================================================= */
 
 .sidebar-user {
+    position: relative;
+
     display: flex;
     align-items: center;
     gap: 11px;
 
     margin-top: 10px;
     padding: 12px 10px;
-    border-top: 1px solid #edf1f5;
+    border-radius: 12px;
+
     white-space: nowrap;
+
+    transition: background 220ms ease;
 }
+
+/* Divisória gradiente em cima */
+.sidebar-user::before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: 10px;
+    right: 10px;
+    height: 1px;
+
+    background: linear-gradient(
+        to right,
+        transparent,
+        var(--sb-border),
+        transparent
+    );
+}
+
+.sidebar-user:hover {
+    background: #f8fafc;
+}
+
+
+/* AVATAR */
 
 .sidebar-user-avatar {
     width: 39px;
@@ -316,25 +449,53 @@
     justify-content: center;
 
     border-radius: 50%;
-    background: var(--sb-text-dark);
+
+    background: linear-gradient(
+        135deg,
+        #334155 0%,
+        #0f172a 100%
+    );
+
     color: #ffffff;
 
     font-size: 14px;
     font-weight: 800;
 
-    box-shadow: 0 5px 14px rgba(17, 24, 39, 0.14);
+    box-shadow:
+        0 5px 14px rgba(17, 24, 39, 0.14),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+
+    transition:
+        transform 260ms var(--sb-ease-bounce),
+        box-shadow 260ms ease;
 }
+
+.sidebar-user:hover .sidebar-user-avatar {
+    transform: scale(1.04);
+    box-shadow:
+        0 8px 18px rgba(17, 24, 39, 0.18),
+        0 0 0 3px rgba(0, 174, 239, 0.10);
+}
+
+
+/* INFO DO UTILIZADOR */
 
 .sidebar-user-info {
     display: flex;
     flex-direction: column;
     gap: 2px;
     min-width: 0;
+
+    transition:
+        opacity 180ms ease,
+        width 220ms ease,
+        visibility 220ms ease;
 }
 
 .sidebar-user-info strong {
     max-width: 150px;
     overflow: hidden;
+
     color: #1f2937;
 
     font-size: 12px;
@@ -350,23 +511,28 @@
 
 
 /* =========================================================
-   ESTADOS DE ABERTURA / FECHO
+   ESTADO FECHADO
    ========================================================= */
 
 .sidebar:not(.open) {
     width: var(--sb-width-closed);
 }
 
-/* Esconde textos de forma suave e acessível */
+
+/* Esconde textos suavemente */
+
 .sidebar:not(.open) .sidebar-brand-text,
 .sidebar:not(.open) .sidebar-group-title,
 .sidebar:not(.open) .sidebar-user-info,
-.sidebar:not(.open) .sidebar-link span:not(.sidebar-link-icon) {
+.sidebar:not(.open) .sidebar-link-label {
     opacity: 0;
     width: 0;
     visibility: hidden;
     pointer-events: none;
 }
+
+
+/* Centraliza tudo */
 
 .sidebar:not(.open) .sidebar-brand,
 .sidebar:not(.open) .sidebar-link,
@@ -377,7 +543,6 @@
     gap: 0;
 }
 
-/* Centraliza perfeitamente a marca quando fechada */
 .sidebar:not(.open) .sidebar-brand {
     width: 100%;
     margin-left: 0;
@@ -389,18 +554,41 @@
 }
 
 
-/* =========================================================
-   ANIMAÇÕES
-   ========================================================= */
+/* Esconde título de grupo */
 
-.sidebar-brand-text,
-.sidebar-group-title,
-.sidebar-user-info,
-.sidebar-link span {
-    transition:
-        opacity 0.15s ease,
-        width 0.2s ease,
-        visibility 0.2s ease;
+.sidebar:not(.open) .sidebar-group-title {
+    display: none;
+}
+
+
+/* Divisória entre grupos quando fechada */
+
+.sidebar:not(.open) .sidebar-group
+    + .sidebar-group {
+    position: relative;
+}
+
+.sidebar:not(.open) .sidebar-group
+    + .sidebar-group::before {
+    content: "";
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    width: 24px;
+    height: 1px;
+    background: var(--sb-border);
+}
+
+
+/* Divisória do utilizador encolhe */
+
+.sidebar:not(.open) .sidebar-user::before {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: 24px;
 }
 
 
@@ -409,12 +597,43 @@
    ========================================================= */
 
 @media (max-width: 900px) {
+
     .sidebar {
         width: var(--sb-width-closed);
+        box-shadow:
+            8px 0 30px rgba(20, 30, 50, 0.06);
     }
 
     .sidebar.open {
         width: var(--sb-width-open);
-        box-shadow: 10px 0 35px rgba(20, 30, 50, 0.12);
+        box-shadow:
+            10px 0 35px rgba(20, 30, 50, 0.12);
+    }
+}
+
+
+/* =========================================================
+   ACESSIBILIDADE
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .sidebar,
+    .sidebar-brand,
+    .sidebar-logo,
+    .sidebar-link,
+    .sidebar-link-icon,
+    .sidebar-user,
+    .sidebar-user-avatar,
+    .sidebar-link.active::before {
+        animation: none !important;
+        transition: none !important;
+    }
+
+    .sidebar-brand:hover .sidebar-logo,
+    .sidebar-link:hover,
+    .sidebar-link:hover .sidebar-link-icon,
+    .sidebar-user:hover .sidebar-user-avatar {
+        transform: none;
     }
 }

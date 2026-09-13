@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { pesquisarProdutos } from "../../produtos/services/produtoService";
+import { obterMensagemErro } from "../../../services/api";
 import "../style/NovaVenda.css";
 
 function ItemVendaForm({ onAdicionar }) {
@@ -11,48 +12,46 @@ function ItemVendaForm({ onAdicionar }) {
     const [carregando, setCarregando] = useState(false);
     const [erro, setErro] = useState("");
 
-   useEffect(() => {
-    if (!pesquisa.trim()) {
-        return;
-    }
-
-    let ativo = true;
-
-    const timeout = setTimeout(async () => {
-        try {
-            setCarregando(true);
-            setErro("");
-
-            const data = await pesquisarProdutos(
-                pesquisa.trim()
-            );
-
-            if (ativo) {
-                setProdutos(data.content);
-            }
-        } catch (error) {
-            console.error(
-                "Erro ao pesquisar produtos:",
-                error
-            );
-
-            if (ativo) {
-                setErro(
-                    "Não foi possível pesquisar os produtos."
-                );
-            }
-        } finally {
-            if (ativo) {
-                setCarregando(false);
-            }
+    useEffect(() => {
+        if (!pesquisa.trim()) {
+            return;
         }
-    }, 300);
 
-    return () => {
-        ativo = false;
-        clearTimeout(timeout);
-    };
-}, [pesquisa]);
+        let ativo = true;
+
+        const timeout = setTimeout(async () => {
+            try {
+                setCarregando(true);
+                setErro("");
+
+                const data = await pesquisarProdutos(
+                    pesquisa.trim()
+                );
+
+                if (ativo) {
+                    setProdutos(data.content);
+                }
+            } catch (error) {
+                console.error(
+                    "Erro ao pesquisar produtos:",
+                    error
+                );
+
+                if (ativo) {
+                    setErro(obterMensagemErro(error));
+                }
+            } finally {
+                if (ativo) {
+                    setCarregando(false);
+                }
+            }
+        }, 300);
+
+        return () => {
+            ativo = false;
+            clearTimeout(timeout);
+        };
+    }, [pesquisa]);
 
     function selecionarProduto(produto) {
         setProdutoSelecionado(produto);
