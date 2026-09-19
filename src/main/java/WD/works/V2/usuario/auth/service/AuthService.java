@@ -25,6 +25,7 @@ import WD.works.V2.usuario.entity.Usuario;
 import WD.works.V2.usuario.perfil.Perfil;
 import WD.works.V2.usuario.repository.UsuarioRepository;
 import WD.works.V2.usuario.service.UsuarioService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +40,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthService {
 
+    @Value("${app.frontend.url:http://localhost:5173}")
+    private String frontendUrl;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final EmpresaService empresaService;
@@ -206,9 +209,7 @@ public class AuthService {
                     String token =
                             tokenRecuperacaoSenhaService.criarToken(usuario);
 
-                    String link =
-                            "http://localhost:5173/redefinir-senha?token="
-                                    + token;
+                    String link = frontendUrl + "/redefinir-senha?token=" + token;
 
                     emailService.enviarRecuperacaoSenha(
                             usuario.getEmail(),
