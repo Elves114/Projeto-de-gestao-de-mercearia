@@ -7,29 +7,101 @@ import { useAuth } from "../../../contexts/useAuth";
 import "../styles/Auth.css";
 
 
+/* ============================================================
+   VALIDAÇÃO CLIENT-SIDE
+   ============================================================ */
+
+const REGEX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const REGEX_DIGITOS = /^\d+$/;
+
+function validarFormulario(formulario) {
+
+    const erros = {};
+
+    /* -------- Empresa -------- */
+
+    if (!formulario.nomeEmpresa.trim()) {
+        erros.nomeEmpresa = "O nome da empresa é obrigatório.";
+    } else if (formulario.nomeEmpresa.trim().length < 2) {
+        erros.nomeEmpresa = "O nome deve ter pelo menos 2 caracteres.";
+    } else if (formulario.nomeEmpresa.length > 150) {
+        erros.nomeEmpresa = "O nome não pode ultrapassar 150 caracteres.";
+    }
+
+    if (!formulario.nuit.trim()) {
+        erros.nuit = "O NUIT é obrigatório.";
+    } else if (!REGEX_DIGITOS.test(formulario.nuit)) {
+        erros.nuit = "O NUIT deve conter apenas dígitos.";
+    } else if (formulario.nuit.length !== 9) {
+        erros.nuit = "O NUIT deve conter exatamente 9 dígitos.";
+    }
+
+    if (!formulario.emailEmpresa.trim()) {
+        erros.emailEmpresa = "O email da empresa é obrigatório.";
+    } else if (!REGEX_EMAIL.test(formulario.emailEmpresa)) {
+        erros.emailEmpresa = "Informe um email válido.";
+    }
+
+    if (!formulario.contacto.trim()) {
+        erros.contacto = "O contacto é obrigatório.";
+    } else if (!REGEX_DIGITOS.test(formulario.contacto)) {
+        erros.contacto = "O contacto deve conter apenas dígitos.";
+    } else if (formulario.contacto.length !== 9) {
+        erros.contacto = "O contacto deve conter exatamente 9 dígitos.";
+    }
+
+    if (formulario.endereco && formulario.endereco.length > 255) {
+        erros.endereco = "O endereço não pode ultrapassar 255 caracteres.";
+    }
+
+    /* -------- Administrador -------- */
+
+    if (!formulario.nomeAdministrador.trim()) {
+        erros.nomeAdministrador = "O nome do administrador é obrigatório.";
+    } else if (formulario.nomeAdministrador.length > 150) {
+        erros.nomeAdministrador = "O nome não pode ultrapassar 150 caracteres.";
+    }
+
+    if (!formulario.emailAdministrador.trim()) {
+        erros.emailAdministrador = "O email do administrador é obrigatório.";
+    } else if (!REGEX_EMAIL.test(formulario.emailAdministrador)) {
+        erros.emailAdministrador = "Informe um email válido.";
+    }
+
+    if (!formulario.senhaAdministrador) {
+        erros.senhaAdministrador = "A senha é obrigatória.";
+    } else if (formulario.senhaAdministrador.length < 8) {
+        erros.senhaAdministrador = "A senha deve ter pelo menos 8 caracteres.";
+    } else if (formulario.senhaAdministrador.length > 100) {
+        erros.senhaAdministrador = "A senha não pode ultrapassar 100 caracteres.";
+    }
+
+    return erros;
+}
+
+
+/* ============================================================
+   COMPONENTE
+   ============================================================ */
+
 function Cadastro() {
 
     const navigate = useNavigate();
-
     const { login } = useAuth();
 
-
     const [formulario, setFormulario] = useState({
-
         nomeEmpresa: "",
         nuit: "",
         emailEmpresa: "",
         contacto: "",
         endereco: "",
-
         nomeAdministrador: "",
         emailAdministrador: "",
         senhaAdministrador: "",
-
     });
 
-
     const [erro, setErro] = useState("");
+    const [errosCampos, setErrosCampos] = useState({});
     const [carregando, setCarregando] = useState(false);
 
 
@@ -37,13 +109,18 @@ function Cadastro() {
 
         const { name, value } = event.target;
 
-        setFormulario((estadoAnterior) => ({
-
-            ...estadoAnterior,
-
+        setFormulario((anterior) => ({
+            ...anterior,
             [name]: value,
-
         }));
+
+        /* Limpa o erro deste campo assim que o utilizador começa a corrigir */
+        setErrosCampos((anterior) => {
+            if (!anterior[name]) return anterior;
+            const copia = { ...anterior };
+            delete copia[name];
+            return copia;
+        });
     }
 
 
@@ -52,6 +129,16 @@ function Cadastro() {
         event.preventDefault();
 
         setErro("");
+
+        /* 1) Validação client-side */
+        const errosCliente = validarFormulario(formulario);
+
+        if (Object.keys(errosCliente).length > 0) {
+            setErrosCampos(errosCliente);
+            return;
+        }
+
+        setErrosCampos({});
         setCarregando(true);
 
         try {
@@ -59,20 +146,33 @@ function Cadastro() {
             const response = await cadastrar(formulario);
 
             login(response.token);
-
             navigate("/dashboard");
 
         } catch (error) {
 
             console.error(error);
 
-            setErro(
-                error.response?.data?.message ||
-                "Não foi possível realizar o cadastro."
-            );
+            const dados = error.response?.data;
+
+            /*
+             * Se o backend devolveu erros de validação por campo,
+             * mostra-os em cada campo específico.
+             */
+            if (dados?.erros && typeof dados.erros === "object") {
+
+                setErrosCampos(dados.erros);
+                setErro(dados.mensagem || "Existem erros de validação.");
+
+            } else {
+
+                setErro(
+                    dados?.mensagem ||
+                    dados?.message ||
+                    "Não foi possível realizar o cadastro."
+                );
+            }
 
         } finally {
-
             setCarregando(false);
         }
     }
@@ -83,7 +183,6 @@ function Cadastro() {
         <div className="auth-page">
 
             <div className="auth-layout">
-
 
                 {/* =================================================
                     BRANDING
@@ -99,19 +198,15 @@ function Cadastro() {
                                 W
                             </div>
 
-                            <span>
-                                WD WORKS
-                            </span>
+                            <span>WD WORKS</span>
 
                         </div>
-
 
                         <h2>
                             Comece a gerir
                             <br />
                             <span>de forma inteligente.</span>
                         </h2>
-
 
                         <p>
                             Registe a sua empresa e tenha
@@ -120,7 +215,6 @@ function Cadastro() {
                         </p>
 
                     </div>
-
 
                     <div className="auth-brand-footer">
                         WD WORKS · Gestão empresarial
@@ -133,16 +227,11 @@ function Cadastro() {
                     CADASTRO
                 ================================================== */}
 
-                <div
-                    className={`auth-card auth-card-large ${erro ? "has-error" : ""
-                        }`}
-                >
+                <div className={`auth-card auth-card-large ${erro ? "has-error" : ""}`}>
 
                     <div className="auth-header">
 
-                        <h1>
-                            Criar conta
-                        </h1>
+                        <h1>Criar conta</h1>
 
                         <p>
                             Registe a sua empresa e crie o administrador
@@ -151,26 +240,21 @@ function Cadastro() {
                     </div>
 
 
-                    <form
-                        className="auth-form"
-                        onSubmit={handleSubmit}
-                    >
-
+                    <form className="auth-form" onSubmit={handleSubmit} noValidate>
 
                         {/* =================================================
                             EMPRESA
                         ================================================== */}
+
                         <div className="auth-section">
 
                             <h2>Dados da empresa</h2>
 
                             <div className="auth-grid">
 
-                                <div className="auth-field">
+                                <div className={`auth-field ${errosCampos.nomeEmpresa ? "has-error" : ""}`}>
 
-                                    <label htmlFor="nomeEmpresa">
-                                        Nome da empresa
-                                    </label>
+                                    <label htmlFor="nomeEmpresa">Nome da empresa</label>
 
                                     <div className="auth-input-wrapper">
 
@@ -182,19 +266,22 @@ function Cadastro() {
                                             onChange={handleChange}
                                             placeholder="Nome da empresa"
                                             autoComplete="organization"
-                                            required
                                         />
 
                                     </div>
 
+                                    {errosCampos.nomeEmpresa && (
+                                        <p className="auth-field-error">
+                                            {errosCampos.nomeEmpresa}
+                                        </p>
+                                    )}
+
                                 </div>
 
 
-                                <div className="auth-field">
+                                <div className={`auth-field ${errosCampos.nuit ? "has-error" : ""}`}>
 
-                                    <label htmlFor="nuit">
-                                        NUIT
-                                    </label>
+                                    <label htmlFor="nuit">NUIT</label>
 
                                     <div className="auth-input-wrapper">
 
@@ -207,19 +294,22 @@ function Cadastro() {
                                             placeholder="Ex: 123456789"
                                             maxLength="9"
                                             inputMode="numeric"
-                                            required
                                         />
 
                                     </div>
 
+                                    {errosCampos.nuit && (
+                                        <p className="auth-field-error">
+                                            {errosCampos.nuit}
+                                        </p>
+                                    )}
+
                                 </div>
 
 
-                                <div className="auth-field">
+                                <div className={`auth-field ${errosCampos.emailEmpresa ? "has-error" : ""}`}>
 
-                                    <label htmlFor="emailEmpresa">
-                                        Email da empresa
-                                    </label>
+                                    <label htmlFor="emailEmpresa">Email da empresa</label>
 
                                     <div className="auth-input-wrapper">
 
@@ -231,19 +321,22 @@ function Cadastro() {
                                             onChange={handleChange}
                                             placeholder="email@empresa.com"
                                             autoComplete="email"
-                                            required
                                         />
 
                                     </div>
 
+                                    {errosCampos.emailEmpresa && (
+                                        <p className="auth-field-error">
+                                            {errosCampos.emailEmpresa}
+                                        </p>
+                                    )}
+
                                 </div>
 
 
-                                <div className="auth-field">
+                                <div className={`auth-field ${errosCampos.contacto ? "has-error" : ""}`}>
 
-                                    <label htmlFor="contacto">
-                                        Contacto
-                                    </label>
+                                    <label htmlFor="contacto">Contacto</label>
 
                                     <div className="auth-input-wrapper">
 
@@ -256,19 +349,22 @@ function Cadastro() {
                                             placeholder="Ex: 841234567"
                                             maxLength="9"
                                             inputMode="numeric"
-                                            required
                                         />
 
                                     </div>
 
+                                    {errosCampos.contacto && (
+                                        <p className="auth-field-error">
+                                            {errosCampos.contacto}
+                                        </p>
+                                    )}
+
                                 </div>
 
 
-                                <div className="auth-field auth-field-full">
+                                <div className={`auth-field auth-field-full ${errosCampos.endereco ? "has-error" : ""}`}>
 
-                                    <label htmlFor="endereco">
-                                        Endereço
-                                    </label>
+                                    <label htmlFor="endereco">Endereço</label>
 
                                     <div className="auth-input-wrapper">
 
@@ -283,6 +379,12 @@ function Cadastro() {
                                         />
 
                                     </div>
+
+                                    {errosCampos.endereco && (
+                                        <p className="auth-field-error">
+                                            {errosCampos.endereco}
+                                        </p>
+                                    )}
 
                                 </div>
 
@@ -301,7 +403,7 @@ function Cadastro() {
 
                             <div className="auth-grid">
 
-                                <div className="auth-field">
+                                <div className={`auth-field ${errosCampos.nomeAdministrador ? "has-error" : ""}`}>
 
                                     <label htmlFor="nomeAdministrador">
                                         Nome do administrador
@@ -317,15 +419,20 @@ function Cadastro() {
                                             onChange={handleChange}
                                             placeholder="Nome completo"
                                             autoComplete="name"
-                                            required
                                         />
 
                                     </div>
 
+                                    {errosCampos.nomeAdministrador && (
+                                        <p className="auth-field-error">
+                                            {errosCampos.nomeAdministrador}
+                                        </p>
+                                    )}
+
                                 </div>
 
 
-                                <div className="auth-field">
+                                <div className={`auth-field ${errosCampos.emailAdministrador ? "has-error" : ""}`}>
 
                                     <label htmlFor="emailAdministrador">
                                         Email do administrador
@@ -341,19 +448,22 @@ function Cadastro() {
                                             onChange={handleChange}
                                             placeholder="email@exemplo.com"
                                             autoComplete="email"
-                                            required
                                         />
 
                                     </div>
 
+                                    {errosCampos.emailAdministrador && (
+                                        <p className="auth-field-error">
+                                            {errosCampos.emailAdministrador}
+                                        </p>
+                                    )}
+
                                 </div>
 
 
-                                <div className="auth-field auth-field-full">
+                                <div className={`auth-field auth-field-full ${errosCampos.senhaAdministrador ? "has-error" : ""}`}>
 
-                                    <label htmlFor="senhaAdministrador">
-                                        Senha
-                                    </label>
+                                    <label htmlFor="senhaAdministrador">Senha</label>
 
                                     <div className="auth-input-wrapper">
 
@@ -365,11 +475,15 @@ function Cadastro() {
                                             onChange={handleChange}
                                             placeholder="Mínimo de 8 caracteres"
                                             autoComplete="new-password"
-                                            minLength="8"
-                                            required
                                         />
 
                                     </div>
+
+                                    {errosCampos.senhaAdministrador && (
+                                        <p className="auth-field-error">
+                                            {errosCampos.senhaAdministrador}
+                                        </p>
+                                    )}
 
                                 </div>
 
@@ -379,15 +493,11 @@ function Cadastro() {
 
 
                         {/* =================================================
-                            ERRO
+                            ERRO GERAL
                         ================================================== */}
 
                         {erro && (
-
-                            <p className="auth-error">
-                                {erro}
-                            </p>
-
+                            <p className="auth-error">{erro}</p>
                         )}
 
 
@@ -400,12 +510,7 @@ function Cadastro() {
                             type="submit"
                             disabled={carregando}
                         >
-
-                            {carregando
-                                ? "A criar conta..."
-                                : "Criar conta"
-                            }
-
+                            {carregando ? "A criar conta..." : "Criar conta"}
                         </button>
 
                     </form>
@@ -415,13 +520,9 @@ function Cadastro() {
 
                     <div className="auth-switch">
 
-                        <span>
-                            Já tem uma conta?
-                        </span>
+                        <span>Já tem uma conta?</span>
 
-                        <Link to="/login">
-                            Entrar
-                        </Link>
+                        <Link to="/login">Entrar</Link>
 
                     </div>
 

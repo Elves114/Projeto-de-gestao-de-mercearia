@@ -818,3 +818,40 @@ outline: 2px solid #00aeef;
 outline-offset: 3px;
 border-radius: 4px;
 }
+
+/* ============================================================
+   ERROS POR CAMPO (validação)
+   ============================================================ */
+
+.auth-field.has-error .auth-input-wrapper input,
+.auth-field.has-error .auth-input-wrapper select,
+.auth-field.has-error .auth-input-wrapper textarea {
+    border-color: #dc2626;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+}
+
+.auth-field.has-error .auth-input-wrapper input:focus,
+.auth-field.has-error .auth-input-wrapper select:focus,
+.auth-field.has-error .auth-input-wrapper textarea:focus {
+    border-color: #dc2626;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.18);
+}
+
+.auth-field-error {
+    margin: 6px 0 0;
+    font-size: 0.8125rem;
+    line-height: 1.35;
+    color: #dc2626;
+    animation: authErroFadeIn 0.18s ease;
+}
+
+@keyframes authErroFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-2px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
