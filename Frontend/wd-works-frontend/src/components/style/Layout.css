@@ -248,3 +248,8 @@
         opacity: 1;
     }
 }
+@media (max-width: 600px) {
+    .app-content {
+        margin-left: 62px;
+    }
+}
