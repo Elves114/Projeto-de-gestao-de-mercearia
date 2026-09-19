@@ -595,19 +595,42 @@
 /* =========================================================
    RESPONSIVIDADE
    ========================================================= */
-
 @media (max-width: 900px) {
 
-    .sidebar {
-        width: var(--sb-width-closed);
-        box-shadow:
-            8px 0 30px rgba(20, 30, 50, 0.06);
+    /*
+     * A sidebar continua visível em mobile (modo ícone).
+     * Portanto o conteúdo tem de respeitar a largura fechada.
+     */
+
+    .app-content {
+        margin-left: var(--sidebar-fechada);   /* 78px, NÃO 0 */
+
+        width: auto;
+
+        transition:
+            transform var(--layout-duration) var(--layout-ease),
+            filter var(--layout-duration) var(--layout-ease);
+
+        will-change: transform, filter;
     }
 
-    .sidebar.open {
-        width: var(--sb-width-open);
-        box-shadow:
-            10px 0 35px rgba(20, 30, 50, 0.12);
+
+    /*
+     * Sidebar ABERTA continua a ser overlay:
+     * o conteúdo NÃO se desloca, mas fica com efeito de profundidade.
+     */
+
+    .app-layout.sidebar-aberto .app-content {
+        margin-left: var(--sidebar-fechada);   /* mantém 78px */
+
+        transform: scale(0.98);
+
+        filter: blur(1px);
+    }
+
+
+    .main-content {
+        padding: 20px;
     }
 }
 
@@ -615,6 +638,20 @@
 /* =========================================================
    ACESSIBILIDADE
    ========================================================= */
+@media (max-width: 600px) {
+    .sidebar {
+        width: 62px;
+        min-width: 62px;
+    }
+    .sidebar-link-icon {
+        transform: scale(0.9);
+    }
+    .sidebar-logo {
+        width: 36px;
+        height: 36px;
+        font-size: 14px;
+    }
+}
 
 @media (prefers-reduced-motion: reduce) {
 
