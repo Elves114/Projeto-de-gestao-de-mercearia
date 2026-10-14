@@ -25,6 +25,9 @@ import WD.works.V2.usuario.entity.Usuario;
 import WD.works.V2.usuario.perfil.Perfil;
 import WD.works.V2.usuario.repository.UsuarioRepository;
 import WD.works.V2.usuario.service.UsuarioService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,12 +52,13 @@ public class AuthService {
     private final UsuarioRepository usuarioRepository;
     private final LoginTentativaService loginTentativaService;
     private final TokenRecuperacaoSenhaService tokenRecuperacaoSenhaService;
-    private final EmailService emailService;
+    private final ObjectProvider<EmailService> emailServiceProvider;
     private final PasswordEncoder passwordEncoder;
     private final AuditoriaService auditoriaService;
     private final EmpresaRepository empresaRepository;
 
-
+    private static final Logger log =
+            LoggerFactory.getLogger(AuthService.class);
     @Transactional
     public AuthResponse cadastrar(
             CadastroRequest request
@@ -135,42 +139,51 @@ public class AuthService {
                     (UsuarioDetails) authentication.getPrincipal();
 
             /*
-             * Login correto:
-             * limpamos as tentativas anteriores.
+             * Usa o utilizador recarregado pelo AuthenticationManager
+             * para garantir que estamos a trabalhar com o estado mais
+             * recente.
+             */
+            Usuario usuarioAutenticado =
+                    usuarioDetails.getUsuario();
+
+            /*
+             * Login correto: limpamos as tentativas anteriores.
              */
             loginTentativaService.registrarSucesso(
-                    usuario
+                    usuarioAutenticado
             );
 
             String token =
                     jwtService.gerarToken(usuarioDetails);
 
+            /*
+             * Auditoria — registada UMA ÚNICA VEZ.
+             *
+             * O registo com o utilizador autenticado evita
+             * inconsistências caso o objeto `usuario` inicial
+             * já não esteja na sessão do Hibernate.
+             */
             auditoriaService.registrar(
                     new AuditoriaRequest(
                             TipoAuditoria.LOGIN,
                             "usuario",
-                            usuario.getId().toString(),
+                            usuarioAutenticado.getId().toString(),
                             "Login efetuado com sucesso."
                     ),
-                    usuario,
-                    usuario.getEmpresa(),
+                    usuarioAutenticado,
+                    usuarioAutenticado.getEmpresa(),
                     GravidadeAuditoria.INFO,
                     null
             );
 
-
             return new AuthResponse(token);
-
 
         } catch (org.springframework.security.core.AuthenticationException ex) {
 
             /*
-             * A senha estava incorreta ou a autenticação
-             * falhou.
+             * A senha estava incorreta ou a autenticação falhou.
              */
-            loginTentativaService.registrarFalha(
-                    usuario
-            );
+            loginTentativaService.registrarFalha(usuario);
 
             throw new RegraNegocioException(
                     "Email ou senha inválidos."
@@ -211,11 +224,38 @@ public class AuthService {
 
                     String link = frontendUrl + "/redefinir-senha?token=" + token;
 
-                    emailService.enviarRecuperacaoSenha(
-                            usuario.getEmail(),
-                            usuario.getNome(),
-                            link
-                    );
+                    /*
+                     * Só envia o email se o EmailService estiver disponível
+                     * (mail.enabled=true).
+                     *
+                     * Caso contrário, apenas gera o token (o link fica
+                     * registado nos logs para debug).
+                     */
+                    EmailService emailService =
+                            emailServiceProvider.getIfAvailable();
+
+                    if (emailService != null) {
+
+                        emailService.enviarRecuperacaoSenha(
+                                usuario.getEmail(),
+                                usuario.getNome(),
+                                link
+                        );
+
+                        log.info(
+                                "Email de recuperação enviado para: {}",
+                                usuario.getEmail()
+                        );
+
+                    } else {
+
+                        log.info(
+                                "EmailService desativado. Link de recuperação "
+                                        + "para {}: {}",
+                                usuario.getEmail(),
+                                link
+                        );
+                    }
                 });
     }
     public void redefinirSenha(RedefinirSenhaRequest request) {

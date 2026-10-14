@@ -1,0 +1,54 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:18-alpine
+    container_name: wdworks-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: wdworks
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-danmachi}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d wdworks"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - wdworks-net
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: wdworks-api
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION: 86400000
+      DB_URL: jdbc:postgresql://db:5432/wdworks
+      DB_USERNAME: postgres
+      DB_PASSWORD: ${DB_PASSWORD:-danmachi}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:5173}
+      MAIL_USERNAME: ${MAIL_USERNAME:-}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+    ports:
+      - "8080:8080"
+    networks:
+      - wdworks-net
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  wdworks-net:
+    driver: bridge

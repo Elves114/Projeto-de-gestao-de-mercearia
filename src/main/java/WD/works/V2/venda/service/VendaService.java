@@ -26,8 +26,12 @@ import WD.works.V2.venda.itensVenda.dto.ItemVendaResponse;
 import WD.works.V2.venda.itensVenda.entity.ItemVenda;
 import WD.works.V2.venda.repository.VendaRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,10 +58,19 @@ public class VendaService {
     private final AlertaStockService alertaStockService;
 
 
-    /**
-     * Cria uma nova venda para a empresa do usuário autenticado.
-     */
-    @Transactional
+    @CacheEvict(value = {"dashboard", "produtos"}, allEntries = true)
+    @Retryable(
+            retryFor = {
+                    org.springframework.orm.ObjectOptimisticLockingFailureException.class,
+                    org.springframework.dao.OptimisticLockingFailureException.class
+            },
+            maxAttempts = 3,
+            backoff = @Backoff(
+                    delay = 50,
+                    multiplier = 2,
+                    maxDelay = 500
+            )
+    )
     public VendaResponse criar(
             VendaRequest request
     ) {
@@ -444,6 +457,33 @@ public class VendaService {
                 );
             }
         }
+    }
+
+
+    /**
+     * Método chamado quando as 3 tentativas falham.
+     * Devolve a exceção original para o cliente receber 409.
+     */
+    @Recover
+    public VendaResponse recoverCriar(
+            org.springframework.dao.OptimisticLockingFailureException ex,
+            VendaRequest request
+    ) {
+        throw new RegraNegocioException(
+                "O estoque foi alterado por outra operação ao mesmo tempo. "
+                        + "Por favor, tente novamente."
+        );
+    }
+
+    @Recover
+    public VendaResponse recoverCriar(
+            org.springframework.orm.ObjectOptimisticLockingFailureException ex,
+            VendaRequest request
+    ) {
+        throw new RegraNegocioException(
+                "O estoque foi alterado por outra operação ao mesmo tempo. "
+                        + "Por favor, tente novamente."
+        );
     }
 
 

@@ -3,6 +3,7 @@ package WD.works.V2.venda.entity;
 import WD.works.V2.empresa.entity.Empresa;
 import WD.works.V2.usuario.entity.Usuario;
 import WD.works.V2.venda.itensVenda.entity.ItemVenda;
+import WD.works.V2.venda.status.StatusVenda;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,6 +31,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Venda {
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -99,4 +101,18 @@ public class Venda {
             dataVenda = LocalDateTime.now();
         }
     }
+
+   /** @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private StatusVenda status = StatusVenda.CONCLUIDA;
+
+    @Column(name = "cancelada_em")
+    private LocalDateTime canceladaEm;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cancelada_por_id")
+    private Usuario canceladaPor;
+
+    @Column(name = "motivo_cancelamento", length = 500)
+    private String motivoCancelamento;*/
 }

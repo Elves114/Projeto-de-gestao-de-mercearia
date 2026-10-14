@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 
 @Configuration
 @EnableWebSecurity
@@ -22,13 +23,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
     private final LoginRateLimitFilter loginRateLimitFilter;
-
     private final UserDetailsService userDetailsService;
-
     private final PasswordEncoder passwordEncoder;
-
 
     @Bean
     public SecurityFilterChain securityFilterChain(
@@ -43,6 +40,59 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(
                                 SessionCreationPolicy.STATELESS
+                        )
+                )
+
+                /*
+                 * ============================================================
+                 * CABEÇALHOS DE SEGURANÇA
+                 * ============================================================
+                 */
+                .headers(headers -> headers
+
+                        // X-Content-Type-Options: nosniff (default)
+                        .contentTypeOptions(contentType -> {
+                        })
+
+                        // X-Frame-Options: DENY
+                        .frameOptions(frame -> frame.deny())
+
+                        // Content Security Policy
+                        .contentSecurityPolicy(csp -> csp
+                                .policyDirectives(
+                                        "default-src 'self'; " +
+                                                "script-src 'self'; " +
+                                                "style-src 'self' 'unsafe-inline'; " +
+                                                "img-src 'self' data:; " +
+                                                "font-src 'self'; " +
+                                                "connect-src 'self'; " +
+                                                "frame-ancestors 'none'; " +
+                                                "base-uri 'self'; " +
+                                                "form-action 'self'"
+                                )
+                        )
+
+                        // Strict-Transport-Security
+                        .httpStrictTransportSecurity(hsts -> hsts
+                                .includeSubDomains(true)
+                                .maxAgeInSeconds(31536000)
+                        )
+
+                        // Referrer-Policy
+                        .referrerPolicy(referrer -> referrer
+                                .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy
+                                        .STRICT_ORIGIN_WHEN_CROSS_ORIGIN)
+                        ).permissionsPolicyHeader(permissions -> permissions
+                                .policy(
+                                        "geolocation=(), " +
+                                                "microphone=(), " +
+                                                "camera=(), " +
+                                                "payment=(), " +
+                                                "usb=(), " +
+                                                "magnetometer=(), " +
+                                                "gyroscope=(), " +
+                                                "accelerometer=()"
+                                )
                         )
                 )
 
@@ -63,7 +113,10 @@ public class SecurityConfig {
                                 "/v3/api-docs/**"
                         ).permitAll()
 
-                        .requestMatchers("/actuator/health", "/actuator/info").permitAll()
+                        .requestMatchers(
+                                "/actuator/health",
+                                "/actuator/info"
+                        ).permitAll()
 
                         .anyRequest()
                         .authenticated()
@@ -73,17 +126,11 @@ public class SecurityConfig {
                         authenticationProvider()
                 )
 
-                /*
-                 * Rate Limit do login
-                 */
                 .addFilterBefore(
                         loginRateLimitFilter,
                         UsernamePasswordAuthenticationFilter.class
                 )
 
-                /*
-                 * JWT
-                 */
                 .addFilterBefore(
                         jwtAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class
@@ -92,24 +139,18 @@ public class SecurityConfig {
         return http.build();
     }
 
-
     @Bean
     public AuthenticationProvider authenticationProvider() {
-
         DaoAuthenticationProvider provider =
                 new DaoAuthenticationProvider(userDetailsService);
-
         provider.setPasswordEncoder(passwordEncoder);
-
         return provider;
     }
-
 
     @Bean
     public AuthenticationManager authenticationManager(
             org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration configuration
     ) throws Exception {
-
         return configuration.getAuthenticationManager();
     }
 }

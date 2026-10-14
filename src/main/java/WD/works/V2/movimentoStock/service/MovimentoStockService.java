@@ -18,8 +18,12 @@ import WD.works.V2.produtos.repository.ProdutoRepository;
 import WD.works.V2.usuario.entity.Usuario;
 import WD.works.V2.configuracao.context.UsuarioContext;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +40,19 @@ public class MovimentoStockService {
     private final AlertaStockService alertaStockService;
     private final AuditoriaService auditoriaService;
 
+    @CacheEvict(value = {"dashboard", "produtos", "estoques"}, allEntries = true)
+    @Retryable(
+            retryFor = {
+                    org.springframework.orm.ObjectOptimisticLockingFailureException.class,
+                    org.springframework.dao.OptimisticLockingFailureException.class
+            },
+            maxAttempts = 3,
+            backoff = @Backoff(
+                    delay = 50,
+                    multiplier = 2,
+                    maxDelay = 500
+            )
+    )
     @Transactional
     public MovimentoStockResponse criar(
             MovimentoStockRequest request
@@ -214,6 +231,28 @@ public class MovimentoStockService {
 
         return converterParaResponse(
                 movimentoSalvo
+        );
+    }
+
+    @Recover
+    public MovimentoStockResponse recoverCriar(
+            org.springframework.dao.OptimisticLockingFailureException ex,
+            MovimentoStockRequest request
+    ) {
+        throw new RegraNegocioException(
+                "O estoque foi alterado por outra operação ao mesmo tempo. "
+                        + "Por favor, tente novamente."
+        );
+    }
+
+    @Recover
+    public MovimentoStockResponse recoverCriar(
+            org.springframework.orm.ObjectOptimisticLockingFailureException ex,
+            MovimentoStockRequest request
+    ) {
+        throw new RegraNegocioException(
+                "O estoque foi alterado por outra operação ao mesmo tempo. "
+                        + "Por favor, tente novamente."
         );
     }
 
