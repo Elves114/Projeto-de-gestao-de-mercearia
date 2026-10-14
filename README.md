@@ -1,425 +1,558 @@
+# WD Works V2 — Sistema de Gestão de Mercearia
 
-# WD Works V2
+API REST para gestão completa de mercearias e pequenos comércios em Moçambique.
 
-**WD Works V2** é uma API REST desenvolvida em **Java e Spring Boot** para gestão de uma mercearia.
-
-O projeto foi desenvolvido com foco em **arquitetura organizada, segurança, separação de responsabilidades, regras de negócio e escalabilidade**, permitindo gerir empresas, utilizadores, produtos, categorias, vendas e estoque através de uma API.
-
-O WD Works V2 é uma evolução de um projeto anterior desenvolvido durante os estudos de Java e Spring Boot, tendo como objetivo aplicar conceitos de desenvolvimento de software de forma mais estruturada e próxima de um projeto real.
+[![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://openjdk.org/projects/jdk/21/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1.1-brightgreen.svg)](https://spring.io/projects/spring-boot)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-18-blue.svg)](https://www.postgresql.org/)
+[![Flyway](https://img.shields.io/badge/Flyway-13.9-red.svg)](https://flywaydb.org/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ---
 
-## 🚀 Funcionalidades
+## 📖 Sobre o Projeto
 
-### 🔐 Autenticação e Segurança
+O **WD Works V2** é uma API REST multiempresa que permite gerir:
 
-* Autenticação de utilizadores
-* Login através da API
-* Autenticação baseada em **JWT**
-* Proteção dos endpoints com **Spring Security**
-* Passwords armazenadas de forma segura
-* Controlo de acesso baseado em perfis
-* Gestão de permissões de acordo com o utilizador
-* Sessões **stateless**
-* Isolamento das informações entre empresas
+- **Empresas** e utilizadores com perfis distintos (ADMIN, GERENTE, FUNCIONÁRIO)
+- **Produtos** e categorias
+- **Estoque** com alertas automáticos de stock baixo
+- **Vendas** com cálculo automático de lucro
+- **Movimentos de stock** (entradas, saídas, ajustes, devoluções)
+- **Auditoria** completa de todas as operações
+- **Dashboard** com KPIs em tempo real
 
-### 🏢 Gestão de Empresas
+Cada empresa tem os seus próprios dados, isolados de todas as outras.
 
-* Criação de empresas
-* Consulta de empresas
-* Atualização de informações
-* Ativação e desativação
-* Validação das regras relacionadas à empresa
+---
 
-### 👤 Gestão de Utilizadores
+## ✨ Funcionalidades
 
-* Criação e gestão de utilizadores
-* Associação do utilizador a uma empresa
-* Perfis de acesso
-* Gestão do estado do utilizador
-* Autorização baseada no perfil
+### 🔐 Autenticação e Autorização
+- Login com JWT
+- Perfis: `ADMIN`, `GERENTE`, `FUNCIONARIO`
+- Permissões granulares por perfil
+- Rate limit inteligente (IP + email)
+- Bloqueio temporário após tentativas falhadas
+- Recuperação de senha por token seguro
 
-Perfis suportados:
-
-* `ADMIN`
-* `GERENTE`
-* `FUNCIONARIO`
-
-Estados do utilizador:
-
-* `ATIVO`
-* `INATIVO`
-* `BLOQUEADO`
+### 🏢 Multiempresa
+- Isolamento total de dados por empresa
+- Um único ADMIN por empresa
+- Auditoria centralizada
 
 ### 📦 Gestão de Produtos
-
-* Criação de produtos
-* Consulta de produtos
-* Atualização de produtos
-* Associação de produtos a categorias
-* Gestão dos dados relacionados ao estoque
-
-### 🏷️ Gestão de Categorias
-
-* Criação de categorias
-* Consulta de categorias
-* Atualização de categorias
-* Organização dos produtos por categoria
-
-### 🛒 Gestão de Vendas
-
-* Registo de vendas
-* Registo dos itens de cada venda
-* Consulta de vendas
-* Cálculo e gestão das informações relacionadas à venda
+- CRUD completo
+- Categorias por empresa
+- Ativação/desativação (soft delete)
+- Filtros avançados (nome, categoria, preço, stock)
+- Registro de autor de criação/alteração
 
 ### 📊 Gestão de Estoque
+- Movimentos: `ENTRADA`, `SAIDA`, `AJUSTE`, `DEVOLUCAO`
+- Quantidade mínima configurável por produto
+- Alertas automáticos de stock baixo
+- Histórico completo de movimentos
+- Optimistic locking (evita conflitos)
 
-* Consulta do estoque
-* Controle da quantidade disponível
-* Atualização do estoque através das operações realizadas
-* Gestão das movimentações de estoque
+### 💰 Gestão de Vendas
+- Venda com múltiplos itens
+- Cálculo automático de total e lucro
+- Atualização automática de stock
+- Retry automático em conflitos de concorrência
+- Filtros por data, utilizador, ID
 
-### 🔄 Movimentações de Estoque
+### 📈 Dashboard
+- KPIs em tempo real
+- Gráfico de vendas (7, 30, 365 dias)
+- Top produtos mais vendidos
+- Stock crítico
+- Atividade recente
+- **Cache de 30s** para alta performance
 
-O sistema mantém o registo das movimentações realizadas no estoque, permitindo acompanhar operações como entradas e saídas de produtos.
+### 🔍 Auditoria
+- Registo de todas as operações
+- Filtros por tipo, gravidade, utilizador, data
+- Níveis: `INFO`, `WARNING`, `CRITICAL`
+- Truncamento automático de payloads grandes
 
-### 📝 Auditoria
+---
 
-O projeto possui estrutura para registo e acompanhamento das operações relevantes realizadas no sistema, permitindo maior rastreabilidade das ações.
+## 🛠️ Stack Técnica
+
+### Backend
+| Tecnologia | Versão | Propósito |
+|-----------|:------:|-----------|
+| Java | 21 | Linguagem |
+| Spring Boot | 4.1.1 | Framework |
+| Spring Security | 7.1.1 | Autenticação/Autorização |
+| Spring Data JPA | 4.1.1 | Persistência |
+| Hibernate | 7.4.5 | ORM |
+| PostgreSQL | 18 | Base de dados |
+| Flyway | 13.9 | Migrations |
+| Caffeine | - | Cache in-memory |
+| Bucket4j | 8.19 | Rate limiting |
+| JWT (jjwt) | 0.12.6 | Tokens |
+| Lombok | 1.18.46 | Boilerplate |
+| MapStruct | 1.6.3 | Mapeamento DTO |
+| SpringDoc OpenAPI | 3.1.1 | Documentação |
+| Bucket4j | 8.19 | Rate limit |
+
+### Frontend (separado)
+Ver repositório `Frontend/`
+
+### Ferramentas
+- Maven Wrapper
+- Docker & docker-compose
+- Git
 
 ---
 
 ## 🏗️ Arquitetura
 
-O projeto segue uma organização baseada na separação de responsabilidades.
+### Estrutura de pacotes
 
-```text
-src/main/java/com/wdworks/v2
-│
-├── config
-│   ├── SecurityConfig
-│   └── CorsConfig
-│
-├── controller
-│   ├── AuthController
-│   ├── CategoryController
-│   ├── CompanyController
-│   ├── ProductController
-│   ├── SaleController
-│   ├── StockController
-│   ├── StockMovementController
-│   └── UserController
-│
-├── dto
-│   ├── auth
-│   ├── category
-│   ├── company
-│   ├── product
-│   ├── sale
-│   └── stock
-│
-└── ...
+```
+WD.works.V2/
+├── alertaStock/       Alertas de stock baixo
+├── auditoria/         Registo de auditoria
+├── categorias/        Categorias de produtos
+├── configuracao/      Configuração transversal
+│   ├── config/        Beans de configuração
+│   ├── context/       Contextos (empresa, usuário, auditoria)
+│   ├── openapi/       Swagger/OpenAPI
+│   └── security/      Segurança (JWT, rate limit)
+├── dashboard/         KPIs e agregações
+├── empresa/           Empresas
+├── estoque/           Stock
+├── exception/         Exceções e handler global
+├── movimentoStock/    Movimentos de stock
+├── produtos/          Produtos
+├── usuario/           Utilizadores e autenticação
+└── venda/             Vendas
 ```
 
-A aplicação utiliza **DTOs (Data Transfer Objects)** para separar os dados recebidos/enviados pela API dos modelos utilizados internamente pela aplicação.
+### Camadas (por feature)
 
-Essa organização facilita a manutenção, evolução e segurança do sistema.
+```
+controller/   → Endpoints REST
+service/      → Lógica de negócio
+repository/   → Acesso a dados
+entity/       → Entidades JPA
+dto/          → Objetos de transferência
+```
+
+### Isolamento multiempresa
+
+- Cada requisição é associada a uma empresa via JWT
+- `EmpresaContext` fornece a empresa atual
+- Todos os repositórios filtram por `empresa_id`
+- Impossível aceder a dados de outra empresa
 
 ---
 
-## 🛠️ Tecnologias
+## 📋 Pré-requisitos
 
-| Tecnologia            | Utilização                     |
-| --------------------- | ------------------------------ |
-| **Java**              | Linguagem principal            |
-| **Spring Boot**       | Desenvolvimento da API         |
-| **Spring Security**   | Segurança e autorização        |
-| **JWT**               | Autenticação baseada em tokens |
-| **Spring Data JPA**   | Persistência de dados          |
-| **Hibernate**         | ORM                            |
-| **MySQL**             | Banco de dados                 |
-| **Maven**             | Gestão de dependências e build |
-| **Lombok**            | Redução de código repetitivo   |
-| **Docker**            | Containerização                |
-| **OpenAPI / Swagger** | Documentação da API            |
+- **Java 21+** ([download](https://adoptium.net/))
+- **PostgreSQL 15+** ([download](https://www.postgresql.org/download/))
+- **Maven 3.9+** (incluído no `mvnw`)
+- **Git**
+
+Opcional:
+- Docker & Docker Compose
+- IntelliJ IDEA / VS Code
 
 ---
 
-## 🔒 Segurança
+## 🚀 Instalação
 
-A segurança é uma das partes fundamentais do WD Works V2.
+### 1. Clonar o repositório
 
-A aplicação utiliza:
-
-```text
-Cliente
-   │
-   │ Login
-   ▼
-AuthController
-   │
-   ▼
-Autenticação
-   │
-   ▼
-JWT
-   │
-   ▼
-Authorization Header
-   │
-   ▼
-JwtAuthenticationFilter
-   │
-   ▼
-Spring Security
-   │
-   ▼
-Autorização
+```bash
+git clone https://github.com/seu-usuario/wd-works-v2.git
+cd wd-works-v2
 ```
 
-Após a autenticação, o utilizador recebe um **JWT**, que é utilizado para autenticar as requisições seguintes.
+### 2. Criar a base de dados
 
-A API não utiliza sessões tradicionais, seguindo uma abordagem **stateless**.
+```bash
+# Liga-te ao PostgreSQL
+psql -U postgres
 
-Além de verificar se o utilizador está autenticado, o sistema considera o **perfil do utilizador e a empresa à qual pertence** para controlar o acesso aos recursos.
+# Dentro do psql:
+CREATE DATABASE wdworks;
+CREATE USER wdworks_user WITH PASSWORD 'senha_segura';
+GRANT ALL PRIVILEGES ON DATABASE wdworks TO wdworks_user;
+\q
+```
+
+### 3. Configurar variáveis de ambiente
+
+Cria um ficheiro `.env` na raiz (não commitado):
+
+```properties
+# .env (exemplo)
+JWT_SECRET=chave-super-secreta-com-pelo-menos-32-caracteres-aqui-123456
+JWT_EXPIRATION=86400000
+DB_URL=jdbc:postgresql://localhost:5432/wdworks
+DB_USERNAME=wdworks_user
+DB_PASSWORD=senha_segura
+CORS_ORIGINS=http://localhost:5173
+FRONTEND_URL=http://localhost:5173
+```
+
+### 4. Compilar e correr
+
+```bash
+# Dar permissão ao Maven Wrapper (Linux/Mac)
+chmod +x mvnw
+
+# Compilar
+./mvnw clean package -DskipTests
+
+# Correr em modo desenvolvimento
+./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
+```
+
+A API fica disponível em: **`http://localhost:8080`**
 
 ---
 
-## 🏢 Multiempresa
+## ⚙️ Configuração por Perfil
 
-Uma das preocupações do WD Works V2 é permitir que o sistema seja utilizado por diferentes empresas mantendo os seus dados isolados.
+O projeto tem 3 perfis:
 
-O conceito pode ser representado da seguinte forma:
+| Perfil | Uso | Ativação |
+|--------|-----|----------|
+| `default` | Base (sem overrides) | (nenhuma) |
+| `dev` | Desenvolvimento | `-Dspring-boot.run.profiles=dev` |
+| `prod` | Produção | `--spring.profiles.active=prod` |
+| `test` | Testes | Automático com `./mvnw test` |
 
-```text
-Empresa A
-├── Utilizadores
-├── Produtos
-├── Categorias
-├── Estoque
-└── Vendas
+### Principais diferenças
 
-Empresa B
-├── Utilizadores
-├── Produtos
-├── Categorias
-├── Estoque
-└── Vendas
-```
-
-Um utilizador de uma empresa não deve conseguir aceder aos dados pertencentes a outra empresa.
-
-Esse isolamento é uma parte importante da arquitetura do projeto.
+| Propriedade | dev | prod |
+|-------------|:---:|:----:|
+| Swagger UI | ON | OFF |
+| Logs SQL | DEBUG | OFF |
+| JWT secret | Fixa | Env var |
+| Rate limit | Desativado | Restritivo |
+| CORS | Permissivo | Domínio real |
 
 ---
 
-## 📋 Regras de negócio
+## 📚 Endpoints Principais
 
-O projeto não foi desenvolvido apenas como um CRUD.
+### Autenticação (`/auth`)
 
-As operações passam por uma camada de regras de negócio responsável por garantir que as operações realizadas respeitam as regras definidas pelo sistema.
+| Método | Endpoint | Descrição |
+|:------:|----------|-----------|
+| POST | `/auth/login` | Login |
+| POST | `/auth/cadastro` | Cadastro de empresa + admin |
+| GET | `/auth/me` | Utilizador autenticado |
+| POST | `/auth/recuperar-senha` | Pedir recuperação |
+| POST | `/auth/redefinir-senha` | Redefinir senha |
 
-Por exemplo:
+### Empresas (`/api/empresas`)
 
-```text
-Controller
-    ↓
-Service
-    ↓
-Regras de negócio
-    ↓
-Repository
-    ↓
-Database
-```
+| Método | Endpoint | Descrição |
+|:------:|----------|-----------|
+| GET | `/api/empresas/minha` | Minha empresa |
+| PUT | `/api/empresas/minha` | Atualizar minha empresa |
+| PATCH | `/api/empresas/minha/ativar` | Ativar |
+| PATCH | `/api/empresas/minha/desativar` | Desativar |
 
-Isso permite manter os controllers mais simples e concentrar a lógica de negócio nos locais apropriados.
+### Utilizadores (`/api/usuarios`)
+
+| Método | Endpoint | Descrição |
+|:------:|----------|-----------|
+| POST | `/api/usuarios` | Criar utilizador |
+| GET | `/api/usuarios` | Listar |
+| GET | `/api/usuarios/{id}` | Buscar por ID |
+| PUT | `/api/usuarios/{id}` | Atualizar |
+| PATCH | `/api/usuarios/{id}/ativar` | Ativar |
+| PATCH | `/api/usuarios/{id}/desativar` | Desativar |
+| PATCH | `/api/usuarios/me/senha` | Alterar minha senha |
+
+### Produtos (`/api/produtos`)
+
+| Método | Endpoint | Descrição |
+|:------:|----------|-----------|
+| POST | `/api/produtos` | Criar produto |
+| GET | `/api/produtos` | Listar/pesquisar |
+| GET | `/api/produtos/{id}` | Buscar por ID |
+| PUT | `/api/produtos/{id}` | Atualizar |
+| PATCH | `/api/produtos/{id}/ativar` | Ativar |
+| PATCH | `/api/produtos/{id}/desativar` | Desativar |
+
+### Categorias (`/api/categorias`)
+
+| Método | Endpoint | Descrição |
+|:------:|----------|-----------|
+| POST | `/api/categorias` | Criar |
+| GET | `/api/categorias` | Listar |
+| PUT | `/api/categorias/{id}` | Atualizar |
+| DELETE | `/api/categorias/{id}` | Eliminar |
+
+### Estoque (`/api/estoques`)
+
+| Método | Endpoint | Descrição |
+|:------:|----------|-----------|
+| GET | `/api/estoques` | Listar |
+| GET | `/api/estoques/produto/{produtoId}` | Por produto |
+| PATCH | `/api/estoques/produto/{produtoId}/quantidade-minima` | Definir mínimo |
+
+### Movimentos de Stock (`/api/movimentos-stock`)
+
+| Método | Endpoint | Descrição |
+|:------:|----------|-----------|
+| POST | `/api/movimentos-stock` | Criar movimento |
+| GET | `/api/movimentos-stock` | Listar |
+| GET | `/api/movimentos-stock/produto/{produtoId}` | Por produto |
+
+### Vendas (`/api/vendas`)
+
+| Método | Endpoint | Descrição |
+|:------:|----------|-----------|
+| POST | `/api/vendas` | Criar venda |
+| GET | `/api/vendas` | Listar/pesquisar |
+| GET | `/api/vendas/{id}` | Buscar por ID |
+
+### Alertas de Stock (`/api/alertas-stock`)
+
+| Método | Endpoint | Descrição |
+|:------:|----------|-----------|
+| GET | `/api/alertas-stock` | Listar todos |
+| GET | `/api/alertas-stock/ativos` | Apenas ativos |
+| GET | `/api/alertas-stock/{id}` | Buscar por ID |
+
+### Dashboard (`/api/dashboard`)
+
+| Método | Endpoint | Descrição |
+|:------:|----------|-----------|
+| GET | `/api/dashboard?periodo=7` | KPIs gerais |
+
+### Auditoria (`/api/auditorias`)
+
+| Método | Endpoint | Descrição |
+|:------:|----------|-----------|
+| GET | `/api/auditorias` | Todas (ADMIN/GERENTE) |
+| GET | `/api/auditorias/minhas` | Minhas |
+| GET | `/api/auditorias/usuario/{id}` | Por utilizador |
+| GET | `/api/auditorias/tipo/{tipo}` | Por tipo |
+| GET | `/api/auditorias/gravidade/{gravidade}` | Por gravidade |
 
 ---
 
 ## 🧪 Testes
 
-O backend foi desenvolvido e **testado**, garantindo o funcionamento das principais funcionalidades e regras implementadas.
-
-Os testes fazem parte da estratégia de desenvolvimento do projeto e têm como objetivo reduzir regressões e aumentar a confiabilidade da aplicação.
-
----
-
-## ⚙️ Como executar o projeto
-
-### Pré-requisitos
-
-Antes de executar o projeto, é necessário ter instalado:
-
-* Java
-* Maven
-* MySQL
-
-Caso seja utilizada a configuração com Docker:
-
-* Docker
-* Docker Compose
-
-### 1. Clonar o repositório
+### Correr todos os testes
 
 ```bash
-git clone <URL_DO_REPOSITORIO>
+./mvnw test
 ```
 
-### 2. Entrar no projeto
+### Correr um teste específico
 
 ```bash
-cd WD-Works-V2
+./mvnw test -Dtest=VendaServiceTest
 ```
 
-### 3. Configurar as variáveis de ambiente
-
-A aplicação utiliza configurações sensíveis através de variáveis de ambiente.
-
-Por exemplo, a chave utilizada para assinar os JWTs é configurada através de:
-
-```properties
-security.jwt.secret=${JWT_SECRET}
-```
-
-Portanto, a variável `JWT_SECRET` deve estar definida no ambiente onde a aplicação será executada.
-
-> **Nunca coloque chaves JWT, passwords ou outras credenciais diretamente no repositório.**
-
-### 4. Configurar o banco de dados
-
-Configure as informações de conexão com o MySQL de acordo com o ambiente em que a aplicação será executada.
-
-### 5. Executar a aplicação
-
-Com Maven:
+### Correr um método específico
 
 ```bash
-./mvnw spring-boot:run
+./mvnw test -Dtest=VendaServiceTest#deveCriarVendaComSucesso
 ```
 
-No Windows:
+---
+
+## 🐳 Docker
+
+### Subir a stack completa
 
 ```bash
-mvnw.cmd spring-boot:run
+docker-compose up -d
+```
+
+Isto sobe:
+- PostgreSQL na porta `5432`
+- API na porta `8080`
+
+### Ver logs
+
+```bash
+docker-compose logs -f api
+```
+
+### Parar tudo
+
+```bash
+docker-compose down
+```
+
+### Parar e apagar volumes (reset total)
+
+```bash
+docker-compose down -v
 ```
 
 ---
 
-## 📚 Documentação da API
+## 🚢 Deploy em Produção
 
-A API foi preparada para utilização com **OpenAPI / Swagger**, permitindo visualizar e testar os endpoints de forma interativa.
+### 1. Preparar o servidor
 
-Após iniciar a aplicação, a documentação pode ser acedida através da configuração do Swagger/OpenAPI do projeto.
+- Ubuntu 22.04+ / Debian 12+
+- Java 21
+- PostgreSQL 15+
+- Nginx (reverse proxy + SSL)
+- Certbot (Let's Encrypt)
 
----
+### 2. Configurar variáveis de ambiente
 
-## 📁 Organização do projeto
-
-A estrutura principal segue uma organização por responsabilidade:
-
-```text
-com.wdworks.v2
-│
-├── config
-│   └── Configurações da aplicação
-│
-├── controller
-│   └── Endpoints REST
-│
-├── dto
-│   └── Objetos utilizados na comunicação da API
-│
-├── entity
-│   └── Entidades do domínio
-│
-├── repository
-│   └── Acesso aos dados
-│
-├── service
-│   └── Regras de negócio
-│
-├── security
-│   └── Componentes relacionados à segurança
-│
-└── ...
+```bash
+export JWT_SECRET="chave-super-secreta-real-com-32-plus-caracteres"
+export DB_URL="jdbc:postgresql://localhost:5432/wdworks"
+export DB_USERNAME="wdworks_user"
+export DB_PASSWORD="senha_muito_segura"
+export CORS_ORIGINS="https://app.wdworks.co.mz"
+export FRONTEND_URL="https://app.wdworks.co.mz"
+export MAIL_USERNAME="brevo-user"
+export MAIL_PASSWORD="brevo-password"
 ```
 
-A separação dessas responsabilidades facilita a manutenção e permite que novas funcionalidades sejam adicionadas sem comprometer a estrutura existente.
+### 3. Arrancar
+
+```bash
+java -jar target/V2-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod
+```
+
+### 4. Configurar Nginx
+
+```nginx
+server {
+    listen 443 ssl http2;
+    server_name app.wdworks.co.mz;
+
+    ssl_certificate /etc/letsencrypt/live/app.wdworks.co.mz/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/app.wdworks.co.mz/privkey.pem;
+
+    location / {
+        proxy_pass http://localhost:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+server {
+    listen 80;
+    server_name app.wdworks.co.mz;
+    return 301 https://$host$request_uri;
+}
+```
+
+### 5. Certificado SSL
+
+```bash
+sudo certbot certonly --nginx -d app.wdworks.co.mz
+```
 
 ---
 
-## 🎯 Objetivos do projeto
+## 📂 Estrutura do Projeto
 
-O WD Works V2 foi desenvolvido com dois objetivos principais:
-
-### 1. Construir uma solução real
-
-Criar uma API capaz de servir como base para um sistema de gestão de uma mercearia, cobrindo áreas como:
-
-* utilizadores;
-* empresas;
-* produtos;
-* categorias;
-* estoque;
-* vendas;
-* segurança;
-* auditoria.
-
-### 2. Evoluir tecnicamente
-
-Aplicar na prática conceitos importantes de desenvolvimento backend:
-
-* Arquitetura de software
-* API REST
-* Spring Boot
-* Spring Security
-* JWT
-* Autenticação e autorização
-* JPA / Hibernate
-* DTOs
-* Regras de negócio
-* Validações
-* Testes
-* Isolamento multiempresa
-* Boas práticas de desenvolvimento
-
----
-
-## 🔮 Próximos passos
-
-O backend do WD Works V2 encontra-se implementado e testado.
-
-A evolução do projeto pode incluir:
-
-* [x] Desenvolvimento do frontend
-* [x] Integração completa frontend + API
-* [x] Dockerização completa da aplicação
-* [x] Deploy da aplicação
-* [x] Evolução da documentação da API
-* [x] Melhorias contínuas de segurança e performance
+```
+Projeto-de-gestao-de-mercearia/
+├── src/
+│   ├── main/
+│   │   ├── java/WD/works/V2/
+│   │   │   ├── alertaStock/
+│   │   │   ├── auditoria/
+│   │   │   ├── categorias/
+│   │   │   ├── configuracao/
+│   │   │   ├── dashboard/
+│   │   │   ├── empresa/
+│   │   │   ├── estoque/
+│   │   │   ├── exception/
+│   │   │   ├── movimentoStock/
+│   │   │   ├── produtos/
+│   │   │   ├── usuario/
+│   │   │   ├── venda/
+│   │   │   └── V2Application.java
+│   │   └── resources/
+│   │       ├── db/migration/       ← Flyway
+│   │       ├── application.properties
+│   │       ├── application-dev.properties
+│   │       └── application-prod.properties
+│   └── test/
+│       └── java/WD/works/V2/       ← Testes
+├── Frontend/                        ← Frontend (separado)
+├── scripts/                         ← Scripts Python
+│   ├── seed_produtos.py
+│   ├── seed_vendas.py
+│   ├── seed_usuarios.py
+│   ├── stress_test.py
+│   └── benchmark_dashboard.py
+├── Dockerfile
+├── docker-compose.yml
+├── pom.xml
+├── mvnw
+├── mvnw.cmd
+└── README.md
+```
 
 ---
 
-## 👨‍💻 Autor
+## 🔒 Segurança
 
-**WD Works**
+- JWT com HMAC-SHA384
+- Senhas com BCrypt (12 rounds)
+- Rate limit no login
+- Bloqueio temporário após tentativas falhadas
+- Cabeçalhos de segurança (CSP, HSTS, X-Frame, etc.)
+- HTTPS forçado em produção
+- CORS restritivo
+- Isolamento multiempresa
 
-Projeto desenvolvido como parte da evolução prática dos conhecimentos em **Java, Spring Boot e desenvolvimento de APIs REST**.
+---
+
+## 🤝 Contribuir
+
+1. Fork o projeto
+2. Cria uma branch (`git checkout -b feature/nova-feature`)
+3. Commit (`git commit -m 'feat: adiciona nova feature'`)
+4. Push (`git push origin feature/nova-feature`)
+5. Abre um Pull Request
+
+### Convenções de commit
+
+- `feat:` nova funcionalidade
+- `fix:` correção de bug
+- `docs:` documentação
+- `test:` testes
+- `refactor:` refactorização
+- `chore:` tarefas diversas
 
 ---
 
 ## 📄 Licença
 
-Este projeto não possui uma licença open source definida neste momento.
-
-O código disponibilizado neste repositório permanece sujeito aos direitos autorais do autor.
+Este projeto está sob a licença **MIT**. Ver [LICENSE](LICENSE) para detalhes.
 
 ---
 
-## ⭐ Sobre o projeto
+## 👥 Autores
 
-O **WD Works V2** representa uma evolução de um projeto inicial de estudos para uma aplicação backend estruturada, com preocupação não apenas com o funcionamento das funcionalidades, mas também com **segurança, arquitetura, manutenção, escalabilidade e regras de negócio**.
+- **WD Works** — Desenvolvimento inicial
 
-> **Construído com Java + Spring Boot para transformar uma ideia de gestão de mercearia em uma API estruturada e preparada para evoluir.**
+---
+
+## 📞 Suporte
+
+Para questões, abrir uma [issue](https://github.com/Elves114) no GitHub.
+
+---
+
+**Feito com ❤️ em Moçambique 🇲🇿**

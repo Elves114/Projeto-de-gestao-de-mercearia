@@ -1,5 +1,6 @@
 package WD.works.V2.venda.controller;
 
+import WD.works.V2.venda.dto.CancelarVendaRequest;
 import WD.works.V2.venda.dto.VendaRequest;
 import WD.works.V2.venda.dto.VendaResponse;
 import WD.works.V2.venda.service.VendaService;
@@ -273,5 +274,31 @@ public class VendaController {
                 )
         );
     }
+
+
+    /**@Operation(
+            summary = "Cancelar uma venda",
+            description = """
+                Cancela uma venda existente.
+
+                O stock dos produtos é devolvido automaticamente
+                e um movimento de stock de DEVOLUCAO é registado.
+
+                A venda NÃO é eliminada — apenas marcada como cancelada.
+                """
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Venda cancelada"),
+            @ApiResponse(responseCode = "400", description = "Venda já cancelada"),
+            @ApiResponse(responseCode = "404", description = "Venda não encontrada")
+    })
+    @PreAuthorize("hasAuthority('VENDA_CANCELAR')")
+    @PostMapping("/{id}/cancelar")
+    public ResponseEntity<VendaResponse> cancelar(
+            @PathVariable Long id,
+            @Valid @RequestBody CancelarVendaRequest request
+    ) {
+        return ResponseEntity.ok(vendaService.cancelar(id, request));
+    }*/
 }
 

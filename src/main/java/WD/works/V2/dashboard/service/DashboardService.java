@@ -13,6 +13,7 @@ import WD.works.V2.venda.itensVenda.repository.ItemVendaRepository;
 import WD.works.V2.venda.repository.VendaRepository;
 import WD.works.V2.venda.entity.Venda;
 import WD.works.V2.estoque.entity.Estoque;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,10 @@ public class DashboardService {
     private final EmpresaContext empresaContext;
 
 
+    @Cacheable(
+            value = "dashboard",
+            key = "@empresaContext.empresaIdAtual + ':' + #periodo"
+    )
     @Transactional(readOnly = true)
     public DashboardResponse obterDashboard(int periodo) {
 

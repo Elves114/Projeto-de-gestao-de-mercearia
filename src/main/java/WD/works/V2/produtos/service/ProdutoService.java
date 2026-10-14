@@ -25,6 +25,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -49,6 +50,7 @@ public class ProdutoService {
     private final ObjectMapper objectMapper;
     private final UsuarioContext usuarioContext;
 
+    @CacheEvict(value = {"dashboard", "produtos"}, allEntries = true)
     @Transactional
     public ProdutoResponse criar(
             ProdutoRequest request
@@ -210,6 +212,7 @@ public class ProdutoService {
         );
     }
 
+    @CacheEvict(value = {"dashboard", "produtos"}, allEntries = true)
     @Transactional
     public void ativar(Long id) {
 
@@ -249,6 +252,7 @@ public class ProdutoService {
         );
     }
 
+    @CacheEvict(value = {"dashboard", "produtos"}, allEntries = true)
     @Transactional
     public ProdutoResponse atualizar(
             Long id,
@@ -375,6 +379,8 @@ public class ProdutoService {
         return dadosNovos;
     }
 
+
+    @CacheEvict(value = {"dashboard", "produtos"}, allEntries = true)
     @Transactional
     public void desativar(Long id) {
 
