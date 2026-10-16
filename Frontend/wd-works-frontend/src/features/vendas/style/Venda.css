@@ -1409,3 +1409,595 @@
         transform: none;
     }
 }
+
+/* ============================================================
+   BADGE DE STATUS DA VENDA
+   ============================================================ */
+
+.venda-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    padding: 5px 11px;
+    border-radius: 999px;
+
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.venda-status::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.venda-status-concluida {
+    background: var(--venda-success-soft);
+    color: var(--venda-success);
+    border: 1px solid var(--venda-success-border);
+}
+
+.venda-status-cancelada {
+    background: var(--venda-danger-soft);
+    color: var(--venda-danger);
+    border: 1px solid var(--venda-danger-border);
+}
+
+
+/* ============================================================
+   LINHA CANCELADA
+   ============================================================ */
+
+.venda-row-cancelada {
+    opacity: 0.75;
+}
+
+.venda-row-cancelada td {
+    color: var(--venda-text-muted);
+}
+
+.venda-row-cancelada td:first-child strong {
+    text-decoration: line-through;
+}
+
+
+/* ============================================================
+   AÇÕES DA LINHA
+   ============================================================ */
+
+.venda-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.venda-cancelar-btn {
+    padding: 6px 12px;
+
+    border: 1px solid var(--venda-danger-border);
+    border-radius: 8px;
+
+    background: var(--venda-danger-soft);
+    color: var(--venda-danger);
+
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition:
+        background 220ms ease,
+        transform 220ms ease,
+        box-shadow 220ms ease;
+}
+
+.venda-cancelar-btn:hover {
+    background: #fee2e2;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(220, 38, 38, 0.15);
+}
+
+
+/* Botão grande nos detalhes */
+.venda-cancelar-btn-destaque {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    min-height: 42px;
+    padding: 0 18px;
+
+    border: 1px solid var(--venda-danger-border);
+    border-radius: var(--venda-radius-sm);
+
+    background: var(--venda-danger-soft);
+    color: var(--venda-danger);
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 220ms ease,
+        transform 220ms ease,
+        box-shadow 220ms ease;
+}
+
+.venda-cancelar-btn-destaque:hover {
+    background: #fee2e2;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(220, 38, 38, 0.15);
+}
+
+.venda-detalhes-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+
+/* ============================================================
+   MENSAGEM DE SUCESSO
+   ============================================================ */
+
+.venda-sucesso {
+    margin-top: 16px;
+    padding: 12px 16px;
+
+    border: 1px solid var(--venda-success-border);
+    border-radius: var(--venda-radius-sm);
+    background: var(--venda-success-soft);
+    color: var(--venda-success);
+
+    font-size: 13px;
+    font-weight: 600;
+
+    animation: vendaSucessoIn 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes vendaSucessoIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+
+/* ============================================================
+   INFO DE CANCELAMENTO (DetalhesVenda)
+   ============================================================ */
+
+.venda-cancelada-info {
+    position: relative;
+    overflow: hidden;
+
+    margin-bottom: 24px;
+    padding: 22px 24px;
+
+    border: 1px solid var(--venda-danger-border);
+    border-radius: var(--venda-radius);
+    background: linear-gradient(
+        135deg,
+        var(--venda-danger-soft) 0%,
+        #ffffff 100%
+    );
+
+    animation: vendaCanceladaIn 380ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes vendaCanceladaIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.venda-cancelada-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    padding: 5px 12px;
+    margin-bottom: 16px;
+    border-radius: 999px;
+
+    background: var(--venda-danger);
+    color: #ffffff;
+
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.venda-cancelada-detalhes {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.venda-cancelada-detalhes > div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.venda-cancelada-detalhes span {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--venda-text-muted);
+}
+
+.venda-cancelada-detalhes strong {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--venda-text);
+}
+
+.venda-cancelada-motivo {
+    grid-column: 1 / -1;
+    padding-top: 12px;
+    border-top: 1px solid var(--venda-danger-border);
+}
+
+.venda-cancelada-motivo strong {
+    font-style: italic;
+    color: var(--venda-danger);
+}
+
+
+/* ============================================================
+   MODAL DE CANCELAMENTO
+   ============================================================ */
+
+.venda-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+
+    animation: vendaModalOverlayIn 220ms ease;
+}
+
+@keyframes vendaModalOverlayIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.venda-modal {
+    width: 100%;
+    max-width: 520px;
+    max-height: calc(100vh - 40px);
+
+    display: flex;
+    flex-direction: column;
+
+    background: #ffffff;
+    border-radius: 20px;
+
+    box-shadow:
+        0 20px 60px rgba(15, 23, 42, 0.25),
+        0 4px 12px rgba(15, 23, 42, 0.08);
+
+    animation: vendaModalIn 320ms cubic-bezier(0.22, 1, 0.36, 1);
+    overflow: hidden;
+}
+
+@keyframes vendaModalIn {
+    from { opacity: 0; transform: translateY(12px) scale(0.96); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+
+/* CABEÇALHO */
+
+.venda-modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+
+    padding: 22px 24px 18px;
+    border-bottom: 1px solid var(--venda-border-soft);
+}
+
+.venda-modal-overline {
+    display: block;
+    margin-bottom: 4px;
+
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+
+    color: var(--venda-danger);
+}
+
+.venda-modal-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: var(--venda-text);
+}
+
+.venda-modal-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 32px;
+    height: 32px;
+    padding: 0;
+
+    border: none;
+    border-radius: 50%;
+    background: var(--venda-bg-soft);
+    color: var(--venda-text-soft);
+
+    font-size: 20px;
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        background 220ms ease,
+        color 220ms ease,
+        transform 220ms ease;
+}
+
+.venda-modal-close:hover:not(:disabled) {
+    background: var(--venda-danger-soft);
+    color: var(--venda-danger);
+    transform: rotate(90deg);
+}
+
+
+/* CORPO */
+
+.venda-modal-body {
+    padding: 22px 24px 24px;
+    overflow-y: auto;
+}
+
+
+/* INFO DA VENDA */
+
+.venda-modal-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+
+    padding: 14px 16px;
+    margin-bottom: 16px;
+
+    border: 1px solid var(--venda-border);
+    border-radius: var(--venda-radius-sm);
+    background: var(--venda-bg-soft);
+}
+
+.venda-modal-info > div {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.venda-modal-info span {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--venda-text-muted);
+}
+
+.venda-modal-info strong {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--venda-text);
+}
+
+
+/* AVISO */
+
+.venda-modal-aviso {
+    padding: 12px 14px;
+    margin-bottom: 18px;
+
+    border: 1px solid rgba(217, 119, 6, 0.20);
+    border-radius: var(--venda-radius-sm);
+    background: #fef3c7;
+
+    color: #92400e;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+
+/* CAMPO */
+
+.venda-modal-field {
+    position: relative;
+    margin-bottom: 18px;
+}
+
+.venda-modal-field label {
+    display: block;
+    margin-bottom: 7px;
+
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--venda-text-soft);
+}
+
+.venda-modal-field textarea {
+    width: 100%;
+    padding: 12px 14px;
+
+    border: 1px solid var(--venda-border);
+    border-radius: var(--venda-radius-sm);
+    background: #ffffff;
+
+    color: var(--venda-text);
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 1.5;
+
+    outline: none;
+    resize: vertical;
+    min-height: 82px;
+
+    transition:
+        border-color 220ms ease,
+        box-shadow 220ms ease;
+}
+
+.venda-modal-field textarea:hover {
+    border-color: #cbd5e1;
+}
+
+.venda-modal-field textarea:focus {
+    border-color: var(--venda-primary);
+    box-shadow: 0 0 0 3px var(--venda-primary-glow);
+}
+
+.venda-modal-counter {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+
+    padding: 2px 7px;
+
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.85);
+
+    color: var(--venda-text-muted);
+    font-size: 10px;
+    font-weight: 700;
+}
+
+
+/* ERRO */
+
+.venda-modal-erro {
+    padding: 10px 14px;
+    margin-bottom: 14px;
+
+    border: 1px solid var(--venda-danger-border);
+    border-radius: var(--venda-radius-sm);
+    background: var(--venda-danger-soft);
+    color: var(--venda-danger);
+
+    font-size: 12px;
+    font-weight: 600;
+}
+
+
+/* AÇÕES */
+
+.venda-modal-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.venda-modal-confirmar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 42px;
+    padding: 0 20px;
+
+    border: 1px solid var(--venda-danger);
+    border-radius: var(--venda-radius-sm);
+
+    background: var(--venda-danger);
+    color: #ffffff;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 220ms ease,
+        transform 220ms ease,
+        box-shadow 220ms ease;
+}
+
+.venda-modal-confirmar:hover:not(:disabled) {
+    background: #b91c1c;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(220, 38, 38, 0.25);
+}
+
+.venda-modal-confirmar:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+
+/* RESPONSIVO */
+
+@media (max-width: 600px) {
+    .venda-modal-overlay {
+        padding: 12px;
+        align-items: flex-end;
+    }
+
+    .venda-modal {
+        max-height: 90vh;
+        border-radius: 20px 20px 0 0;
+    }
+
+    .venda-modal-header,
+    .venda-modal-body {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .venda-modal-actions {
+        flex-direction: column-reverse;
+    }
+
+    .venda-modal-actions button {
+        width: 100%;
+    }
+
+    .venda-cancelada-detalhes {
+        grid-template-columns: 1fr;
+    }
+
+    .venda-detalhes-actions {
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+    }
+
+    .venda-cancelar-btn-destaque {
+        width: 100%;
+    }
+}

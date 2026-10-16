@@ -102,7 +102,7 @@ public class Venda {
         }
     }
 
-   /** @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private StatusVenda status = StatusVenda.CONCLUIDA;
 
@@ -114,5 +114,5 @@ public class Venda {
     private Usuario canceladaPor;
 
     @Column(name = "motivo_cancelamento", length = 500)
-    private String motivoCancelamento;*/
+    private String motivoCancelamento;
 }

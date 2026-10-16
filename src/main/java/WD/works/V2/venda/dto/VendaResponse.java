@@ -1,6 +1,7 @@
 package WD.works.V2.venda.dto;
 
 import WD.works.V2.venda.itensVenda.dto.ItemVendaResponse;
+import WD.works.V2.venda.status.StatusVenda;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,9 +26,20 @@ public class VendaResponse {
     private BigDecimal lucroTotal;
 
     private Long usuarioId;
+
     private String usuarioNome;
 
     private Long empresaId;
+
+    private StatusVenda status;
+
+    private LocalDateTime canceladaEm;
+
+    private String motivoCancelamento;
+
+    private Long canceladaPorId;
+
+    private String canceladaPorNome;
 
     private List<ItemVendaResponse> itens;
 }

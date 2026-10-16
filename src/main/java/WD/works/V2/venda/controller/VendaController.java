@@ -276,20 +276,23 @@ public class VendaController {
     }
 
 
-    /**@Operation(
+    @Operation(
             summary = "Cancelar uma venda",
             description = """
                 Cancela uma venda existente.
 
                 O stock dos produtos é devolvido automaticamente
-                e um movimento de stock de DEVOLUCAO é registado.
+                e um movimento de stock de DEVOLUCAO é registado
+                por cada item.
 
                 A venda NÃO é eliminada — apenas marcada como cancelada.
                 """
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Venda cancelada"),
-            @ApiResponse(responseCode = "400", description = "Venda já cancelada"),
+            @ApiResponse(responseCode = "200", description = "Venda cancelada com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Venda já cancelada ou motivo inválido"),
+            @ApiResponse(responseCode = "401", description = "Usuário não autenticado"),
+            @ApiResponse(responseCode = "403", description = "Usuário sem permissão"),
             @ApiResponse(responseCode = "404", description = "Venda não encontrada")
     })
     @PreAuthorize("hasAuthority('VENDA_CANCELAR')")
@@ -299,6 +302,6 @@ public class VendaController {
             @Valid @RequestBody CancelarVendaRequest request
     ) {
         return ResponseEntity.ok(vendaService.cancelar(id, request));
-    }*/
+    }
 }
 

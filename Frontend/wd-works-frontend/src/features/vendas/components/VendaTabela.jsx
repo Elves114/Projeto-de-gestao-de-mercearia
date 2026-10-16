@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 
-function VendaTabela({ vendas }) {
+function VendaTabela({ vendas, onCancelar }) {
+
     if (vendas.length === 0) {
         return (
             <div className="empty-state">
@@ -26,63 +27,95 @@ function VendaTabela({ vendas }) {
                         <th>Funcionário</th>
                         <th>Total</th>
                         <th>Lucro</th>
+                        <th>Estado</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
 
                 <tbody>
-                    {vendas.map((venda) => (
-                        <tr key={venda.id}>
-                            <td>
-                                <strong>
-                                    #{venda.id}
-                                </strong>
-                            </td>
+                    {vendas.map((venda) => {
 
-                            <td>
-                                {new Date(
-                                    venda.dataVenda
-                                ).toLocaleString("pt-MZ")}
-                            </td>
+                        const cancelada =
+                            venda.status === "CANCELADA";
 
-                            <td>
-                                {venda.usuarioNome}
-                            </td>
+                        return (
+                            <tr
+                                key={venda.id}
+                                className={
+                                    cancelada
+                                        ? "venda-row venda-row-cancelada"
+                                        : "venda-row"
+                                }
+                            >
+                                <td>
+                                    <strong>#{venda.id}</strong>
+                                </td>
 
-                            <td>
-                                {Number(
-                                    venda.total
-                                ).toLocaleString(
-                                    "pt-MZ",
-                                    {
-                                        style: "currency",
-                                        currency: "MZN",
-                                    }
-                                )}
-                            </td>
+                                <td>
+                                    {new Date(
+                                        venda.dataVenda
+                                    ).toLocaleString("pt-MZ")}
+                                </td>
 
-                            <td>
-                                {Number(
-                                    venda.lucroTotal
-                                ).toLocaleString(
-                                    "pt-MZ",
-                                    {
-                                        style: "currency",
-                                        currency: "MZN",
-                                    }
-                                )}
-                            </td>
+                                <td>{venda.usuarioNome}</td>
 
-                            <td>
-                                <Link
-                                    to={`/vendas/${venda.id}`}
-                                    className="table-action"
-                                >
-                                    Ver detalhes
-                                </Link>
-                            </td>
-                        </tr>
-                    ))}
+                                <td>
+                                    {Number(
+                                        venda.total
+                                    ).toLocaleString("pt-MZ", {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2,
+                                    }) + " MT"}
+                                </td>
+
+                                <td>
+                                    {Number(
+                                        venda.lucroTotal
+                                    ).toLocaleString("pt-MZ", {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2,
+                                    }) + " MT"}
+                                </td>
+
+                                <td>
+                                    {cancelada ? (
+                                        <span className="venda-status venda-status-cancelada">
+                                            Cancelada
+                                        </span>
+                                    ) : (
+                                        <span className="venda-status venda-status-concluida">
+                                            Concluída
+                                        </span>
+                                    )}
+                                </td>
+
+                                <td>
+                                    <div className="venda-actions">
+
+                                        <Link
+                                            to={`/vendas/${venda.id}`}
+                                            className="table-action"
+                                        >
+                                            Ver
+                                        </Link>
+
+                                        {!cancelada && onCancelar && (
+                                            <button
+                                                type="button"
+                                                className="venda-cancelar-btn"
+                                                onClick={() =>
+                                                    onCancelar(venda)
+                                                }
+                                            >
+                                                Cancelar
+                                            </button>
+                                        )}
+
+                                    </div>
+                                </td>
+                            </tr>
+                        );
+                    })}
                 </tbody>
             </table>
         </div>

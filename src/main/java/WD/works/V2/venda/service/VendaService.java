@@ -2,6 +2,7 @@ package WD.works.V2.venda.service;
 
 import WD.works.V2.alertaStock.service.AlertaStockService;
 import WD.works.V2.auditoria.dto.AuditoriaRequest;
+import WD.works.V2.auditoria.gravidade.GravidadeAuditoria;
 import WD.works.V2.auditoria.service.AuditoriaService;
 import WD.works.V2.auditoria.tipo.TipoAuditoria;
 import WD.works.V2.configuracao.context.EmpresaContext;
@@ -18,6 +19,7 @@ import WD.works.V2.produtos.entity.Produto;
 import WD.works.V2.produtos.repository.ProdutoRepository;
 import WD.works.V2.produtos.status.StatusProduto;
 import WD.works.V2.usuario.entity.Usuario;
+import WD.works.V2.venda.dto.CancelarVendaRequest;
 import WD.works.V2.venda.dto.VendaRequest;
 import WD.works.V2.venda.dto.VendaResponse;
 import WD.works.V2.venda.entity.Venda;
@@ -25,6 +27,7 @@ import WD.works.V2.venda.itensVenda.dto.ItemVendaRequest;
 import WD.works.V2.venda.itensVenda.dto.ItemVendaResponse;
 import WD.works.V2.venda.itensVenda.entity.ItemVenda;
 import WD.works.V2.venda.repository.VendaRepository;
+import WD.works.V2.venda.status.StatusVenda;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
@@ -396,6 +399,108 @@ public class VendaService {
                 .map(this::converterParaResponse);
     }
 
+    @CacheEvict(value = {"dashboard", "produtos"}, allEntries = true)
+    @Transactional
+    public VendaResponse cancelar(
+            Long vendaId,
+            CancelarVendaRequest request
+    ) {
+
+        Usuario usuario = usuarioContext.getUsuarioAtual();
+        Empresa empresa = empresaContext.getEmpresaAtual();
+
+        /*
+         * 1) Busca a venda, garantindo que pertence à empresa
+         */
+        Venda venda = vendaRepository
+                .findByIdAndEmpresaId(vendaId, empresa.getId())
+                .orElseThrow(() -> new RecursoNaoEncontradoException(
+                        "Venda não encontrada."
+                ));
+
+        /*
+         * 2) Verifica se já está cancelada
+         */
+        if (venda.getStatus() == StatusVenda.CANCELADA) {
+            throw new RegraNegocioException(
+                    "Esta venda já foi cancelada em "
+                            + venda.getCanceladaEm()
+                            + "."
+            );
+        }
+
+        /*
+         * 3) Devolve o stock e cria um movimento por item
+         */
+        for (ItemVenda item : venda.getItens()) {
+
+            Estoque estoque = estoqueRepository
+                    .findByProdutoIdAndEmpresaId(
+                            item.getProduto().getId(),
+                            empresa.getId()
+                    )
+                    .orElseThrow(() -> new RecursoNaoEncontradoException(
+                            "Estoque do produto não encontrado: "
+                                    + item.getProduto().getNome()
+                    ));
+
+            int quantidadeAnterior = estoque.getQuantidade();
+            int quantidadePosterior = quantidadeAnterior + item.getQuantidade();
+
+            estoque.setQuantidade(quantidadePosterior);
+            estoqueRepository.save(estoque);
+
+            // Verifica se o alerta de stock deve ser resolvido
+            alertaStockService.verificarEstoque(estoque);
+
+            // Movimento de DEVOLUCAO (rastreabilidade)
+            MovimentoStock movimento = new MovimentoStock();
+            movimento.setAcao(Acao.DEVOLUCAO);
+            movimento.setQuantidade(item.getQuantidade());
+            movimento.setQuantidadeAnterior(quantidadeAnterior);
+            movimento.setQuantidadePosterior(quantidadePosterior);
+            movimento.setDescricao("Devolução por cancelamento da venda #" + vendaId);
+            movimento.setData(LocalDateTime.now());
+            movimento.setEstoque(estoque);
+            movimento.setProduto(item.getProduto());
+            movimento.setEmpresa(empresa);
+            movimento.setUsuario(usuario);
+
+            movimentoRepository.save(movimento);
+        }
+
+        /*
+         * 4) Marca a venda como cancelada
+         */
+        venda.setStatus(StatusVenda.CANCELADA);
+        venda.setCanceladaEm(LocalDateTime.now());
+        venda.setCanceladaPor(usuario);
+        venda.setMotivoCancelamento(request.getMotivo());
+
+        Venda vendaCancelada = vendaRepository.save(venda);
+
+        /*
+         * 5) Auditoria com gravidade WARNING
+         */
+        AuditoriaRequest auditoria = new AuditoriaRequest(
+                TipoAuditoria.ALTERACAO,
+                "Venda",
+                vendaCancelada.getId().toString(),
+                "Venda #" + vendaCancelada.getId()
+                        + " cancelada. Motivo: " + request.getMotivo()
+        );
+
+        auditoriaService.registrar(
+                auditoria,
+                usuario,
+                empresa,
+                GravidadeAuditoria.WARNING,
+                null
+        );
+
+        return converterParaResponse(vendaCancelada);
+    }
+
 
 
 
@@ -645,7 +750,6 @@ public class VendaService {
                         )
                         .toList();
 
-
         return new VendaResponse(
                 venda.getId(),
                 venda.getDataVenda(),
@@ -654,6 +758,11 @@ public class VendaService {
                 venda.getUsuario().getId(),
                 venda.getUsuario().getNome(),
                 venda.getEmpresa().getId(),
+                venda.getStatus(),
+                venda.getCanceladaEm(),
+                venda.getMotivoCancelamento(),
+                venda.getCanceladaPor() != null ? venda.getCanceladaPor().getId() : null,
+                venda.getCanceladaPor() != null ? venda.getCanceladaPor().getNome() : null,
                 itens
         );
     }
