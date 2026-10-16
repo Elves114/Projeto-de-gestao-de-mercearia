@@ -67,3 +67,13 @@ export async function criarVenda(venda) {
     return response.data;
 }
 
+
+export async function cancelarVenda(id, motivo) {
+    const response = await api.post(
+        `/api/vendas/${id}/cancelar`,
+        { motivo }
+    );
+
+    return response.data;
+}
+
