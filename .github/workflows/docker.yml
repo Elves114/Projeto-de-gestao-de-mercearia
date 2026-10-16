@@ -4,12 +4,25 @@ on:
   push:
     branches: [ main, master ]
     tags: [ 'v*.*.*' ]
-  workflow_dispatch:   # permite correr manualmente no GitHub
+  workflow_dispatch:
+
+
+permissions:
+  contents: read
+  packages: write
+  attestations: write
+  id-token: write
 
 jobs:
   build:
     name: Construir imagem Docker
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
 
     steps:
       - name: Checkout do código
@@ -26,7 +39,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extrair metadados (tags, labels)
+      - name: Extrair metadados
         id: meta
         uses: docker/metadata-action@v5
         with:
