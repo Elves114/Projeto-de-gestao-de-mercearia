@@ -1,210 +1,135 @@
 package WD.works.V2.usuario.auth.controller;
 
-import WD.works.V2.usuario.auth.dto.AuthMeResponse;
-import WD.works.V2.usuario.auth.dto.AuthRequest;
-import WD.works.V2.usuario.auth.dto.AuthResponse;
+import WD.works.V2.usuario.auth.dto.*;
 import WD.works.V2.usuario.auth.service.AuthService;
-import WD.works.V2.usuario.auth.dto.CadastroRequest;
-import WD.works.V2.usuario.auth.dto.RecuperacaoSenhaRequest;
-import WD.works.V2.usuario.auth.dto.RedefinirSenhaRequest;
-import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
-@Tag(
-        name = "Autenticação",
-        description = "Endpoints relacionados à autenticação dos usuários"
-)
+@Tag(name = "Autenticação", description = "Endpoints de autenticação")
 public class AuthController {
 
     private final AuthService authService;
 
-    @Operation(
-            summary = "Autenticar usuário",
-            description = """
-                    Realiza o login do usuário através do email e senha.
-                    
-                    Após uma autenticação bem-sucedida,
-                    a API retorna um token JWT que deve ser utilizado
-                    nas requisições que exigem autenticação.
-                    """
-    )
-    @ApiResponses({
+    /* ============================================================
+       LOGIN
+       ============================================================ */
 
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Login realizado com sucesso",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(
-                                    implementation = AuthResponse.class
-                            )
-                    )
-            ),
-
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Dados de login inválidos",
-                    content = @Content
-            ),
-
-            @ApiResponse(
-                    responseCode = "401",
-                    description = "Email ou senha incorretos",
-                    content = @Content
-            )
-    })
     @PostMapping("/login")
+    @Operation(summary = "Autenticar usuário")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Login OK",
+                    content = @Content(schema = @Schema(implementation = AuthResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
+            @ApiResponse(responseCode = "401", description = "Credenciais inválidas")
+    })
     public ResponseEntity<AuthResponse> login(
-            @Valid @RequestBody AuthRequest request
+            @Valid @RequestBody AuthRequest request,
+            HttpServletRequest httpRequest
     ) {
-
         return ResponseEntity.ok(
-                authService.login(request)
+                authService.login(request, httpRequest)
         );
     }
+
+    /* ============================================================
+       REFRESH
+       ============================================================ */
+
+    @PostMapping("/refresh")
+    @Operation(
+            summary = "Renovar access token",
+            description = "Usa um refresh token válido para gerar um novo par de tokens."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Token renovado",
+                    content = @Content(schema = @Schema(implementation = AuthResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Refresh token inválido ou expirado")
+    })
+    public ResponseEntity<AuthResponse> refresh(
+            @Valid @RequestBody RefreshTokenRequest request,
+            HttpServletRequest httpRequest
+    ) {
+        return ResponseEntity.ok(
+                authService.refresh(request.getRefreshToken(), httpRequest)
+        );
+    }
+
+    /* ============================================================
+       LOGOUT
+       ============================================================ */
+
+    @PostMapping("/logout")
+    @Operation(
+            summary = "Terminar sessão",
+            description = "Invalida o refresh token. O access token continua válido até expirar."
+    )
+    @ApiResponse(responseCode = "204", description = "Sessão terminada")
+    public ResponseEntity<Void> logout(
+            @RequestBody(required = false) RefreshTokenRequest request
+    ) {
+        String token = request != null ? request.getRefreshToken() : null;
+        authService.logout(token);
+        return ResponseEntity.noContent().build();
+    }
+
+    /* ============================================================
+       ME
+       ============================================================ */
 
     @GetMapping("/me")
-    @Operation(
-            summary = "Obter usuário autenticado",
-            description = "Retorna os dados do usuário atualmente autenticado."
-    )
-    @ApiResponses({
-
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Dados do usuário autenticado."
-            ),
-
-            @ApiResponse(
-                    responseCode = "401",
-                    description = "Usuário não autenticado."
-            )
-    })
+    @Operation(summary = "Utilizador autenticado")
     public ResponseEntity<AuthMeResponse> usuarioAutenticado() {
-
-        return ResponseEntity.ok(
-                authService.usuarioAutenticado()
-        );
+        return ResponseEntity.ok(authService.usuarioAutenticado());
     }
 
+    /* ============================================================
+       CADASTRO
+       ============================================================ */
+
     @PostMapping("/cadastro")
-    @Operation(
-            summary = "Cadastrar empresa",
-            description = """
-                    Cria uma nova empresa juntamente com o
-                    seu administrador inicial.
-                    
-                    O administrador inicial é criado automaticamente
-                    com o perfil ADMIN.
-                    
-                    Este endpoint é público e não exige autenticação.
-                    """
-    )
-    @ApiResponses({
-
-            @ApiResponse(
-                    responseCode = "201",
-                    description = "Empresa e administrador criados com sucesso.",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(
-                                    implementation = AuthResponse.class
-                            )
-                    )
-            ),
-
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Dados de cadastro inválidos.",
-                    content = @Content
-            ),
-
-            @ApiResponse(
-                    responseCode = "409",
-                    description = "Empresa ou usuário já existente.",
-                    content = @Content
-            )
-    })
+    @Operation(summary = "Cadastrar empresa + admin")
+    @ApiResponse(responseCode = "201", description = "Conta criada",
+            content = @Content(schema = @Schema(implementation = AuthResponse.class)))
     public ResponseEntity<AuthResponse> cadastrar(
             @Valid @RequestBody CadastroRequest request
     ) {
-
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(
-                        authService.cadastrar(request)
-                );
+                .body(authService.cadastrar(request));
     }
 
+    /* ============================================================
+       RECUPERAÇÃO DE SENHA
+       ============================================================ */
+
     @PostMapping("/recuperar-senha")
-    @Operation(
-            summary = "Solicitar recuperação de senha",
-            description = """
-                    Inicia o processo de recuperação de senha
-                    através do email do usuário.
-                    """
-    )
-    @ApiResponses({
-
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Solicitação processada com sucesso."
-            ),
-
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Email inválido.",
-                    content = @Content
-            )
-    })
+    @Operation(summary = "Solicitar recuperação de senha")
     public ResponseEntity<Void> recuperarSenha(
             @Valid @RequestBody RecuperacaoSenhaRequest request
     ) {
-
         authService.solicitarRecuperacaoSenha(request);
-
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/redefinir-senha")
-    @Operation(
-            summary = "Redefinir senha",
-            description = """
-                    Redefine a senha do usuário utilizando
-                    um token de recuperação válido.
-                    """
-    )
-    @ApiResponses({
-
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Senha redefinida com sucesso."
-            ),
-
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Token inválido, expirado ou já utilizado.",
-                    content = @Content
-            )
-    })
+    @Operation(summary = "Redefinir senha com token")
     public ResponseEntity<Void> redefinirSenha(
             @Valid @RequestBody RedefinirSenhaRequest request
     ) {
-
         authService.redefinirSenha(request);
-
         return ResponseEntity.ok().build();
     }
 }

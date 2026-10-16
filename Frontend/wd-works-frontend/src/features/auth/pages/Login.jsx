@@ -27,9 +27,12 @@ function Login() {
         setCarregando(true);
 
         try {
-            const response = await loginApi(email, senha);
+            // O loginApi já guarda os tokens automaticamente
+            await loginApi(email, senha);
 
-            login(response.token);
+            // Atualiza o contexto com o novo token
+            const novoToken = localStorage.getItem("token");
+            login(novoToken);
 
             navigate("/");
 

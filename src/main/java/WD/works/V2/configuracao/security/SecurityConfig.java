@@ -50,14 +50,10 @@ public class SecurityConfig {
                  */
                 .headers(headers -> headers
 
-                        // X-Content-Type-Options: nosniff (default)
                         .contentTypeOptions(contentType -> {
                         })
-
-                        // X-Frame-Options: DENY
                         .frameOptions(frame -> frame.deny())
 
-                        // Content Security Policy
                         .contentSecurityPolicy(csp -> csp
                                 .policyDirectives(
                                         "default-src 'self'; " +
@@ -72,13 +68,11 @@ public class SecurityConfig {
                                 )
                         )
 
-                        // Strict-Transport-Security
                         .httpStrictTransportSecurity(hsts -> hsts
                                 .includeSubDomains(true)
                                 .maxAgeInSeconds(31536000)
                         )
 
-                        // Referrer-Policy
                         .referrerPolicy(referrer -> referrer
                                 .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy
                                         .STRICT_ORIGIN_WHEN_CROSS_ORIGIN)
@@ -98,9 +92,18 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
 
+                        /*
+                         * Endpoints públicos de autenticação
+                         *
+                         * /auth/refresh e /auth/logout TÊM de estar aqui
+                         * porque o utilizador ainda não tem um access
+                         * token válido quando os chama.
+                         */
                         .requestMatchers(
                                 "/auth/login",
                                 "/auth/cadastro",
+                                "/auth/refresh",       // ★ NOVO
+                                "/auth/logout",        // ★ NOVO
                                 "/auth/recuperar-senha",
                                 "/auth/redefinir-senha"
                         ).permitAll()
@@ -118,13 +121,10 @@ public class SecurityConfig {
                                 "/actuator/info"
                         ).permitAll()
 
-                        .anyRequest()
-                        .authenticated()
+                        .anyRequest().authenticated()
                 )
 
-                .authenticationProvider(
-                        authenticationProvider()
-                )
+                .authenticationProvider(authenticationProvider())
 
                 .addFilterBefore(
                         loginRateLimitFilter,
@@ -138,7 +138,6 @@ public class SecurityConfig {
 
         return http.build();
     }
-
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider =
