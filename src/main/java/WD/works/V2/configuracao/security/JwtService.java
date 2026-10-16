@@ -187,4 +187,8 @@ public class JwtService {
                 new Date()
         );
     }
+
+    public long getExpirationSeconds() {
+        return expiration / 1000;
+    }
 }
