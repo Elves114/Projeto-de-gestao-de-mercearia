@@ -2,11 +2,19 @@
 
 API REST para gestão completa de mercearias e pequenos comércios em Moçambique.
 
+# WD Works V2 — Sistema de Gestão de Mercearia
+
+[![Testes](https://github.com/SEU-USUARIO/projeto-de-gestao-de-mercearia/actions/workflows/test.yml/badge.svg)](https://github.com/SEU-USUARIO/projeto-de-gestao-de-mercearia/actions/workflows/test.yml)
+[![Docker](https://github.com/SEU-USUARIO/projeto-de-gestao-de-mercearia/actions/workflows/docker.yml/badge.svg)](https://github.com/SEU-USUARIO/projeto-de-gestao-de-mercearia/actions/workflows/docker.yml)
+[![CodeQL](https://github.com/SEU-USUARIO/projeto-de-gestao-de-mercearia/actions/workflows/codeql.yml/badge.svg)](https://github.com/SEU-USUARIO/projeto-de-gestao-de-mercearia/actions/workflows/codeql.yml)
+
 [![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://openjdk.org/projects/jdk/21/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1.1-brightgreen.svg)](https://spring.io/projects/spring-boot)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-18-blue.svg)](https://www.postgresql.org/)
 [![Flyway](https://img.shields.io/badge/Flyway-13.9-red.svg)](https://flywaydb.org/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+
 
 ---
 
