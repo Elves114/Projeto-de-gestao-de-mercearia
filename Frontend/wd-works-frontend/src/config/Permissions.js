@@ -78,4 +78,6 @@ export const PERMISSOES_ROTAS = {
         "GERENTE",
         "FUNCIONARIO"
     ],
+
+    "/caixa": ["ADMIN", "GERENTE"],
 };
