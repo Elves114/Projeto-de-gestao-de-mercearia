@@ -95,4 +95,10 @@ public interface VendaRepository
             @Param("fim") LocalDateTime fim
     );
 
+    List<Venda> findByEmpresaIdAndDataVendaBetween(
+            Long empresaId,
+            LocalDateTime inicio,
+            LocalDateTime fim
+    );
+
 }

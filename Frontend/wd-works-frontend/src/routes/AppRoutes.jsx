@@ -24,6 +24,7 @@ import AlertasStock from "../features/alertaStock/pages/AlertaStock";
 import RecuperarSenha from "../features/auth/pages/RecuperarSenha";
 import RedefinirSenha from "../features/auth/pages/RedefinirSenha";
 import Perfil from "../features/perfil/pages/Perfil";
+import Caixa from "../features/caixa/pages/Caixa";
 import Inicio from "./Inicio";
 
 
@@ -144,6 +145,10 @@ function AppRoutes() {
                                 path="/perfil"
                                 element={<Perfil />}
                             />
+
+                            <Route
+                                path="/caixa" 
+                                element={<Caixa />} />
 
                         </Route>
 

@@ -1197,3 +1197,56 @@
         transform: none;
     }
 }
+
+/* ============================================================
+   BOTÃO EXPORTAR CSV
+   ============================================================ */
+
+.auditoria-exportar-csv {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    min-height: 42px;
+    padding: 0 18px;
+
+    border: 1px solid var(--aud-border);
+    border-radius: var(--aud-radius-sm);
+
+    background: #ffffff;
+    color: var(--aud-text-soft);
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background var(--aud-ease),
+        border-color var(--aud-ease),
+        color var(--aud-ease),
+        box-shadow var(--aud-ease),
+        transform var(--aud-ease);
+}
+
+.auditoria-exportar-csv:hover {
+    background: var(--aud-bg-soft);
+    border-color: #cbd5e1;
+    color: var(--aud-text);
+    transform: translateY(-2px);
+    box-shadow: var(--aud-shadow);
+}
+
+.auditoria-exportar-csv:active {
+    transform: translateY(0) scale(0.98);
+}
+
+/* Em mobile */
+@media (max-width: 700px) {
+    .auditoria-exportar-csv {
+        width: 100%;
+        margin-top: 12px;
+    }
+}

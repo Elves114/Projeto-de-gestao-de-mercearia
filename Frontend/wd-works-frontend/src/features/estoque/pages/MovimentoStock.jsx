@@ -1,583 +1,349 @@
 import { useEffect, useState } from "react";
 
-import {
-    listarMovimentosStock
-} from "../services/MovimentoStockService";
+import { listarMovimentosStock } from "../services/MovimentoStockService";
 
-import {
-    obterMensagemErro
-} from "../../../services/api";
+import { obterMensagemErro } from "../../../services/api";
+
+import { exportarCsv } from "../../../utils/exportarCsv";
 
 import "../style/MovimentoStock.css";
 
-
 function MovimentosStock() {
+  const [movimentos, setMovimentos] = useState([]);
 
-    const [movimentos, setMovimentos] = useState([]);
+  const [produtoPesquisa, setProdutoPesquisa] = useState("");
 
-    const [produtoPesquisa, setProdutoPesquisa] =
-        useState("");
+  const [pesquisaAplicada, setPesquisaAplicada] = useState("");
 
-    const [pesquisaAplicada, setPesquisaAplicada] =
-        useState("");
+  const [pagina, setPagina] = useState(0);
 
-    const [pagina, setPagina] =
-        useState(0);
+  const [totalPaginas, setTotalPaginas] = useState(0);
 
-    const [totalPaginas, setTotalPaginas] =
-        useState(0);
+  const [totalElementos, setTotalElementos] = useState(0);
 
-    const [totalElementos, setTotalElementos] =
-        useState(0);
+  const [carregando, setCarregando] = useState(false);
 
-    const [carregando, setCarregando] =
-        useState(false);
+  const [erro, setErro] = useState("");
 
-    const [erro, setErro] =
-        useState("");
+  const tamanhoPagina = 10;
 
-    const tamanhoPagina = 10;
+  /*
+   * ============================================================
+   * CARREGAR MOVIMENTOS
+   * ============================================================
+   */
 
+  useEffect(() => {
+    let ativo = true;
 
-    /*
-     * ============================================================
-     * CARREGAR MOVIMENTOS
-     * ============================================================
-     */
+    async function carregar() {
+      try {
+        setCarregando(true);
+        setErro("");
 
-    useEffect(() => {
-
-        let ativo = true;
-
-        async function carregar() {
-
-            try {
-
-                setCarregando(true);
-                setErro("");
-
-                const data =
-                    await listarMovimentosStock(
-                        pagina,
-                        tamanhoPagina,
-                        pesquisaAplicada
-                    );
-
-                if (!ativo) {
-                    return;
-                }
-
-
-                /*
-                 * Dados dos movimentos
-                 */
-                setMovimentos(
-                    data.content || []
-                );
-
-
-                /*
-                 * IMPORTANTE:
-                 *
-                 * A paginação vem dentro de "page".
-                 */
-                setTotalPaginas(
-                    data.page?.totalPages || 0
-                );
-
-                setTotalElementos(
-                    data.page?.totalElements || 0
-                );
-
-
-                /*
-                 * Se a página atual deixar de existir,
-                 * voltamos para a última página válida.
-                 */
-                if (
-                    data.page?.totalPages > 0 &&
-                    pagina >= data.page.totalPages
-                ) {
-
-                    setPagina(
-                        data.page.totalPages - 1
-                    );
-                }
-
-            } catch (error) {
-
-                console.error(
-                    "Erro ao carregar movimentos:",
-                    error
-                );
-
-                if (!ativo) {
-                    return;
-                }
-
-                setErro(
-                    obterMensagemErro(error)
-                );
-
-            } finally {
-
-                if (ativo) {
-                    setCarregando(false);
-                }
-
-            }
-        }
-
-        carregar();
-
-        return () => {
-            ativo = false;
-        };
-
-    }, [pagina, pesquisaAplicada]);
-
-
-    /*
-     * ============================================================
-     * PESQUISAR
-     * ============================================================
-     */
-
-    function pesquisar(event) {
-
-        event.preventDefault();
-
-        setPagina(0);
-
-        setPesquisaAplicada(
-            produtoPesquisa.trim()
+        const data = await listarMovimentosStock(
+          pagina,
+          tamanhoPagina,
+          pesquisaAplicada,
         );
-    }
 
-
-    /*
-     * ============================================================
-     * LIMPAR PESQUISA
-     * ============================================================
-     */
-
-    function limparPesquisa() {
-
-        setProdutoPesquisa("");
-
-        setPesquisaAplicada("");
-
-        setPagina(0);
-    }
-
-
-    /*
-     * ============================================================
-     * PAGINAÇÃO
-     * ============================================================
-     */
-
-    function paginaAnterior() {
-
-        if (pagina > 0) {
-
-            setPagina(
-                (paginaAtual) =>
-                    paginaAtual - 1
-            );
+        if (!ativo) {
+          return;
         }
-    }
 
+        /*
+         * Dados dos movimentos
+         */
+        setMovimentos(data.content || []);
 
-    function proximaPagina() {
+        /*
+         * IMPORTANTE:
+         *
+         * A paginação vem dentro de "page".
+         */
+        setTotalPaginas(data.page?.totalPages || 0);
 
-        if (
-            pagina <
-            totalPaginas - 1
-        ) {
+        setTotalElementos(data.page?.totalElements || 0);
 
-            setPagina(
-                (paginaAtual) =>
-                    paginaAtual + 1
-            );
+        /*
+         * Se a página atual deixar de existir,
+         * voltamos para a última página válida.
+         */
+        if (data.page?.totalPages > 0 && pagina >= data.page.totalPages) {
+          setPagina(data.page.totalPages - 1);
         }
+      } catch (error) {
+        console.error("Erro ao carregar movimentos:", error);
+
+        if (!ativo) {
+          return;
+        }
+
+        setErro(obterMensagemErro(error));
+      } finally {
+        if (ativo) {
+          setCarregando(false);
+        }
+      }
     }
 
+    carregar();
 
-    /*
-     * ============================================================
-     * PÁGINA
-     * ============================================================
-     */
+    return () => {
+      ativo = false;
+    };
+  }, [pagina, pesquisaAplicada]);
 
-    return (
+  /*
+   * ============================================================
+   * PESQUISAR
+   * ============================================================
+   */
 
-        <div className="movimentos-stock-page">
+  function pesquisar(event) {
+    event.preventDefault();
 
-            <div className="page-header">
+    setPagina(0);
 
-                <div>
+    setPesquisaAplicada(produtoPesquisa.trim());
+  }
 
-                    <h1>
-                        Histórico de Stock
-                    </h1>
+  /*
+   * ============================================================
+   * LIMPAR PESQUISA
+   * ============================================================
+   */
 
-                    <p>
-                        Consulte as movimentações de stock
-                        realizadas na sua empresa.
-                    </p>
+  function limparPesquisa() {
+    setProdutoPesquisa("");
 
-                </div>
+    setPesquisaAplicada("");
 
-            </div>
+    setPagina(0);
+  }
 
+  /*
+   * ============================================================
+   * PAGINAÇÃO
+   * ============================================================
+   */
 
-            <section className="movimentos-stock-list-card">
+  function paginaAnterior() {
+    if (pagina > 0) {
+      setPagina((paginaAtual) => paginaAtual - 1);
+    }
+  }
 
-                <div className="section-header">
+  function proximaPagina() {
+    if (pagina < totalPaginas - 1) {
+      setPagina((paginaAtual) => paginaAtual + 1);
+    }
+  }
 
-                    <div>
+  /*
+   * ============================================================
+   * PÁGINA
+   * ============================================================
+   */
 
-                        <h2>
-                            Movimentações
-                        </h2>
+  return (
+    <div className="movimentos-stock-page">
+      <div className="page-header">
+        <div>
+          <h1>Histórico de Stock</h1>
+          <p>...</p>
+        </div>
 
-                        <p>
-                            Pesquise pelo nome do produto
-                            para encontrar rapidamente
-                            os movimentos.
-                        </p>
+        <button
+          type="button"
+          className="button button-secondary"
+          onClick={() =>
+            exportarCsv("/api/relatorios/movimentos.csv", {}, "movimentos.csv")
+          }
+        >
+          Exportar CSV
+        </button>
+      </div>
 
-                    </div>
+      <section className="movimentos-stock-list-card">
+        <div className="section-header">
+          <div>
+            <h2>Movimentações</h2>
 
-                    <span className="categoria-count">
-                        {totalElementos}
-                    </span>
+            <p>
+              Pesquise pelo nome do produto para encontrar rapidamente os
+              movimentos.
+            </p>
+          </div>
 
-                </div>
+          <span className="categoria-count">{totalElementos}</span>
+        </div>
 
-
-                {/* =================================================
+        {/* =================================================
                     PESQUISA
                    ================================================= */}
 
-                <form
-                    className="movimentos-stock-pesquisa"
-                    onSubmit={pesquisar}
-                >
+        <form className="movimentos-stock-pesquisa" onSubmit={pesquisar}>
+          <div className="form-group">
+            <label htmlFor="produtoPesquisa">Produto</label>
 
-                    <div className="form-group">
+            <input
+              id="produtoPesquisa"
+              type="text"
+              value={produtoPesquisa}
+              onChange={(event) => setProdutoPesquisa(event.target.value)}
+              placeholder="Pesquisar produto..."
+            />
+          </div>
 
-                        <label htmlFor="produtoPesquisa">
-                            Produto
-                        </label>
+          <div className="pesquisa-actions">
+            <button
+              type="submit"
+              className="button button-primary"
+              disabled={carregando}
+            >
+              Pesquisar
+            </button>
 
-                        <input
-                            id="produtoPesquisa"
-                            type="text"
-                            value={produtoPesquisa}
-                            onChange={(event) =>
-                                setProdutoPesquisa(
-                                    event.target.value
-                                )
-                            }
-                            placeholder="Pesquisar produto..."
-                        />
+            {pesquisaAplicada && (
+              <button
+                type="button"
+                className="button button-secondary"
+                onClick={limparPesquisa}
+              >
+                Limpar
+              </button>
+            )}
+          </div>
+        </form>
 
-                    </div>
-
-
-                    <div className="pesquisa-actions">
-
-                        <button
-                            type="submit"
-                            className="button button-primary"
-                            disabled={carregando}
-                        >
-                            Pesquisar
-                        </button>
-
-
-                        {pesquisaAplicada && (
-
-                            <button
-                                type="button"
-                                className="button button-secondary"
-                                onClick={limparPesquisa}
-                            >
-                                Limpar
-                            </button>
-
-                        )}
-
-                    </div>
-
-                </form>
-
-
-                {/* =================================================
+        {/* =================================================
                     CARREGAMENTO
                    ================================================= */}
 
-                {carregando ? (
+        {carregando ? (
+          <div className="empty-state">
+            <p>A carregar histórico de stock...</p>
+          </div>
+        ) : erro ? (
+          <div>
+            <p className="form-error">{erro}</p>
 
-                    <div className="empty-state">
+            <button
+              type="button"
+              className="button button-primary"
+              onClick={() => {
+                setPagina((paginaAtual) => paginaAtual);
+              }}
+            >
+              Tentar novamente
+            </button>
+          </div>
+        ) : movimentos.length === 0 ? (
+          <div className="empty-state">
+            <p>
+              {pesquisaAplicada
+                ? "Nenhuma movimentação encontrada para este produto."
+                : "Nenhuma movimentação de stock encontrada."}
+            </p>
+          </div>
+        ) : (
+          <>
+            <div className="table-container">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>Data</th>
 
-                        <p>
-                            A carregar histórico de stock...
-                        </p>
+                    <th>Produto</th>
 
-                    </div>
+                    <th>Ação</th>
 
-                ) : erro ? (
+                    <th>Quantidade</th>
 
-                    <div>
+                    <th>Antes</th>
 
-                        <p className="form-error">
-                            {erro}
-                        </p>
+                    <th>Depois</th>
 
-                        <button
-                            type="button"
-                            className="button button-primary"
-                            onClick={() => {
-                                setPagina(
-                                    (paginaAtual) =>
-                                        paginaAtual
-                                );
-                            }}
+                    <th>Utilizador</th>
+
+                    <th>Descrição</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {movimentos.map((movimento) => (
+                    <tr key={movimento.id}>
+                      <td>{formatarData(movimento.data)}</td>
+
+                      <td className="produto-nome">{movimento.produtoNome}</td>
+
+                      <td>
+                        <span
+                          className={`movimento-acao movimento-${movimento.acao.toLowerCase()}`}
                         >
-                            Tentar novamente
-                        </button>
+                          {movimento.acao}
+                        </span>
+                      </td>
 
-                    </div>
+                      <td>{movimento.quantidade}</td>
 
-                ) : movimentos.length === 0 ? (
+                      <td>{movimento.quantidadeAnterior}</td>
 
-                    <div className="empty-state">
+                      <td>{movimento.quantidadePosterior}</td>
 
-                        <p>
-                            {pesquisaAplicada
-                                ? "Nenhuma movimentação encontrada para este produto."
-                                : "Nenhuma movimentação de stock encontrada."
-                            }
-                        </p>
+                      <td>{movimento.usuarioNome}</td>
 
-                    </div>
+                      <td>{movimento.descricao || "-"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-                ) : (
-
-                    <>
-
-                        <div className="table-container">
-
-                            <table className="data-table">
-
-                                <thead>
-
-                                    <tr>
-
-                                        <th>
-                                            Data
-                                        </th>
-
-                                        <th>
-                                            Produto
-                                        </th>
-
-                                        <th>
-                                            Ação
-                                        </th>
-
-                                        <th>
-                                            Quantidade
-                                        </th>
-
-                                        <th>
-                                            Antes
-                                        </th>
-
-                                        <th>
-                                            Depois
-                                        </th>
-
-                                        <th>
-                                            Utilizador
-                                        </th>
-
-                                        <th>
-                                            Descrição
-                                        </th>
-
-                                    </tr>
-
-                                </thead>
-
-
-                                <tbody>
-
-                                    {movimentos.map(
-                                        (movimento) => (
-
-                                            <tr
-                                                key={
-                                                    movimento.id
-                                                }
-                                            >
-
-                                                <td>
-                                                    {formatarData(
-                                                        movimento.data
-                                                    )}
-                                                </td>
-
-
-                                                <td className="produto-nome">
-                                                    {
-                                                        movimento.produtoNome
-                                                    }
-                                                </td>
-
-
-                                                <td>
-
-                                                    <span
-                                                        className={
-                                                            `movimento-acao movimento-${movimento.acao.toLowerCase()}`
-                                                        }
-                                                    >
-                                                        {
-                                                            movimento.acao
-                                                        }
-                                                    </span>
-
-                                                </td>
-
-
-                                                <td>
-                                                    {
-                                                        movimento.quantidade
-                                                    }
-                                                </td>
-
-
-                                                <td>
-                                                    {
-                                                        movimento.quantidadeAnterior
-                                                    }
-                                                </td>
-
-
-                                                <td>
-                                                    {
-                                                        movimento.quantidadePosterior
-                                                    }
-                                                </td>
-
-
-                                                <td>
-                                                    {
-                                                        movimento.usuarioNome
-                                                    }
-                                                </td>
-
-
-                                                <td>
-                                                    {
-                                                        movimento.descricao ||
-                                                        "-"
-                                                    }
-                                                </td>
-
-                                            </tr>
-
-                                        )
-                                    )}
-
-                                </tbody>
-
-                            </table>
-
-                        </div>
-
-
-                        {/* =================================================
+            {/* =================================================
                             PAGINAÇÃO
                            ================================================= */}
 
-                        {totalPaginas > 0 && (
+            {totalPaginas > 0 && (
+              <div className="pagination">
+                <button
+                  type="button"
+                  className="button button-secondary"
+                  onClick={paginaAnterior}
+                  disabled={pagina === 0 || carregando}
+                >
+                  ← Anterior
+                </button>
 
-                            <div className="pagination">
+                <span className="pagination-info">
+                  Página <strong>{pagina + 1}</strong> de{" "}
+                  <strong>{totalPaginas}</strong>
+                </span>
 
-                                <button
-                                    type="button"
-                                    className="button button-secondary"
-                                    onClick={paginaAnterior}
-                                    disabled={
-                                        pagina === 0 ||
-                                        carregando
-                                    }
-                                >
-                                    ← Anterior
-                                </button>
-
-
-                                <span className="pagination-info">
-
-                                    Página{" "}
-
-                                    <strong>
-                                        {pagina + 1}
-                                    </strong>
-
-                                    {" "}de{" "}
-
-                                    <strong>
-                                        {totalPaginas}
-                                    </strong>
-
-                                </span>
-
-
-                                <button
-                                    type="button"
-                                    className="button button-secondary"
-                                    onClick={proximaPagina}
-                                    disabled={
-                                        pagina >=
-                                        totalPaginas - 1 ||
-                                        carregando
-                                    }
-                                >
-                                    Próxima →
-                                </button>
-
-                            </div>
-
-                        )}
-
-                    </>
-
-                )}
-
-            </section>
-
-        </div>
-    );
+                <button
+                  type="button"
+                  className="button button-secondary"
+                  onClick={proximaPagina}
+                  disabled={pagina >= totalPaginas - 1 || carregando}
+                >
+                  Próxima →
+                </button>
+              </div>
+            )}
+          </>
+        )}
+      </section>
+    </div>
+  );
 }
-
 
 function formatarData(data) {
+  if (!data) {
+    return "-";
+  }
 
-    if (!data) {
-        return "-";
-    }
-
-    return new Date(data).toLocaleString(
-        "pt-MZ"
-    );
+  return new Date(data).toLocaleString("pt-MZ");
 }
 
-
 export default MovimentosStock;
-

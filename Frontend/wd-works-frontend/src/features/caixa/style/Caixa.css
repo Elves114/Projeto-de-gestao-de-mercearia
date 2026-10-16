@@ -1,0 +1,409 @@
+/* ============================================================
+   CAIXA — FECHO DE CAIXA
+   ============================================================ */
+
+:root {
+    --caixa-primary: #00aeef;
+    --caixa-primary-dark: #008fc5;
+    --caixa-primary-soft: #e0f2fe;
+
+    --caixa-success: #16a34a;
+    --caixa-success-soft: #ecfdf3;
+
+    --caixa-danger: #dc2626;
+    --caixa-danger-soft: #fef2f2;
+
+    --caixa-text: #0f172a;
+    --caixa-text-soft: #475569;
+    --caixa-text-muted: #94a3b8;
+
+    --caixa-bg: #f4f7fb;
+    --caixa-bg-soft: #f8fafc;
+    --caixa-border: #e5eaf1;
+    --caixa-border-soft: #eef2f7;
+
+    --caixa-shadow:
+        0 1px 2px rgba(15, 23, 42, 0.04),
+        0 4px 14px rgba(15, 23, 42, 0.04);
+
+    --caixa-ease: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    --caixa-ease-bounce: 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.caixa-page {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 28px 32px 40px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    color: var(--caixa-text);
+    animation: caixaPageIn 380ms var(--caixa-ease-bounce) both;
+}
+
+@keyframes caixaPageIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+
+/* ============================================================
+   CABEÇALHO
+   ============================================================ */
+
+.caixa-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.caixa-overline {
+    display: block;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--caixa-primary-dark);
+    margin-bottom: 6px;
+}
+
+.caixa-header h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--caixa-text);
+}
+
+.caixa-header p {
+    margin: 6px 0 0;
+    font-size: 14px;
+    color: var(--caixa-text-muted);
+    max-width: 560px;
+    line-height: 1.5;
+}
+
+.caixa-filtro-data {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.caixa-filtro-data label {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--caixa-text-muted);
+}
+
+.caixa-filtro-data input {
+    min-height: 42px;
+    padding: 0 14px;
+    border: 1px solid var(--caixa-border);
+    border-radius: 10px;
+    background: #ffffff;
+    color: var(--caixa-text);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    outline: none;
+    cursor: pointer;
+    transition: border-color var(--caixa-ease), box-shadow var(--caixa-ease);
+}
+
+.caixa-filtro-data input:hover {
+    border-color: #cbd5e1;
+}
+
+.caixa-filtro-data input:focus {
+    border-color: var(--caixa-primary);
+    box-shadow: 0 0 0 3px rgba(0, 174, 239, 0.15);
+}
+
+
+/* ============================================================
+   KPIs
+   ============================================================ */
+
+.caixa-kpis {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.caixa-kpi {
+    position: relative;
+    overflow: hidden;
+
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    padding: 20px 22px;
+
+    background: #ffffff;
+    border: 1px solid var(--caixa-border);
+    border-radius: 16px;
+    box-shadow: var(--caixa-shadow);
+
+    transition: transform var(--caixa-ease), box-shadow var(--caixa-ease);
+}
+
+.caixa-kpi:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 2px 4px rgba(15, 23, 42, 0.05),
+        0 10px 28px rgba(15, 23, 42, 0.07);
+}
+
+.caixa-kpi::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 18px;
+    bottom: 18px;
+    width: 3px;
+    border-radius: 0 3px 3px 0;
+    background: var(--caixa-primary);
+    opacity: 0.85;
+}
+
+.caixa-kpi-sucesso::before {
+    background: var(--caixa-success);
+}
+
+.caixa-kpi-perigo::before {
+    background: var(--caixa-danger);
+}
+
+.caixa-kpi-label {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--caixa-text-muted);
+}
+
+.caixa-kpi-valor {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--caixa-text);
+    line-height: 1.15;
+}
+
+.caixa-kpi-sucesso .caixa-kpi-valor {
+    color: var(--caixa-success);
+}
+
+.caixa-kpi-perigo .caixa-kpi-valor {
+    color: var(--caixa-danger);
+}
+
+.caixa-kpi-primario .caixa-kpi-valor {
+    color: var(--caixa-primary-dark);
+}
+
+.caixa-kpi-footnote {
+    font-size: 12px;
+    color: var(--caixa-text-muted);
+}
+
+
+/* ============================================================
+   PAINEL
+   ============================================================ */
+
+.caixa-painel {
+    position: relative;
+    overflow: hidden;
+
+    background: #ffffff;
+    border: 1px solid var(--caixa-border);
+    border-radius: 16px;
+    box-shadow: var(--caixa-shadow);
+}
+
+.caixa-painel::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--caixa-primary) 30%,
+        var(--caixa-primary-dark) 70%,
+        transparent
+    );
+    opacity: 0.9;
+}
+
+.caixa-painel-header {
+    padding: 22px 24px;
+    border-bottom: 1px solid var(--caixa-border-soft);
+}
+
+.caixa-painel-header h2 {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--caixa-text);
+}
+
+.caixa-painel-header p {
+    margin: 5px 0 0;
+    font-size: 12px;
+    color: var(--caixa-text-muted);
+}
+
+
+/* ============================================================
+   TABELA
+   ============================================================ */
+
+.caixa-tabela-wrapper {
+    overflow-x: auto;
+}
+
+.caixa-tabela {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 13px;
+}
+
+.caixa-tabela thead th {
+    height: 44px;
+    padding: 0 20px;
+    background: var(--caixa-bg-soft);
+    border-bottom: 1px solid var(--caixa-border);
+    color: var(--caixa-text-muted);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.caixa-tabela tbody td {
+    height: 56px;
+    padding: 0 20px;
+    border-bottom: 1px solid var(--caixa-border-soft);
+    color: var(--caixa-text-soft);
+}
+
+.caixa-tabela tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.caixa-tabela tbody tr:hover {
+    background: #fafcff;
+}
+
+.caixa-tabela td strong {
+    color: var(--caixa-text);
+    font-weight: 700;
+}
+
+.caixa-col-num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.caixa-valor {
+    color: var(--caixa-primary-dark) !important;
+    font-weight: 800;
+}
+
+
+/* ============================================================
+   VAZIO / LOADING / ERRO
+   ============================================================ */
+
+.caixa-vazio,
+.caixa-loading {
+    padding: 50px 24px;
+    text-align: center;
+    color: var(--caixa-text-muted);
+    font-size: 14px;
+}
+
+.caixa-erro {
+    padding: 14px 18px;
+    border: 1px solid rgba(220, 38, 38, 0.20);
+    border-radius: 10px;
+    background: var(--caixa-danger-soft);
+    color: var(--caixa-danger);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+/* ============================================================
+   RESPONSIVO
+   ============================================================ */
+
+@media (max-width: 1000px) {
+    .caixa-kpis {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .caixa-page {
+        padding: 18px 16px 32px;
+        gap: 18px;
+    }
+
+    .caixa-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .caixa-filtro-data input {
+        width: 100%;
+    }
+
+    .caixa-kpis {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .caixa-kpi-valor {
+        font-size: 22px;
+    }
+
+    .caixa-tabela thead th,
+    .caixa-tabela tbody td {
+        padding: 0 14px;
+    }
+}
+
+
+/* ============================================================
+   ACESSIBILIDADE
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+    .caixa-page {
+        animation: none;
+    }
+
+    .caixa-kpi,
+    .caixa-filtro-data input {
+        transition: none;
+    }
+
+    .caixa-kpi:hover {
+        transform: none;
+    }
+}
