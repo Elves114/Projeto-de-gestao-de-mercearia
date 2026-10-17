@@ -1,57 +1,9 @@
 /* ============================================================
-   MOVIMENTOS STOCK
-   Histórico de movimentações de stock
-   Identidade: WD Works — Light + Candy Blue
+   MOVIMENTOS STOCK — CSS Unificado
    ============================================================ */
 
-:root {
-    /* Paleta */
-    --mov-primary: #00aeef;
-    --mov-primary-dark: #008fc5;
-    --mov-primary-soft: #e0f2fe;
-    --mov-primary-glow: rgba(0, 174, 239, 0.18);
-
-    --mov-text: #0f172a;
-    --mov-text-soft: #475569;
-    --mov-text-muted: #94a3b8;
-
-    --mov-bg: #f4f7fb;
-    --mov-bg-soft: #f8fafc;
-    --mov-bg-hover: #fafcff;
-    --mov-border: #e5eaf1;
-    --mov-border-soft: #eef2f7;
-
-    --mov-success: #16a34a;
-    --mov-success-soft: #ecfdf3;
-    --mov-success-border: rgba(22, 163, 74, 0.20);
-
-    --mov-danger: #dc2626;
-    --mov-danger-soft: #fef2f2;
-    --mov-danger-border: rgba(220, 38, 38, 0.20);
-
-    --mov-warning: #d97706;
-    --mov-warning-soft: #fff7ed;
-    --mov-warning-border: rgba(217, 119, 6, 0.22);
-
-    /* Sombras */
-    --mov-shadow-sm: 0 2px 6px rgba(15, 23, 42, 0.04);
-    --mov-shadow:
-        0 1px 2px rgba(15, 23, 42, 0.04),
-        0 4px 14px rgba(15, 23, 42, 0.04);
-
-    /* Motion */
-    --mov-ease: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
-    --mov-ease-bounce: 0.32s cubic-bezier(0.22, 1, 0.36, 1);
-
-    /* Radius */
-    --mov-radius: 18px;
-    --mov-radius-md: 14px;
-    --mov-radius-sm: 10px;
-}
-
-
 /* ============================================================
-   PÁGINA
+   1. PÁGINA E CABEÇALHO
    ============================================================ */
 
 .movimentos-stock-page {
@@ -59,19 +11,14 @@
     min-height: 100%;
     padding: 28px;
     box-sizing: border-box;
-    color: var(--mov-text);
-    animation: movPageIn 380ms var(--mov-ease-bounce) both;
+    color: var(--text);
+    animation: movPageIn 380ms var(--ease-bounce) both;
 }
 
 @keyframes movPageIn {
     from { opacity: 0; transform: translateY(8px); }
     to   { opacity: 1; transform: translateY(0); }
 }
-
-
-/* ============================================================
-   HEADER
-   ============================================================ */
 
 .movimentos-stock-page .page-header {
     display: flex;
@@ -85,39 +32,34 @@
     font-size: 28px;
     font-weight: 800;
     letter-spacing: -0.02em;
-    color: var(--mov-text);
+    color: var(--text);
 }
 
 .movimentos-stock-page .page-header p {
     margin: 7px 0 0;
     font-size: 14px;
     line-height: 1.5;
-    color: var(--mov-text-muted);
+    color: var(--text-muted);
 }
 
-
 /* ============================================================
-   CARD PRINCIPAL
+   2. CARD PRINCIPAL
    ============================================================ */
 
 .movimentos-stock-list-card {
     position: relative;
     overflow: hidden;
-
     width: 100%;
     box-sizing: border-box;
     padding: 24px;
-
-    background: #ffffff;
-    border: 1px solid var(--mov-border);
-    border-radius: var(--mov-radius);
-
-    box-shadow: var(--mov-shadow);
-
-    animation: movCardIn 420ms var(--mov-ease-bounce);
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    animation: movCardIn 420ms var(--ease-bounce);
 }
 
-/* Linha Candy Blue no topo do card (padrão do resto da app) */
+/* Linha Candy Blue no topo */
 .movimentos-stock-list-card::before {
     content: "";
     position: absolute;
@@ -128,8 +70,8 @@
     background: linear-gradient(
         90deg,
         transparent,
-        var(--mov-primary) 30%,
-        var(--mov-primary-dark) 70%,
+        var(--primary) 30%,
+        var(--primary-dark) 70%,
         transparent
     );
     opacity: 0.9;
@@ -139,11 +81,6 @@
     from { opacity: 0; transform: translateY(10px); }
     to   { opacity: 1; transform: translateY(0); }
 }
-
-
-/* ============================================================
-   HEADER DA SECÇÃO
-   ============================================================ */
 
 .movimentos-stock-list-card .section-header {
     display: flex;
@@ -158,54 +95,43 @@
     font-size: 18px;
     font-weight: 800;
     letter-spacing: -0.01em;
-    color: var(--mov-text);
+    color: var(--text);
 }
 
 .movimentos-stock-list-card .section-header p {
     margin: 5px 0 0;
     font-size: 13px;
-    color: var(--mov-text-muted);
+    color: var(--text-muted);
 }
-
-
-/* ============================================================
-   CONTADOR
-   ============================================================ */
 
 .movimentos-stock-list-card .categoria-count {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     box-sizing: border-box;
-
     min-width: 38px;
     height: 34px;
     padding: 0 11px;
-
-    border-radius: 999px;
-    background: var(--mov-primary-soft);
-    color: var(--mov-primary-dark);
-
+    border-radius: var(--radius-full);
+    background: var(--primary-soft);
+    color: var(--primary-dark);
     font-size: 13px;
     font-weight: 800;
 }
 
-
 /* ============================================================
-   PESQUISA
+   3. BARRA DE PESQUISA
    ============================================================ */
 
 .movimentos-stock-pesquisa {
     display: flex;
     align-items: flex-end;
     gap: 14px;
-
     margin-bottom: 24px;
     padding: 18px 20px;
-
-    background: var(--mov-bg-soft);
-    border: 1px solid var(--mov-border-soft);
-    border-radius: var(--mov-radius-md);
+    background: var(--bg-surface-2);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-md);
 }
 
 .movimentos-stock-pesquisa .form-group {
@@ -220,7 +146,7 @@
     font-weight: 800;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: var(--mov-text-soft);
+    color: var(--text-soft);
 }
 
 .movimentos-stock-pesquisa input {
@@ -228,38 +154,29 @@
     height: 44px;
     padding: 0 14px;
     box-sizing: border-box;
-
-    border: 1px solid var(--mov-border);
-    border-radius: var(--mov-radius-sm);
-    background: #ffffff;
-    color: var(--mov-text);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg-surface);
+    color: var(--text);
     font-family: inherit;
     font-size: 13px;
     font-weight: 500;
     outline: none;
-
-    transition:
-        border-color var(--mov-ease),
-        box-shadow var(--mov-ease);
+    transition: all var(--duration-fast) var(--ease-standard);
 }
 
 .movimentos-stock-pesquisa input::placeholder {
-    color: var(--mov-text-muted);
+    color: var(--text-muted);
 }
 
 .movimentos-stock-pesquisa input:hover {
-    border-color: #cbd5e1;
+    border-color: var(--border-strong);
 }
 
 .movimentos-stock-pesquisa input:focus {
-    border-color: var(--mov-primary);
-    box-shadow: 0 0 0 3px var(--mov-primary-glow);
+    border-color: var(--primary);
+    box-shadow: var(--focus-ring);
 }
-
-
-/* ============================================================
-   BOTÕES DA PESQUISA
-   ============================================================ */
 
 .pesquisa-actions {
     display: flex;
@@ -272,9 +189,8 @@
     white-space: nowrap;
 }
 
-
 /* ============================================================
-   BOTÕES GENÉRICOS
+   4. BOTÕES GENÉRICOS
    ============================================================ */
 
 .movimentos-stock-page .button {
@@ -282,25 +198,15 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-
     min-height: 42px;
     padding: 0 18px;
-
     border: 1px solid transparent;
-    border-radius: var(--mov-radius-sm);
-
+    border-radius: var(--radius-md);
     font-family: inherit;
     font-size: 13px;
     font-weight: 700;
-
     cursor: pointer;
-
-    transition:
-        background var(--mov-ease),
-        border-color var(--mov-ease),
-        color var(--mov-ease),
-        box-shadow var(--mov-ease),
-        transform var(--mov-ease);
+    transition: all var(--duration-fast) var(--ease-standard);
 }
 
 .movimentos-stock-page .button:hover:not(:disabled) {
@@ -318,56 +224,43 @@
     box-shadow: none;
 }
 
-
-/* PRIMARY — Candy Blue */
-
 .movimentos-stock-page .button-primary {
-    background: var(--mov-primary);
-    border-color: var(--mov-primary);
-    color: #ffffff;
+    background: var(--primary);
+    border-color: var(--primary);
+    color: var(--text-on-primary);
     box-shadow: 0 4px 12px rgba(0, 174, 239, 0.22);
 }
 
 .movimentos-stock-page .button-primary:hover:not(:disabled) {
-    background: var(--mov-primary-dark);
-    border-color: var(--mov-primary-dark);
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
     box-shadow: 0 8px 20px rgba(0, 174, 239, 0.30);
 }
 
-
-/* SECONDARY */
-
 .movimentos-stock-page .button-secondary {
-    background: #ffffff;
-    border-color: var(--mov-border);
-    color: var(--mov-text-soft);
+    background: var(--bg-surface);
+    border-color: var(--border);
+    color: var(--text-soft);
 }
 
 .movimentos-stock-page .button-secondary:hover:not(:disabled) {
-    background: var(--mov-bg-soft);
-    border-color: #cbd5e1;
-    color: var(--mov-text);
-    box-shadow: var(--mov-shadow-sm);
+    background: var(--bg-surface-2);
+    border-color: var(--border-strong);
+    color: var(--text);
+    box-shadow: var(--shadow-sm);
 }
 
-
 /* ============================================================
-   CONTAINER DA TABELA
+   5. TABELA
    ============================================================ */
 
 .movimentos-stock-page .table-container {
     width: 100%;
     overflow-x: auto;
-
-    border: 1px solid var(--mov-border);
-    border-radius: var(--mov-radius-md);
-    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg-surface);
 }
-
-
-/* ============================================================
-   TABELA
-   ============================================================ */
 
 .movimentos-stock-page .data-table {
     width: 100%;
@@ -376,17 +269,12 @@
     border-spacing: 0;
 }
 
-
-/* CABEÇALHO */
-
 .movimentos-stock-page .data-table thead th {
     height: 46px;
     padding: 0 16px;
-
-    background: var(--mov-bg-soft);
-    border-bottom: 1px solid var(--mov-border);
-
-    color: var(--mov-text-muted);
+    background: var(--bg-surface-2);
+    border-bottom: 1px solid var(--border);
+    color: var(--text-muted);
     font-size: 10px;
     font-weight: 800;
     letter-spacing: 0.08em;
@@ -396,66 +284,75 @@
 }
 
 .movimentos-stock-page .data-table thead th:first-child {
-    border-top-left-radius: var(--mov-radius-md);
+    border-top-left-radius: var(--radius-md);
     padding-left: 20px;
 }
 
 .movimentos-stock-page .data-table thead th:last-child {
-    border-top-right-radius: var(--mov-radius-md);
+    border-top-right-radius: var(--radius-md);
     padding-right: 20px;
 }
 
-
-/* LINHAS */
-
 .movimentos-stock-page .data-table tbody tr {
-    background: #ffffff;
-    transition: background var(--mov-ease);
+    background: var(--bg-surface);
+    transition: background var(--duration-fast) var(--ease-standard);
 }
 
 .movimentos-stock-page .data-table tbody tr:hover {
-    background: var(--mov-bg-hover);
+    background: var(--bg-hover);
 }
-
-
-/* CÉLULAS */
 
 .movimentos-stock-page .data-table tbody td {
     padding: 14px 16px;
-    border-bottom: 1px solid var(--mov-border-soft);
-
-    color: var(--mov-text-soft);
+    border-bottom: 1px solid var(--border-soft);
+    color: var(--text-soft);
     font-size: 13px;
-
     vertical-align: middle;
     white-space: nowrap;
 }
 
-.movimentos-stock-page .data-table tbody td:first-child {
-    padding-left: 20px;
-}
-
-.movimentos-stock-page .data-table tbody td:last-child {
-    padding-right: 20px;
-}
+.movimentos-stock-page .data-table tbody td:first-child { padding-left: 20px; }
+.movimentos-stock-page .data-table tbody td:last-child  { padding-right: 20px; }
 
 .movimentos-stock-page .data-table tbody tr:last-child td {
     border-bottom: none;
 }
 
-
-/* ============================================================
-   PRODUTO
-   ============================================================ */
-
+/* Colunas específicas */
 .movimentos-stock-page .produto-nome {
-    color: var(--mov-text) !important;
+    color: var(--text) !important;
     font-weight: 700;
 }
 
+.movimentos-stock-page .data-table tbody td:nth-child(4),
+.movimentos-stock-page .data-table tbody td:nth-child(5),
+.movimentos-stock-page .data-table tbody td:nth-child(6) {
+    color: var(--text);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.movimentos-stock-page .data-table tbody td:first-child {
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+}
+
+.movimentos-stock-page .data-table tbody td:nth-child(7) {
+    color: var(--text);
+    font-weight: 600;
+}
+
+.movimentos-stock-page .data-table tbody td:last-child {
+    max-width: 230px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--text-muted);
+}
 
 /* ============================================================
-   BADGES DE MOVIMENTAÇÃO
+   6. BADGES DE MOVIMENTAÇÃO
    ============================================================ */
 
 .movimentos-stock-page .movimento-acao {
@@ -463,13 +360,10 @@
     align-items: center;
     justify-content: center;
     gap: 6px;
-
     min-width: 78px;
     padding: 5px 11px;
-
     border: 1px solid transparent;
-    border-radius: 999px;
-
+    border-radius: var(--radius-full);
     font-size: 10px;
     font-weight: 800;
     letter-spacing: 0.04em;
@@ -484,92 +378,32 @@
     background: currentColor;
 }
 
-
-/* ENTRADA */
-
 .movimentos-stock-page .movimento-entrada {
-    background: var(--mov-success-soft);
-    border-color: var(--mov-success-border);
-    color: var(--mov-success);
+    background: var(--success-soft);
+    border-color: var(--success-border);
+    color: var(--success);
 }
-
-
-/* SAÍDA */
 
 .movimentos-stock-page .movimento-saida {
-    background: var(--mov-danger-soft);
-    border-color: var(--mov-danger-border);
-    color: var(--mov-danger);
+    background: var(--danger-soft);
+    border-color: var(--danger-border);
+    color: var(--danger);
 }
-
-
-/* DEVOLUÇÃO — Candy Blue */
 
 .movimentos-stock-page .movimento-devolucao {
-    background: var(--mov-primary-soft);
-    border-color: rgba(0, 174, 239, 0.22);
-    color: var(--mov-primary-dark);
+    background: var(--primary-soft);
+    border-color: var(--primary-glow);
+    color: var(--primary-dark);
 }
-
-
-/* AJUSTE — Âmbar */
 
 .movimentos-stock-page .movimento-ajuste {
-    background: var(--mov-warning-soft);
-    border-color: var(--mov-warning-border);
-    color: var(--mov-warning);
+    background: var(--warning-soft);
+    border-color: var(--warning-border);
+    color: var(--warning);
 }
 
-
 /* ============================================================
-   QUANTIDADES
-   ============================================================ */
-
-.movimentos-stock-page .data-table tbody td:nth-child(4),
-.movimentos-stock-page .data-table tbody td:nth-child(5),
-.movimentos-stock-page .data-table tbody td:nth-child(6) {
-    color: var(--mov-text);
-    font-weight: 700;
-    font-variant-numeric: tabular-nums;
-}
-
-
-/* ============================================================
-   DATA
-   ============================================================ */
-
-.movimentos-stock-page .data-table tbody td:first-child {
-    color: var(--mov-text-muted);
-    font-family: "SFMono-Regular", Consolas, monospace;
-    font-size: 11px;
-    font-variant-numeric: tabular-nums;
-}
-
-
-/* ============================================================
-   UTILIZADOR
-   ============================================================ */
-
-.movimentos-stock-page .data-table tbody td:nth-child(7) {
-    color: var(--mov-text);
-    font-weight: 600;
-}
-
-
-/* ============================================================
-   DESCRIÇÃO
-   ============================================================ */
-
-.movimentos-stock-page .data-table tbody td:last-child {
-    max-width: 230px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    color: var(--mov-text-muted);
-}
-
-
-/* ============================================================
-   PAGINAÇÃO
+   7. PAGINAÇÃO
    ============================================================ */
 
 .movimentos-stock-page .pagination {
@@ -577,14 +411,13 @@
     align-items: center;
     justify-content: space-between;
     gap: 20px;
-
     margin-top: 22px;
     padding-top: 20px;
-    border-top: 1px solid var(--mov-border-soft);
+    border-top: 1px solid var(--border-soft);
 }
 
 .movimentos-stock-page .pagination-info {
-    color: var(--mov-text-soft);
+    color: var(--text-soft);
     font-size: 12px;
     font-weight: 600;
 }
@@ -593,25 +426,20 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     min-width: 28px;
     height: 28px;
     padding: 0 7px;
-
-    border: 1px solid var(--mov-border);
-    border-radius: 8px;
-    background: #ffffff;
-
-    color: var(--mov-text);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--bg-surface);
+    color: var(--text);
     font-size: 12px;
     font-weight: 800;
-
-    box-shadow: var(--mov-shadow-sm);
+    box-shadow: var(--shadow-sm);
 }
 
-
 /* ============================================================
-   ESTADO VAZIO
+   8. ESTADO VAZIO E ERRO
    ============================================================ */
 
 .movimentos-stock-page .empty-state {
@@ -619,39 +447,30 @@
     align-items: center;
     justify-content: center;
     box-sizing: border-box;
-
     min-height: 180px;
     padding: 30px;
-
-    border: 1px dashed #cbd5e1;
-    border-radius: var(--mov-radius-md);
-    background: #fafcff;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg-surface-2);
 }
 
 .movimentos-stock-page .empty-state p {
     margin: 0;
-    color: var(--mov-text-muted);
+    color: var(--text-muted);
     font-size: 13px;
     text-align: center;
 }
 
-
-/* ============================================================
-   ERRO
-   ============================================================ */
-
 .movimentos-stock-page .form-error {
     margin: 14px 0 0;
     padding: 11px 14px;
-
-    border: 1px solid var(--mov-danger-border);
-    border-radius: var(--mov-radius-sm);
-    background: var(--mov-danger-soft);
-    color: var(--mov-danger);
-
+    border: 1px solid var(--danger-border);
+    border-radius: var(--radius-md);
+    background: var(--danger-soft);
+    color: var(--danger);
     font-size: 12px;
     font-weight: 600;
-    animation: movErrorIn 240ms var(--mov-ease-bounce);
+    animation: movErrorIn 240ms var(--ease-standard);
 }
 
 @keyframes movErrorIn {
@@ -659,102 +478,98 @@
     to   { opacity: 1; transform: translateY(0); }
 }
 
+/* ============================================================
+   9. DARK MODE — Efeito Neon Reactivo
+   ============================================================ */
+
+[data-theme="dark"] .movimentos-stock-list-card {
+    border-color: var(--border);
+}
+
+/* A tabela inteira ganha um glow subtil */
+[data-theme="dark"] .movimentos-stock-page .table-container {
+    border-color: var(--border);
+    box-shadow: 0 0 20px rgba(92, 200, 255, 0.03);
+}
+
+/* Linha da tabela reage ao hover com um tom neon */
+[data-theme="dark"] .movimentos-stock-page .data-table tbody tr:hover {
+    background: var(--bg-hover);
+    box-shadow: inset 3px 0 0 var(--primary);
+}
+
+/* Badges reagem com brilho */
+[data-theme="dark"] .movimentos-stock-page .movimento-entrada:hover {
+    box-shadow: 0 0 10px rgba(69, 212, 131, 0.3);
+}
+
+[data-theme="dark"] .movimentos-stock-page .movimento-saida:hover {
+    box-shadow: 0 0 10px rgba(255, 92, 108, 0.3);
+}
+
+[data-theme="dark"] .movimentos-stock-page .movimento-ajuste:hover {
+    box-shadow: 0 0 10px rgba(255, 200, 87, 0.3);
+}
+
+[data-theme="dark"] .movimentos-stock-page .movimento-devolucao:hover {
+    box-shadow: 0 0 10px rgba(92, 200, 255, 0.3);
+}
+
+/* Paginação neon no hover */
+[data-theme="dark"] .movimentos-stock-page .pagination .button-secondary:hover:not(:disabled) {
+    border-color: var(--primary);
+    color: var(--primary);
+    box-shadow: 0 0 12px rgba(92, 200, 255, 0.15);
+}
 
 /* ============================================================
-   RESPONSIVIDADE
+   10. RESPONSIVIDADE
    ============================================================ */
 
 @media (max-width: 900px) {
-
-    .movimentos-stock-page {
-        padding: 20px;
-    }
-
-    .movimentos-stock-pesquisa {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .movimentos-stock-pesquisa .form-group {
-        width: 100%;
-    }
-
-    .pesquisa-actions {
-        width: 100%;
-    }
-
-    .pesquisa-actions .button {
-        flex: 1;
-    }
+    .movimentos-stock-page { padding: 20px; }
+    .movimentos-stock-pesquisa { flex-direction: column; align-items: stretch; }
+    .movimentos-stock-pesquisa .form-group { width: 100%; }
+    .pesquisa-actions { width: 100%; }
+    .pesquisa-actions .button { flex: 1; }
 }
 
 @media (max-width: 600px) {
-
-    .movimentos-stock-page {
-        padding: 14px;
-    }
-
-    .movimentos-stock-page .page-header h1 {
-        font-size: 23px;
-    }
-
-    .movimentos-stock-list-card {
-        padding: 16px;
-        border-radius: var(--mov-radius-md);
-    }
-
+    .movimentos-stock-page { padding: 14px; }
+    .movimentos-stock-page .page-header h1 { font-size: 23px; }
+    .movimentos-stock-list-card { padding: 16px; border-radius: var(--radius-md); }
     .movimentos-stock-list-card .section-header {
         align-items: flex-start;
         flex-direction: column;
         gap: 12px;
     }
-
-    .movimentos-stock-list-card .section-header h2 {
-        font-size: 16px;
-    }
-
-    .movimentos-stock-pesquisa {
-        padding: 14px;
-    }
-
-    .pesquisa-actions {
-        flex-direction: column;
-    }
-
-    .pesquisa-actions .button {
-        width: 100%;
-    }
-
-    .movimentos-stock-page .pagination {
-        flex-direction: column;
-        gap: 12px;
-    }
-
-    .movimentos-stock-page .pagination .button {
-        width: 100%;
-    }
+    .movimentos-stock-list-card .section-header h2 { font-size: 16px; }
+    .movimentos-stock-pesquisa { padding: 14px; }
+    .pesquisa-actions { flex-direction: column; }
+    .pesquisa-actions .button { width: 100%; }
+    .movimentos-stock-page .pagination { flex-direction: column; gap: 12px; }
+    .movimentos-stock-page .pagination .button { width: 100%; }
 }
 
-
 /* ============================================================
-   ACESSIBILIDADE
+   11. ACESSIBILIDADE
    ============================================================ */
 
 @media (prefers-reduced-motion: reduce) {
-
     .movimentos-stock-page,
     .movimentos-stock-list-card,
     .movimentos-stock-page .form-error {
         animation: none !important;
     }
-
     .movimentos-stock-page .data-table tbody tr,
     .movimentos-stock-page .button,
     .movimentos-stock-pesquisa input {
         transition: none !important;
     }
-
     .movimentos-stock-page .button:hover:not(:disabled) {
         transform: none;
+    }
+    [data-theme="dark"] .movimentos-stock-page .data-table tbody tr:hover {
+        box-shadow: none;
     }
 }

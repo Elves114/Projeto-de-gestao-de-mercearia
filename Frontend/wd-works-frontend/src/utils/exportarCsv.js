@@ -4,16 +4,32 @@
  * Como os endpoints exigem JWT, não podemos simplesmente
  * usar window.open(). Temos de fazer fetch com o header
  * Authorization e depois criar um Blob para download.
+ *
+ * Aceita uma função showToast opcional para notificações.
+ * Se não fornecida, usa console.warn como fallback.
  */
 
 const BASE_URL = import.meta.env.VITE_API_URL;
+
+function notificar(msg, tipo = "error") {
+    // Tenta usar o ToastContext se disponível via window
+    if (window.__wdToast && typeof window.__wdToast.error === "function") {
+        if (tipo === "error") {
+            window.__wdToast.error(msg);
+        } else if (tipo === "warning") {
+            window.__wdToast.warning(msg);
+        }
+    } else {
+        console.warn(`[exportarCsv] ${msg}`);
+    }
+}
 
 export async function exportarCsv(path, params = {}, nomeFicheiro = "dados.csv") {
 
     const token = localStorage.getItem("token");
 
     if (!token) {
-        alert("Sessão expirada. Faça login novamente.");
+        notificar("Sessão expirada. Faça login novamente.");
         return;
     }
 
@@ -39,11 +55,11 @@ export async function exportarCsv(path, params = {}, nomeFicheiro = "dados.csv")
         if (!response.ok) {
 
             if (response.status === 403) {
-                alert("Não tem permissão para exportar este relatório.");
+                notificar("Não tem permissão para exportar este relatório.");
             } else if (response.status === 401) {
-                alert("Sessão expirada. Faça login novamente.");
+                notificar("Sessão expirada. Faça login novamente.");
             } else {
-                alert("Não foi possível gerar o ficheiro.");
+                notificar("Não foi possível gerar o ficheiro.");
             }
 
             return;
@@ -66,6 +82,6 @@ export async function exportarCsv(path, params = {}, nomeFicheiro = "dados.csv")
 
     } catch (error) {
         console.error("Erro ao exportar CSV:", error);
-        alert("Erro de ligação ao servidor.");
+        notificar("Erro de ligação ao servidor.");
     }
 }

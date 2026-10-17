@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { buscarVenda, cancelarVenda } from "../services/vendaService";
 import { obterMensagemErro } from "../../../services/api";
+import { useToast } from "../../../contexts/useToast";
 import CancelarVendaModal from "../components/CancelarVendaModal";
 import "../style/Venda.css";
 
@@ -15,6 +16,7 @@ function formatarValor(valor) {
 function DetalhesVenda() {
 
     const { id } = useParams();
+    const { error: toastError} = useToast();
 
     const [venda, setVenda] = useState(null);
     const [carregando, setCarregando] = useState(true);
@@ -90,7 +92,7 @@ function DetalhesVenda() {
         } catch (error) {
 
             console.error(error);
-            alert(obterMensagemErro(error));
+            toastError(obterMensagemErro(error));
 
         } finally {
 

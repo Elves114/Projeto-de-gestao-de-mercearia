@@ -1,6 +1,6 @@
-
 import { useAuth } from "../../contexts/useAuth";
 import { Link, useLocation } from "react-router-dom";
+import ThemeToggle from "./ThemeToggle";
 import "../style/Header.css";
 
 function Header() {
@@ -64,6 +64,8 @@ function Header() {
 
                 </div>
 
+
+                <ThemeToggle />
 
                 <button
                     type="button"

@@ -1,51 +1,9 @@
 /* ============================================================
-   AUDITORIA
-   Identidade: WD Works — Light + Candy Blue
+   AUDITORIA — CSS Unificado (Light + Dark Neon)
    ============================================================ */
 
-:root {
-    /* Paleta principal */
-    --aud-primary: #00aeef;
-    --aud-primary-dark: #008fc5;
-    --aud-primary-soft: #e0f2fe;
-    --aud-primary-glow: rgba(0, 174, 239, 0.18);
-
-    /* Texto */
-    --aud-text: #0f172a;
-    --aud-text-soft: #475569;
-    --aud-text-muted: #94a3b8;
-
-    /* Fundos e bordas */
-    --aud-bg-soft: #f8fafc;
-    --aud-bg-hover: #fafcff;
-    --aud-border: #e5eaf1;
-    --aud-border-soft: #eef2f7;
-
-    /* Estados */
-    --aud-success: #16a34a;
-    --aud-success-soft: #ecfdf3;
-    --aud-warning: #d97706;
-    --aud-warning-soft: #fef3c7;
-    --aud-danger: #dc2626;
-    --aud-danger-soft: #fef2f2;
-
-    /* Sombras */
-    --aud-shadow-sm: 0 2px 6px rgba(15, 23, 42, 0.04);
-    --aud-shadow:
-        0 1px 2px rgba(15, 23, 42, 0.04),
-        0 4px 14px rgba(15, 23, 42, 0.04);
-    --aud-shadow-hover:
-        0 2px 4px rgba(15, 23, 42, 0.05),
-        0 10px 28px rgba(15, 23, 42, 0.08);
-
-    /* Motion */
-    --aud-ease: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
-    --aud-ease-bounce: 0.28s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-
 /* ============================================================
-   PÁGINA
+   1. PÁGINA E HEADER
    ============================================================ */
 
 .auditoria-page {
@@ -53,7 +11,8 @@
     min-height: 100%;
     padding: 28px;
     box-sizing: border-box;
-    animation: auditoriaPageIn 380ms var(--aud-ease-bounce) both;
+    color: var(--text);
+    animation: auditoriaPageIn 380ms var(--ease-bounce) both;
 }
 
 @keyframes auditoriaPageIn {
@@ -72,12 +31,41 @@
     font-weight: 800;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--aud-primary-dark);
+    color: var(--primary-dark);
 }
 
+.auditoria-exportar-csv {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 42px;
+    padding: 0 18px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg-surface);
+    color: var(--text-soft);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all var(--duration-fast) var(--ease-standard);
+}
+
+.auditoria-exportar-csv:hover {
+    background: var(--bg-surface-2);
+    border-color: var(--border-strong);
+    color: var(--text);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+
+.auditoria-exportar-csv:active {
+    transform: translateY(0) scale(0.98);
+}
 
 /* ============================================================
-   RESUMO — 4 CARDS
+   2. CARDS DE RESUMO (Info / Warning / Critical)
    ============================================================ */
 
 .auditoria-summary {
@@ -91,21 +79,17 @@
     position: relative;
     overflow: hidden;
     padding: 18px 20px;
-
-    border: 1px solid var(--aud-border);
-    border-radius: 14px;
-    background: #ffffff;
-    box-shadow: var(--aud-shadow);
-
-    transition:
-        transform var(--aud-ease),
-        box-shadow var(--aud-ease),
-        border-color var(--aud-ease);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg-surface);
+    box-shadow: var(--shadow);
+    transition: all var(--duration-base) var(--ease-standard);
 }
 
 .auditoria-summary-card:hover {
     transform: translateY(-2px);
-    box-shadow: var(--aud-shadow-hover);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary);
 }
 
 /* Acento lateral com cor semântica */
@@ -117,13 +101,13 @@
     bottom: 16px;
     width: 3px;
     border-radius: 0 3px 3px 0;
-    background: var(--aud-primary);
+    background: var(--primary);
     opacity: 0.85;
 }
 
-.auditoria-summary-card.info::before     { background: var(--aud-primary); }
-.auditoria-summary-card.warning::before  { background: var(--aud-warning); }
-.auditoria-summary-card.critical::before { background: var(--aud-danger); }
+.auditoria-summary-card.info::before     { background: var(--primary); }
+.auditoria-summary-card.warning::before  { background: var(--warning); }
+.auditoria-summary-card.critical::before { background: var(--danger); }
 
 /* Halo decorativo no canto */
 .auditoria-summary-card::after {
@@ -134,28 +118,16 @@
     width: 90px;
     height: 90px;
     border-radius: 50%;
-    background: radial-gradient(
-        circle,
-        rgba(0, 174, 239, 0.06) 0%,
-        rgba(0, 174, 239, 0) 70%
-    );
+    background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
     pointer-events: none;
 }
 
 .auditoria-summary-card.warning::after {
-    background: radial-gradient(
-        circle,
-        rgba(217, 119, 6, 0.07) 0%,
-        rgba(217, 119, 6, 0) 70%
-    );
+    background: radial-gradient(circle, rgba(217, 119, 6, 0.08) 0%, transparent 70%);
 }
 
 .auditoria-summary-card.critical::after {
-    background: radial-gradient(
-        circle,
-        rgba(220, 38, 38, 0.07) 0%,
-        rgba(220, 38, 38, 0) 70%
-    );
+    background: radial-gradient(circle, rgba(220, 38, 38, 0.08) 0%, transparent 70%);
 }
 
 .auditoria-summary-label {
@@ -165,7 +137,7 @@
     font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--aud-text-muted);
+    color: var(--text-muted);
 }
 
 .auditoria-summary-card strong {
@@ -175,30 +147,29 @@
     line-height: 1;
     font-weight: 800;
     letter-spacing: -0.04em;
-    color: var(--aud-text);
+    color: var(--text);
     font-variant-numeric: tabular-nums;
 }
 
-.auditoria-summary-card.info strong     { color: var(--aud-primary-dark); }
-.auditoria-summary-card.warning strong  { color: var(--aud-warning); }
-.auditoria-summary-card.critical strong { color: var(--aud-danger); }
+.auditoria-summary-card.info strong     { color: var(--primary-dark); }
+.auditoria-summary-card.warning strong  { color: var(--warning); }
+.auditoria-summary-card.critical strong { color: var(--danger); }
 
 .auditoria-summary-description {
     font-size: 11px;
-    color: var(--aud-text-muted);
+    color: var(--text-muted);
 }
 
-
 /* ============================================================
-   CARD PRINCIPAL
+   3. CARD PRINCIPAL
    ============================================================ */
 
 .auditoria-content-card {
     overflow: hidden;
-    background: #ffffff;
-    border: 1px solid var(--aud-border);
-    border-radius: 16px;
-    box-shadow: var(--aud-shadow);
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
 }
 
 .auditoria-content-header {
@@ -207,38 +178,36 @@
     justify-content: space-between;
     gap: 20px;
     padding: 22px 24px;
-    border-bottom: 1px solid var(--aud-border-soft);
+    border-bottom: 1px solid var(--border-soft);
 }
 
 .auditoria-content-header h2 {
     margin: 0;
     font-size: 17px;
     font-weight: 800;
-    letter-spacing: -0.01em;
-    color: var(--aud-text);
+    color: var(--text);
 }
 
 .auditoria-content-header p {
     margin: 5px 0 0;
     font-size: 13px;
-    color: var(--aud-text-muted);
+    color: var(--text-muted);
 }
 
 .auditoria-event-count {
     display: inline-flex;
     align-items: center;
     padding: 6px 11px;
-    border-radius: 999px;
-    background: var(--aud-primary-soft);
-    color: var(--aud-primary-dark);
+    border-radius: var(--radius-full);
+    background: var(--primary-soft);
+    color: var(--primary-dark);
     font-size: 11px;
     font-weight: 800;
     white-space: nowrap;
 }
 
-
 /* ============================================================
-   FILTROS
+   4. FILTROS
    ============================================================ */
 
 .auditoria-filtros {
@@ -246,8 +215,8 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 14px;
     padding: 18px 24px;
-    border-bottom: 1px solid var(--aud-border-soft);
-    background: var(--aud-bg-soft);
+    border-bottom: 1px solid var(--border-soft);
+    background: var(--bg-surface-2);
 }
 
 .auditoria-filtros .form-group {
@@ -261,7 +230,7 @@
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    color: var(--aud-text-soft);
+    color: var(--text-soft);
 }
 
 .auditoria-filtros select {
@@ -270,63 +239,56 @@
     width: 100%;
     min-height: 42px;
     padding: 0 38px 0 14px;
-
-    border: 1px solid var(--aud-border);
-    border-radius: 10px;
-    background-color: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background-color: var(--bg-surface);
     background-image:
-        linear-gradient(45deg, transparent 50%, #64748b 50%),
-        linear-gradient(135deg, #64748b 50%, transparent 50%);
+        linear-gradient(45deg, transparent 50%, var(--text-muted) 50%),
+        linear-gradient(135deg, var(--text-muted) 50%, transparent 50%);
     background-position:
         calc(100% - 16px) 50%,
         calc(100% - 11px) 50%;
     background-size: 5px 5px, 5px 5px;
     background-repeat: no-repeat;
-
-    color: var(--aud-text);
+    color: var(--text);
     font: inherit;
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
     outline: none;
-
-    transition:
-        border-color var(--aud-ease),
-        box-shadow var(--aud-ease);
+    transition: all var(--duration-fast) var(--ease-standard);
 }
 
 .auditoria-filtros select:hover {
-    border-color: #cbd5e1;
+    border-color: var(--border-strong);
 }
 
 .auditoria-filtros select:focus {
-    border-color: var(--aud-primary);
-    box-shadow: 0 0 0 3px var(--aud-primary-glow);
+    border-color: var(--primary);
+    box-shadow: var(--focus-ring);
 }
 
-
 /* ============================================================
-   TABELA
+   5. TABELA
    ============================================================ */
 
 .auditoria-table-container {
     overflow-x: auto;
     scrollbar-width: thin;
-    scrollbar-color: rgba(15, 23, 42, 0.15) transparent;
-
+    scrollbar-color: var(--border-strong) transparent;
     transition:
-        opacity var(--aud-ease),
-        transform var(--aud-ease-bounce);
+        opacity var(--duration-fast) var(--ease-standard),
+        transform var(--duration-base) var(--ease-bounce);
 }
 
 .auditoria-table-container::-webkit-scrollbar { height: 7px; }
 .auditoria-table-container::-webkit-scrollbar-track { background: transparent; }
 .auditoria-table-container::-webkit-scrollbar-thumb {
     border-radius: 999px;
-    background: rgba(15, 23, 42, 0.14);
+    background: var(--border-strong);
 }
 .auditoria-table-container::-webkit-scrollbar-thumb:hover {
-    background: rgba(15, 23, 42, 0.22);
+    background: var(--text-muted);
 }
 
 .auditoria-table {
@@ -339,9 +301,9 @@
 .auditoria-table thead th {
     height: 46px;
     padding: 0 16px;
-    border-bottom: 1px solid var(--aud-border);
-    background: var(--aud-bg-soft);
-    color: var(--aud-text-muted);
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-surface-2);
+    color: var(--text-muted);
     font-size: 10px;
     font-weight: 800;
     letter-spacing: 0.08em;
@@ -355,8 +317,8 @@
 
 .auditoria-table tbody td {
     padding: 15px 16px;
-    border-bottom: 1px solid var(--aud-border-soft);
-    color: var(--aud-text-soft);
+    border-bottom: 1px solid var(--border-soft);
+    color: var(--text-soft);
     font-size: 12px;
     vertical-align: middle;
 }
@@ -368,18 +330,17 @@
     border-bottom: none;
 }
 
-
 /* ============================================================
-   LINHA
+   6. LINHAS
    ============================================================ */
 
 .auditoria-row {
     cursor: pointer;
-    transition: background var(--aud-ease);
+    transition: background var(--duration-fast) var(--ease-standard);
 }
 
 .auditoria-row:hover {
-    background: var(--aud-bg-hover);
+    background: var(--bg-hover);
 }
 
 .auditoria-row td {
@@ -387,22 +348,22 @@
 }
 
 .auditoria-row-aberta {
-    background: var(--aud-bg-hover);
+    background: var(--bg-hover);
 }
 
 .auditoria-row-aberta td:first-child {
-    box-shadow: inset 3px 0 0 var(--aud-primary);
+    box-shadow: inset 3px 0 0 var(--primary);
 }
 
 .auditoria-data {
-    color: var(--aud-text-muted);
-    font-family: "SFMono-Regular", Consolas, monospace;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
     font-size: 11px;
     white-space: nowrap;
 }
 
 .auditoria-usuario {
-    color: var(--aud-text);
+    color: var(--text);
     font-weight: 700;
     white-space: nowrap;
 }
@@ -417,7 +378,7 @@
 
 .auditoria-descricao > span:first-child {
     overflow: hidden;
-    color: var(--aud-text-soft);
+    color: var(--text-soft);
     text-overflow: ellipsis;
     white-space: nowrap;
 }
@@ -435,53 +396,43 @@
     line-height: 1;
     opacity: 0.45;
     transform: rotate(0deg);
-
-    transition:
-        transform 350ms var(--aud-ease-bounce),
-        opacity var(--aud-ease),
-        background var(--aud-ease),
-        color var(--aud-ease);
+    transition: all var(--duration-base) var(--ease-standard);
 }
 
 .auditoria-row:hover .auditoria-expand-icon {
     opacity: 1;
-    background: var(--aud-primary-soft);
-    color: var(--aud-primary-dark);
+    background: var(--primary-soft);
+    color: var(--primary-dark);
 }
 
 .auditoria-expand-icon.aberto {
     transform: rotate(90deg);
     opacity: 1;
-    background: var(--aud-primary-soft);
-    color: var(--aud-primary-dark);
+    background: var(--primary-soft);
+    color: var(--primary-dark);
 }
 
-
 /* ============================================================
-   TIPO / GRAVIDADE
+   7. TIPO E GRAVIDADE
    ============================================================ */
 
 .auditoria-tipo {
     display: inline-flex;
     padding: 5px 9px;
-    border: 1px solid var(--aud-border);
-    border-radius: 7px;
-    background: var(--aud-bg-soft);
-    color: var(--aud-text-soft);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--bg-surface-2);
+    color: var(--text-soft);
     font-size: 11px;
     font-weight: 800;
     letter-spacing: 0.04em;
-
-    transition:
-        background var(--aud-ease),
-        border-color var(--aud-ease),
-        color var(--aud-ease);
+    transition: all var(--duration-fast) var(--ease-standard);
 }
 
 .auditoria-row:hover .auditoria-tipo {
-    background: var(--aud-primary-soft);
-    border-color: rgba(0, 174, 239, 0.18);
-    color: var(--aud-primary-dark);
+    background: var(--primary-soft);
+    border-color: var(--primary);
+    color: var(--primary-dark);
 }
 
 .auditoria-gravidade {
@@ -492,7 +443,7 @@
     min-width: 78px;
     padding: 5px 9px;
     border: 1px solid transparent;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     font-size: 11px;
     font-weight: 800;
     letter-spacing: 0.04em;
@@ -500,21 +451,21 @@
 }
 
 .auditoria-severity-info {
-    color: var(--aud-primary-dark);
-    background: rgba(0, 174, 239, 0.09);
-    border-color: rgba(0, 174, 239, 0.18);
+    color: var(--primary-dark);
+    background: var(--primary-soft);
+    border-color: var(--primary);
 }
 
 .auditoria-severity-warning {
-    color: var(--aud-warning);
-    background: rgba(217, 119, 6, 0.10);
-    border-color: rgba(217, 119, 6, 0.20);
+    color: var(--warning);
+    background: var(--warning-soft);
+    border-color: var(--warning-border);
 }
 
 .auditoria-severity-critical {
-    color: var(--aud-danger);
-    background: rgba(220, 38, 38, 0.08);
-    border-color: rgba(220, 38, 38, 0.18);
+    color: var(--danger);
+    background: var(--danger-soft);
+    border-color: var(--danger-border);
 }
 
 .auditoria-gravidade-icon {
@@ -531,15 +482,10 @@
     50%      { opacity: 1;    transform: scale(1.15); }
 }
 
-
 /* ============================================================
-   ACCORDION — DETALHES
+   8. ACCORDION (Detalhes)
    ============================================================ */
 
-/*
- * FIX: fechar por defeito de forma explícita
- * (antes a <tr> era sempre visível, o que deixava um espaço vazio).
- */
 .auditoria-detail-row > td {
     padding: 0 !important;
     border: 0 !important;
@@ -549,7 +495,7 @@
     display: grid;
     grid-template-rows: 0fr;
     background: transparent;
-    transition: grid-template-rows 420ms var(--aud-ease-bounce);
+    transition: grid-template-rows 420ms var(--ease-bounce);
 }
 
 .auditoria-detail-row.aberta .auditoria-detail-wrapper {
@@ -564,11 +510,10 @@
     opacity: 0;
     transform: translateY(-8px);
     pointer-events: none;
-
     transition:
         opacity 260ms ease,
-        transform 420ms var(--aud-ease-bounce),
-        padding 420ms var(--aud-ease-bounce),
+        transform 420ms var(--ease-bounce),
+        padding 420ms var(--ease-bounce),
         border-color 420ms ease;
 }
 
@@ -577,7 +522,7 @@
     transform: translateY(0);
     padding-top: 24px;
     padding-bottom: 24px;
-    border-top-color: var(--aud-border);
+    border-top-color: var(--border);
     pointer-events: auto;
 }
 
@@ -586,7 +531,7 @@
     transform: translateY(8px);
     transition:
         opacity 280ms ease,
-        transform 380ms var(--aud-ease-bounce);
+        transform 380ms var(--ease-bounce);
 }
 
 .auditoria-detail-row.aberta .auditoria-detail > * {
@@ -599,9 +544,8 @@
 .auditoria-detail-row.aberta .auditoria-detail > *:nth-child(3) { transition-delay: 160ms; }
 .auditoria-detail-row.aberta .auditoria-detail > *:nth-child(4) { transition-delay: 210ms; }
 
-
 /* ============================================================
-   CABEÇALHO DOS DETALHES
+   9. CABEÇALHO DOS DETALHES
    ============================================================ */
 
 .auditoria-detail-header {
@@ -619,32 +563,30 @@
     font-weight: 800;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--aud-primary-dark);
+    color: var(--primary-dark);
 }
 
 .auditoria-detail-header h3 {
     margin: 0;
     font-size: 18px;
     font-weight: 800;
-    letter-spacing: -0.01em;
-    color: var(--aud-text);
+    color: var(--text);
 }
 
 .auditoria-detail-id {
     display: inline-flex;
     padding: 5px 9px;
-    border-radius: 7px;
-    background: var(--aud-bg-soft);
-    border: 1px solid var(--aud-border);
-    font-family: monospace;
+    border-radius: var(--radius-sm);
+    background: var(--bg-surface-2);
+    border: 1px solid var(--border);
+    font-family: var(--font-mono);
     font-size: 12px;
     font-weight: 700;
-    color: var(--aud-text-soft);
+    color: var(--text-soft);
 }
 
-
 /* ============================================================
-   CONTEXTO TÉCNICO
+   10. CONTEXTO TÉCNICO
    ============================================================ */
 
 .auditoria-context-grid {
@@ -656,9 +598,9 @@
 
 .auditoria-context-item {
     padding: 14px 16px;
-    border: 1px solid var(--aud-border);
-    border-radius: 12px;
-    background: var(--aud-bg-soft);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg-surface-2);
 }
 
 .auditoria-context-item span {
@@ -668,32 +610,31 @@
     font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--aud-text-muted);
+    color: var(--text-muted);
 }
 
 .auditoria-context-item strong {
     display: block;
     overflow: hidden;
-    font-family: "SFMono-Regular", Consolas, monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
     font-weight: 700;
-    color: var(--aud-text);
+    color: var(--text);
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-
 /* ============================================================
-   DIFF — ANTES / DEPOIS
+   11. DIFF (Antes / Depois)
    ============================================================ */
 
 .auditoria-diff-section {
     overflow: hidden;
     margin-top: 18px;
-    border: 1px solid var(--aud-border);
-    border-radius: 14px;
-    background: #ffffff;
-    box-shadow: var(--aud-shadow);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg-surface);
+    box-shadow: var(--shadow);
 }
 
 .auditoria-diff-title {
@@ -701,16 +642,11 @@
     align-items: center;
     justify-content: space-between;
     padding: 13px 16px;
-    border-bottom: 1px solid var(--aud-border-soft);
-    background: linear-gradient(
-        90deg,
-        rgba(0, 174, 239, 0.05),
-        rgba(0, 174, 239, 0.015)
-    );
+    border-bottom: 1px solid var(--border-soft);
+    background: linear-gradient(90deg, var(--primary-soft), transparent);
     font-size: 11px;
     font-weight: 800;
-    letter-spacing: 0.02em;
-    color: var(--aud-text);
+    color: var(--text);
 }
 
 .auditoria-diff-title > div {
@@ -720,10 +656,10 @@
 }
 
 .auditoria-diff-title > span {
-    font-family: monospace;
+    font-family: var(--font-mono);
     font-size: 9px;
     letter-spacing: 0.14em;
-    color: var(--aud-primary-dark);
+    color: var(--primary-dark);
     opacity: 0.7;
 }
 
@@ -731,28 +667,28 @@
     width: 7px;
     height: 7px;
     border-radius: 50%;
-    background: var(--aud-primary);
+    background: var(--primary);
 }
 
 .auditoria-diff {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 1px;
-    background: var(--aud-border);
+    background: var(--border);
 }
 
 .auditoria-diff-column {
     min-width: 0;
     overflow: hidden;
     padding: 8px;
-    background: #ffffff;
+    background: var(--bg-surface);
 }
 
 .auditoria-diff-column-title {
     display: flex;
     align-items: center;
     padding: 12px 15px;
-    border-bottom: 1px solid var(--aud-border-soft);
+    border-bottom: 1px solid var(--border-soft);
     font-size: 10px;
     font-weight: 800;
     letter-spacing: 0.1em;
@@ -760,13 +696,13 @@
 }
 
 .auditoria-diff-column:first-child .auditoria-diff-column-title {
-    color: var(--aud-danger);
-    background: rgba(220, 38, 38, 0.04);
+    color: var(--danger);
+    background: var(--danger-soft);
 }
 
 .auditoria-diff-column:last-child .auditoria-diff-column-title {
-    color: var(--aud-success);
-    background: rgba(22, 163, 74, 0.04);
+    color: var(--success);
+    background: var(--success-soft);
 }
 
 .auditoria-diff-line {
@@ -777,10 +713,10 @@
     align-items: center;
     min-height: 40px;
     padding: 8px 15px;
-    border-bottom: 1px solid var(--aud-border-soft);
-    font-family: "SFMono-Regular", Consolas, monospace;
+    border-bottom: 1px solid var(--border-soft);
+    font-family: var(--font-mono);
     font-size: 11px;
-    transition: background-color 180ms ease;
+    transition: background-color var(--duration-fast) var(--ease-standard);
 }
 
 .auditoria-diff-line:last-child {
@@ -790,7 +726,7 @@
 .auditoria-diff-key {
     min-width: 0;
     overflow: hidden;
-    color: var(--aud-text-muted);
+    color: var(--text-muted);
     font-weight: 700;
     text-overflow: ellipsis;
 }
@@ -798,13 +734,13 @@
 .auditoria-diff-value {
     min-width: 0;
     overflow-wrap: anywhere;
-    color: var(--aud-text-soft);
+    color: var(--text-soft);
     font-weight: 600;
     line-height: 1.5;
 }
 
 .auditoria-diff-line.alterado {
-    background: rgba(0, 174, 239, 0.04);
+    background: var(--primary-soft);
 }
 
 .auditoria-diff-line.alterado::before {
@@ -815,7 +751,7 @@
     bottom: 7px;
     width: 3px;
     border-radius: 0 3px 3px 0;
-    background: var(--aud-primary);
+    background: var(--primary);
     animation: auditoriaDiffBar 2s ease-out forwards;
 }
 
@@ -823,18 +759,18 @@
     display: inline-block;
     max-width: 100%;
     padding: 2px 6px;
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     font-weight: 800;
-    color: var(--aud-primary-dark);
+    color: var(--primary-dark);
     animation: auditoriaDiffHighlight 2s ease-out forwards;
     overflow-wrap: anywhere;
 }
 
 @keyframes auditoriaDiffHighlight {
-    0%   { background: rgba(0, 174, 239, 0.35); box-shadow: 0 0 0 rgba(0, 174, 239, 0); }
-    25%  { background: rgba(0, 174, 239, 0.22); box-shadow: 0 0 10px rgba(0, 174, 239, 0.15); }
-    60%  { background: rgba(0, 174, 239, 0.10); box-shadow: 0 0 5px rgba(0, 174, 239, 0.06); }
-    100% { background: transparent; box-shadow: 0 0 0 rgba(0, 174, 239, 0); }
+    0%   { background: var(--primary-soft); box-shadow: 0 0 0 transparent; }
+    25%  { background: var(--primary-soft); box-shadow: 0 0 10px var(--primary-glow); }
+    60%  { background: var(--primary-soft); box-shadow: 0 0 5px var(--primary-glow); }
+    100% { background: transparent; box-shadow: 0 0 0 transparent; }
 }
 
 @keyframes auditoriaDiffBar {
@@ -843,18 +779,17 @@
     100% { opacity: 0.25; }
 }
 
-
 /* ============================================================
-   PAYLOAD (JSON)
+   12. PAYLOAD (JSON)
    ============================================================ */
 
 .auditoria-payload {
     overflow: hidden;
     margin-top: 14px;
-    border: 1px solid var(--aud-border);
-    border-radius: 12px;
-    background: #ffffff;
-    box-shadow: var(--aud-shadow);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg-surface);
+    box-shadow: var(--shadow);
 }
 
 .auditoria-json-header {
@@ -862,11 +797,11 @@
     align-items: center;
     justify-content: space-between;
     padding: 11px 14px;
-    border-bottom: 1px solid var(--aud-border-soft);
-    background: rgba(0, 174, 239, 0.04);
+    border-bottom: 1px solid var(--border-soft);
+    background: var(--primary-soft);
     font-size: 11px;
     font-weight: 800;
-    color: var(--aud-text);
+    color: var(--text);
 }
 
 .auditoria-json-header > div {
@@ -878,7 +813,7 @@
 .auditoria-json-header > span {
     font-size: 9px;
     letter-spacing: 0.12em;
-    color: var(--aud-primary-dark);
+    color: var(--primary-dark);
     opacity: 0.7;
 }
 
@@ -886,17 +821,16 @@
     margin: 0;
     padding: 16px;
     overflow-x: auto;
-    font-family: "SFMono-Regular", Consolas, monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     line-height: 1.65;
-    color: var(--aud-text-soft);
+    color: var(--text-soft);
     white-space: pre-wrap;
     word-break: break-word;
 }
 
-
 /* ============================================================
-   PAGINAÇÃO
+   13. PAGINAÇÃO
    ============================================================ */
 
 .auditoria-paginacao {
@@ -905,15 +839,15 @@
     justify-content: space-between;
     gap: 20px;
     padding: 16px 24px;
-    border-top: 1px solid var(--aud-border-soft);
-    background: var(--aud-bg-soft);
+    border-top: 1px solid var(--border-soft);
+    background: var(--bg-surface-2);
 }
 
 .auditoria-paginacao-info {
     display: flex;
     align-items: center;
     gap: 7px;
-    color: var(--aud-text-soft);
+    color: var(--text-soft);
     font-size: 12px;
     font-weight: 600;
 }
@@ -925,13 +859,13 @@
     min-width: 28px;
     height: 28px;
     padding: 0 7px;
-    border: 1px solid var(--aud-border);
-    border-radius: 8px;
-    background: #ffffff;
-    color: var(--aud-text);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--bg-surface);
+    color: var(--text);
     font-size: 12px;
     font-weight: 800;
-    box-shadow: var(--aud-shadow-sm);
+    box-shadow: var(--shadow-sm);
 }
 
 .auditoria-paginacao-acoes {
@@ -947,40 +881,33 @@
     gap: 8px;
     min-height: 36px;
     padding: 0 13px;
-    border: 1px solid var(--aud-border);
-    border-radius: 9px;
-    background: #ffffff;
-    color: var(--aud-text-soft);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--bg-surface);
+    color: var(--text-soft);
     font-size: 12px;
     font-weight: 700;
     cursor: pointer;
-    box-shadow: var(--aud-shadow-sm);
-
-    transition:
-        background var(--aud-ease),
-        border-color var(--aud-ease),
-        color var(--aud-ease),
-        box-shadow var(--aud-ease),
-        transform var(--aud-ease);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--duration-fast) var(--ease-standard);
 }
 
 .auditoria-paginacao-btn:not(:disabled):hover {
-    background: var(--aud-primary-soft);
-    border-color: rgba(0, 174, 239, 0.35);
-    color: var(--aud-primary-dark);
+    background: var(--bg-hover);
+    border-color: var(--primary);
+    color: var(--primary-dark);
     transform: translateY(-1px);
-    box-shadow: 0 6px 14px rgba(0, 174, 239, 0.14);
+    box-shadow: 0 6px 14px var(--primary-glow);
 }
 
 .auditoria-paginacao-btn:not(:disabled):active {
     transform: translateY(0);
-    box-shadow: var(--aud-shadow-sm);
 }
 
 .auditoria-paginacao-btn:disabled {
-    opacity: 0.38;
+    opacity: 0.4;
     cursor: not-allowed;
-    background: var(--aud-bg-soft);
+    background: var(--bg-surface-2);
     box-shadow: none;
 }
 
@@ -992,8 +919,8 @@
     line-height: 1;
     opacity: 0.65;
     transition:
-        transform var(--aud-ease),
-        opacity var(--aud-ease);
+        transform var(--duration-fast) var(--ease-standard),
+        opacity var(--duration-fast) var(--ease-standard);
 }
 
 .auditoria-paginacao-btn:first-child:hover .auditoria-paginacao-icon {
@@ -1006,9 +933,8 @@
     opacity: 1;
 }
 
-
 /* ============================================================
-   ANIMAÇÕES DE LINHA / FILTRO
+   14. ANIMAÇÕES DE LINHA / FILTRO
    ============================================================ */
 
 .auditoria-filtro-mudando {
@@ -1018,7 +944,7 @@
 }
 
 .auditoria-table tbody .auditoria-row {
-    animation: auditoriaRowIn 320ms var(--aud-ease-bounce) both;
+    animation: auditoriaRowIn 320ms var(--ease-bounce) both;
 }
 
 @keyframes auditoriaRowIn {
@@ -1026,7 +952,6 @@
     to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Cascata suave nas linhas visíveis */
 .auditoria-table tbody .auditoria-row:nth-child(1) { animation-delay: 0ms; }
 .auditoria-table tbody .auditoria-row:nth-child(2) { animation-delay: 30ms; }
 .auditoria-table tbody .auditoria-row:nth-child(3) { animation-delay: 60ms; }
@@ -1034,16 +959,15 @@
 .auditoria-table tbody .auditoria-row:nth-child(5) { animation-delay: 120ms; }
 .auditoria-table tbody .auditoria-row:nth-child(n+6) { animation-delay: 150ms; }
 
-
 /* ============================================================
-   EMPTY / LOADING / ERRO
+   15. ESTADOS (Empty / Loading / Erro)
    ============================================================ */
 
 .auditoria-table tbody tr:not(.auditoria-row) td {
     padding: 50px 24px;
     border-bottom: none;
     text-align: center;
-    color: var(--aud-text-muted);
+    color: var(--text-muted);
     font-size: 13px;
 }
 
@@ -1053,7 +977,7 @@
     justify-content: center;
     gap: 10px;
     min-height: 240px;
-    color: var(--aud-text-soft);
+    color: var(--text-soft);
     font-size: 13px;
     font-weight: 600;
 }
@@ -1061,8 +985,8 @@
 .auditoria-loading span {
     width: 15px;
     height: 15px;
-    border: 2px solid rgba(0, 174, 239, 0.18);
-    border-top-color: var(--aud-primary);
+    border: 2px solid var(--primary-soft);
+    border-top-color: var(--primary);
     border-radius: 50%;
     animation: auditoriaSpin 700ms linear infinite;
 }
@@ -1074,24 +998,101 @@
 .auditoria-error {
     margin: 30px;
     padding: 16px 18px;
-    border: 1px solid rgba(220, 38, 38, 0.18);
-    border-radius: 10px;
-    background: var(--aud-danger-soft);
-    color: var(--aud-danger);
+    border: 1px solid var(--danger-border);
+    border-radius: var(--radius-md);
+    background: var(--danger-soft);
+    color: var(--danger);
     font-size: 13px;
     font-weight: 600;
 }
 
+/* ============================================================
+   16. DARK MODE — Efeito Neon Reactivo
+   ============================================================ */
+
+/* Cards de resumo ganham glow da cor semântica */
+[data-theme="dark"] .auditoria-summary-card:hover {
+    border-color: var(--primary);
+    box-shadow:
+        var(--shadow-lg),
+        0 0 25px rgba(92, 200, 255, 0.08);
+}
+
+[data-theme="dark"] .auditoria-summary-card.warning:hover {
+    border-color: var(--warning);
+    box-shadow:
+        var(--shadow-lg),
+        0 0 25px rgba(255, 200, 87, 0.12);
+}
+
+[data-theme="dark"] .auditoria-summary-card.critical:hover {
+    border-color: var(--danger);
+    box-shadow:
+        var(--shadow-lg),
+        0 0 25px rgba(255, 92, 108, 0.15);
+}
+
+/* Linha da tabela reage ao hover */
+[data-theme="dark"] .auditoria-row:hover {
+    box-shadow: inset 3px 0 0 var(--primary);
+}
+
+/* Severidade Critical pulsa com glow neon */
+[data-theme="dark"] .auditoria-severity-critical {
+    animation: criticalNeonPulse 2s ease-in-out infinite;
+}
+
+@keyframes criticalNeonPulse {
+    0%, 100% {
+        box-shadow: 0 0 8px rgba(255, 92, 108, 0.15);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(255, 92, 108, 0.4);
+    }
+}
+
+/* Diff alterado ganha brilho neon */
+[data-theme="dark"] .auditoria-diff-line.alterado {
+    background: rgba(92, 200, 255, 0.06);
+}
+
+[data-theme="dark"] .auditoria-diff-line.alterado::before {
+    background: var(--primary);
+    box-shadow: 0 0 12px var(--primary-glow);
+}
+
+[data-theme="dark"] .auditoria-diff-value.valor-alterado {
+    color: var(--primary);
+    text-shadow: 0 0 10px rgba(92, 200, 255, 0.3);
+}
+
+/* Payload JSON com brilho de código */
+[data-theme="dark"] .auditoria-payload pre {
+    text-shadow: 0 0 8px rgba(92, 200, 255, 0.08);
+}
+
+/* Paginação neon */
+[data-theme="dark"] .auditoria-paginacao-btn:not(:disabled):hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    box-shadow: 0 0 12px rgba(92, 200, 255, 0.15);
+}
+
+/* Botão Exportar CSV com glow */
+[data-theme="dark"] .auditoria-exportar-csv:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    box-shadow: 0 0 15px rgba(92, 200, 255, 0.15);
+}
 
 /* ============================================================
-   RESPONSIVIDADE
+   17. RESPONSIVIDADE
    ============================================================ */
 
 @media (max-width: 1100px) {
     .auditoria-context-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
-
     .auditoria-summary {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
@@ -1107,50 +1108,45 @@
     .auditoria-page {
         padding: 16px;
     }
-
     .auditoria-summary {
         grid-template-columns: 1fr;
         gap: 10px;
     }
-
     .auditoria-content-header {
         align-items: flex-start;
         flex-direction: column;
         padding: 18px;
     }
-
     .auditoria-filtros {
         grid-template-columns: 1fr;
         padding: 16px;
     }
-
     .auditoria-paginacao {
         flex-direction: column;
         align-items: stretch;
         padding: 14px 18px;
     }
-
     .auditoria-paginacao-info,
     .auditoria-paginacao-acoes {
         justify-content: center;
     }
-
     .auditoria-paginacao-btn {
         flex: 1;
     }
-
     .auditoria-diff {
         grid-template-columns: 1fr;
     }
-
     .auditoria-detail {
         padding-left: 14px;
         padding-right: 14px;
     }
-
     .auditoria-detail-header {
         flex-direction: column;
         gap: 10px;
+    }
+    .auditoria-exportar-csv {
+        width: 100%;
+        margin-top: 12px;
     }
 }
 
@@ -1159,15 +1155,13 @@
         grid-template-columns: 1fr;
         gap: 4px;
     }
-
     .auditoria-summary-card {
         padding: 16px;
     }
 }
 
-
 /* ============================================================
-   ACESSIBILIDADE
+   18. ACESSIBILIDADE
    ============================================================ */
 
 @media (prefers-reduced-motion: reduce) {
@@ -1176,7 +1170,8 @@
     .auditoria-severity-critical .auditoria-gravidade-icon,
     .auditoria-diff-value.valor-alterado,
     .auditoria-diff-line.alterado::before,
-    .auditoria-loading span {
+    .auditoria-loading span,
+    [data-theme="dark"] .auditoria-severity-critical {
         animation: none !important;
     }
 
@@ -1195,58 +1190,5 @@
     .auditoria-summary-card:hover,
     .auditoria-paginacao-btn:not(:disabled):hover {
         transform: none;
-    }
-}
-
-/* ============================================================
-   BOTÃO EXPORTAR CSV
-   ============================================================ */
-
-.auditoria-exportar-csv {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-
-    min-height: 42px;
-    padding: 0 18px;
-
-    border: 1px solid var(--aud-border);
-    border-radius: var(--aud-radius-sm);
-
-    background: #ffffff;
-    color: var(--aud-text-soft);
-
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 700;
-
-    cursor: pointer;
-
-    transition:
-        background var(--aud-ease),
-        border-color var(--aud-ease),
-        color var(--aud-ease),
-        box-shadow var(--aud-ease),
-        transform var(--aud-ease);
-}
-
-.auditoria-exportar-csv:hover {
-    background: var(--aud-bg-soft);
-    border-color: #cbd5e1;
-    color: var(--aud-text);
-    transform: translateY(-2px);
-    box-shadow: var(--aud-shadow);
-}
-
-.auditoria-exportar-csv:active {
-    transform: translateY(0) scale(0.98);
-}
-
-/* Em mobile */
-@media (max-width: 700px) {
-    .auditoria-exportar-csv {
-        width: 100%;
-        margin-top: 12px;
     }
 }

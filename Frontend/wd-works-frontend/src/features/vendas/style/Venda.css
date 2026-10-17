@@ -1,84 +1,22 @@
 /* ============================================================
-   VENDAS — CSS unificado
-   Identidade: WD Works — Light + Candy Blue
-
-   Cobre:
-     • Vendas (listagem)
-     • Detalhes da venda
-     • Nova venda (formulário)
-     • Itens da venda (carrinho)
+   VENDAS — CSS Unificado
    ============================================================ */
 
-
 /* ============================================================
-   VARIÁVEIS
-   ============================================================ */
-
-:root {
-    /* Paleta */
-    --venda-primary: #00aeef;
-    --venda-primary-dark: #008fc5;
-    --venda-primary-soft: #e0f2fe;
-    --venda-primary-glow: rgba(0, 174, 239, 0.18);
-
-    --venda-text: #0f172a;
-    --venda-text-soft: #475569;
-    --venda-text-muted: #94a3b8;
-
-    --venda-bg: #f4f7fb;
-    --venda-bg-soft: #f8fafc;
-    --venda-bg-hover: #fafcff;
-    --venda-border: #e5eaf1;
-    --venda-border-soft: #eef2f7;
-
-    --venda-success: #16a34a;
-    --venda-success-soft: #ecfdf3;
-    --venda-success-border: rgba(22, 163, 74, 0.20);
-
-    --venda-danger: #dc2626;
-    --venda-danger-soft: #fef2f2;
-    --venda-danger-border: rgba(220, 38, 38, 0.20);
-
-    /* Sombras */
-    --venda-shadow-sm: 0 2px 6px rgba(15, 23, 42, 0.04);
-    --venda-shadow:
-        0 1px 2px rgba(15, 23, 42, 0.04),
-        0 4px 14px rgba(15, 23, 42, 0.04);
-    --venda-shadow-lg:
-        0 2px 4px rgba(15, 23, 42, 0.05),
-        0 12px 32px rgba(15, 23, 42, 0.08);
-
-    /* Motion */
-    --venda-ease: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
-    --venda-ease-bounce: 0.32s cubic-bezier(0.22, 1, 0.36, 1);
-
-    /* Radius */
-    --venda-radius: 16px;
-    --venda-radius-md: 14px;
-    --venda-radius-sm: 10px;
-}
-
-
-/* ============================================================
-   CONTAINER DA PÁGINA
+   1. CONTAINER DA PÁGINA
    ============================================================ */
 
 .page-container {
     width: 100%;
     max-width: 1500px;
     margin: 0 auto;
-    animation: vendaPageIn 380ms var(--venda-ease-bounce) both;
+    animation: vendaPageIn 380ms var(--ease-bounce) both;
 }
 
 @keyframes vendaPageIn {
     from { opacity: 0; transform: translateY(8px); }
     to   { opacity: 1; transform: translateY(0); }
 }
-
-
-/* ============================================================
-   CABEÇALHO DA PÁGINA
-   ============================================================ */
 
 .page-header {
     display: flex;
@@ -90,7 +28,7 @@
 
 .page-header h1 {
     margin: 0;
-    color: var(--venda-text);
+    color: var(--text);
     font-size: 26px;
     font-weight: 800;
     letter-spacing: -0.02em;
@@ -99,14 +37,19 @@
 
 .page-header p {
     margin: 7px 0 0;
-    color: var(--venda-text-muted);
+    color: var(--text-muted);
     font-size: 13px;
     line-height: 1.5;
 }
 
+.page-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
 
 /* ============================================================
-   BOTÕES — BASE
+   2. BOTÕES GLOBAIS (Nesta página)
    ============================================================ */
 
 .button-primary,
@@ -121,22 +64,21 @@
     padding: 0 18px;
 
     border: 1px solid transparent;
-    border-radius: var(--venda-radius-sm);
+    border-radius: var(--radius-md);
 
     font-family: inherit;
     font-size: 13px;
     font-weight: 700;
     text-decoration: none;
     white-space: nowrap;
-
     cursor: pointer;
 
     transition:
-        background var(--venda-ease),
-        border-color var(--venda-ease),
-        color var(--venda-ease),
-        box-shadow var(--venda-ease),
-        transform var(--venda-ease);
+        background var(--duration-base) var(--ease-standard),
+        border-color var(--duration-base) var(--ease-standard),
+        color var(--duration-base) var(--ease-standard),
+        box-shadow var(--duration-base) var(--ease-standard),
+        transform var(--duration-base) var(--ease-standard);
 }
 
 .button-primary:disabled,
@@ -148,19 +90,17 @@
     box-shadow: none;
 }
 
-
-/* PRIMARY — Candy Blue */
-
+/* Primary */
 .button-primary {
-    background: var(--venda-primary);
-    border-color: var(--venda-primary);
-    color: #ffffff;
+    background: var(--primary);
+    border-color: var(--primary);
+    color: var(--text-on-primary);
     box-shadow: 0 4px 12px rgba(0, 174, 239, 0.22);
 }
 
 .button-primary:hover:not(:disabled) {
-    background: var(--venda-primary-dark);
-    border-color: var(--venda-primary-dark);
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(0, 174, 239, 0.30);
 }
@@ -169,23 +109,21 @@
     transform: translateY(0) scale(0.98);
 }
 
-
-/* SECONDARY */
-
+/* Secondary */
 .button-secondary,
 .button {
-    background: #ffffff;
-    border-color: var(--venda-border);
-    color: var(--venda-text-soft);
+    background: var(--bg-surface);
+    border-color: var(--border);
+    color: var(--text-soft);
 }
 
 .button-secondary:hover:not(:disabled),
 .button:hover:not(:disabled) {
-    background: var(--venda-bg-soft);
-    border-color: #cbd5e1;
-    color: var(--venda-text);
+    background: var(--bg-surface-2);
+    border-color: var(--border-strong);
+    color: var(--text);
     transform: translateY(-2px);
-    box-shadow: var(--venda-shadow-sm);
+    box-shadow: var(--shadow-sm);
 }
 
 .button-secondary:active:not(:disabled),
@@ -193,22 +131,20 @@
     transform: translateY(0);
 }
 
-
 /* ============================================================
-   CARTÃO DE CONTEÚDO
+   3. CARTÃO DE CONTEÚDO
    ============================================================ */
 
 .content-card {
     position: relative;
     overflow: hidden;
 
-    background: #ffffff;
-    border: 1px solid var(--venda-border);
-    border-radius: var(--venda-radius);
-    box-shadow: var(--venda-shadow);
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
 }
 
-/* Linha Candy Blue no topo (padrão do resto da app) */
 .content-card::before {
     content: "";
     position: absolute;
@@ -219,17 +155,12 @@
     background: linear-gradient(
         90deg,
         transparent,
-        var(--venda-primary) 30%,
-        var(--venda-primary-dark) 70%,
+        var(--primary) 30%,
+        var(--primary-dark) 70%,
         transparent
     );
     opacity: 0.9;
 }
-
-
-/* ============================================================
-   CABEÇALHO DO CARTÃO
-   ============================================================ */
 
 .content-card-header {
     display: flex;
@@ -237,12 +168,12 @@
     justify-content: space-between;
     gap: 20px;
     padding: 22px 24px;
-    border-bottom: 1px solid var(--venda-border-soft);
+    border-bottom: 1px solid var(--border-soft);
 }
 
 .content-card-header h2 {
     margin: 0;
-    color: var(--venda-text);
+    color: var(--text);
     font-size: 17px;
     font-weight: 800;
     letter-spacing: -0.01em;
@@ -250,13 +181,12 @@
 
 .content-card-header p {
     margin: 5px 0 0;
-    color: var(--venda-text-muted);
+    color: var(--text-muted);
     font-size: 12px;
 }
 
-
 /* ============================================================
-   ÁREA DE FILTROS — BARRA UNIFICADA
+   4. FILTROS DE PESQUISA
    ============================================================ */
 
 .vendas-filtros {
@@ -268,28 +198,18 @@
         minmax(140px, 1fr)
         minmax(110px, 0.9fr)
         auto;
-
     align-items: end;
     gap: 14px;
-
     padding: 20px 24px;
-
-    background: var(--venda-bg-soft);
-    border-bottom: 1px solid var(--venda-border-soft);
-
-    animation: vendasFiltrosIn
-        460ms var(--venda-ease-bounce) 80ms both;
+    background: var(--bg-surface-2);
+    border-bottom: 1px solid var(--border-soft);
+    animation: vendasFiltrosIn 460ms var(--ease-bounce) 80ms both;
 }
 
 @keyframes vendasFiltrosIn {
     from { opacity: 0; transform: translateY(-6px); }
     to   { opacity: 1; transform: translateY(0); }
 }
-
-
-/* ============================================================
-   GRUPO DE FILTRO
-   ============================================================ */
 
 .filtro-group {
     display: flex;
@@ -303,9 +223,8 @@
     font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--venda-text-muted);
-
-    transition: color var(--venda-ease);
+    color: var(--text-muted);
+    transition: color var(--duration-fast) var(--ease-standard);
 }
 
 .filtro-group input {
@@ -314,52 +233,45 @@
     padding: 0 12px;
     box-sizing: border-box;
 
-    border: 1px solid var(--venda-border);
-    border-radius: var(--venda-radius-sm);
-    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg-surface);
 
-    color: var(--venda-text);
+    color: var(--text);
     font-family: inherit;
     font-size: 13px;
     font-weight: 500;
-
     outline: none;
 
     transition:
-        border-color var(--venda-ease),
-        box-shadow var(--venda-ease),
-        background var(--venda-ease);
+        border-color var(--duration-fast) var(--ease-standard),
+        box-shadow var(--duration-fast) var(--ease-standard),
+        background var(--duration-fast) var(--ease-standard);
 }
 
 .filtro-group input::placeholder {
-    color: var(--venda-text-muted);
+    color: var(--text-muted);
 }
 
 .filtro-group input:hover {
-    border-color: #cbd5e1;
+    border-color: var(--border-strong);
 }
 
 .filtro-group:focus-within label {
-    color: var(--venda-primary-dark);
+    color: var(--primary-dark);
 }
 
 .filtro-group input:focus {
-    border-color: var(--venda-primary);
-    background: #ffffff;
-    box-shadow: 0 0 0 3px var(--venda-primary-glow);
+    border-color: var(--primary);
+    background: var(--bg-surface);
+    box-shadow: var(--focus-ring);
 }
 
-/* Input de data / hora — cursor pointer */
 .filtro-group input[type="date"],
 .filtro-group input[type="time"] {
     cursor: pointer;
     padding-right: 8px;
 }
-
-
-/* ============================================================
-   BOTÕES DO FILTRO
-   ============================================================ */
 
 .filtros-acoes {
     display: flex;
@@ -373,37 +285,25 @@
     padding: 0 18px;
 }
 
-
-/* ============================================================
-   RESUMO DOS RESULTADOS
-   ============================================================ */
-
+/* Resumo (Badge) */
 .vendas-resumo {
     display: flex;
     align-items: center;
-
     padding: 14px 24px;
-
-    color: var(--venda-text-soft);
+    color: var(--text-soft);
     font-size: 12px;
     font-weight: 600;
-
-    border-bottom: 1px solid var(--venda-border-soft);
-
-    animation: vendasResumoIn
-        380ms var(--venda-ease-bounce) 140ms both;
+    border-bottom: 1px solid var(--border-soft);
+    animation: vendasResumoIn 380ms var(--ease-bounce) 140ms both;
 }
 
 .vendas-resumo span {
     display: inline-flex;
     align-items: center;
-
     padding: 4px 11px;
-
-    border-radius: 999px;
-    background: var(--venda-primary-soft);
-    color: var(--venda-primary-dark);
-
+    border-radius: var(--radius-full);
+    background: var(--primary-soft);
+    color: var(--primary-dark);
     font-weight: 700;
 }
 
@@ -412,26 +312,25 @@
     to   { opacity: 1; transform: translateY(0); }
 }
 
-
 /* ============================================================
-   TABELA
+   5. TABELA
    ============================================================ */
 
 .table-container {
     width: 100%;
     overflow-x: auto;
     scrollbar-width: thin;
-    scrollbar-color: rgba(15, 23, 42, 0.15) transparent;
+    scrollbar-color: var(--border-strong) transparent;
 }
 
 .table-container::-webkit-scrollbar { height: 7px; }
 .table-container::-webkit-scrollbar-track { background: transparent; }
 .table-container::-webkit-scrollbar-thumb {
     border-radius: 999px;
-    background: rgba(15, 23, 42, 0.14);
+    background: var(--border-strong);
 }
 .table-container::-webkit-scrollbar-thumb:hover {
-    background: rgba(15, 23, 42, 0.22);
+    background: var(--text-muted);
 }
 
 .table-container table {
@@ -443,22 +342,20 @@
 }
 
 .table-container thead {
-    background: var(--venda-bg-soft);
+    background: var(--bg-surface-2);
 }
 
 .table-container th {
     height: 44px;
     padding: 0 18px;
-
-    color: var(--venda-text-muted);
+    color: var(--text-muted);
     font-size: 10px;
     font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     text-align: left;
     white-space: nowrap;
-
-    border-bottom: 1px solid var(--venda-border);
+    border-bottom: 1px solid var(--border);
 }
 
 .table-container th:first-child { padding-left: 24px; }
@@ -467,9 +364,8 @@
 .table-container td {
     height: 60px;
     padding: 0 18px;
-
-    color: var(--venda-text-soft);
-    border-bottom: 1px solid var(--venda-border-soft);
+    color: var(--text-soft);
+    border-bottom: 1px solid var(--border-soft);
     white-space: nowrap;
     vertical-align: middle;
 }
@@ -478,11 +374,11 @@
 .table-container td:last-child  { padding-right: 24px; }
 
 .table-container tbody tr {
-    transition: background var(--venda-ease);
-    animation: vendaRowIn
-        320ms var(--venda-ease-bounce) both;
+    transition: background var(--duration-fast) var(--ease-standard);
+    animation: vendaRowIn 320ms var(--ease-bounce) both;
 }
 
+/* Stagger animation */
 .table-container tbody tr:nth-child(1) { animation-delay: 0ms; }
 .table-container tbody tr:nth-child(2) { animation-delay: 30ms; }
 .table-container tbody tr:nth-child(3) { animation-delay: 60ms; }
@@ -496,7 +392,7 @@
 }
 
 .table-container tbody tr:hover {
-    background: var(--venda-bg-hover);
+    background: var(--bg-hover);
 }
 
 .table-container tbody tr:last-child td {
@@ -504,48 +400,23 @@
 }
 
 .table-container td strong {
-    color: var(--venda-text);
+    color: var(--text);
     font-weight: 700;
 }
 
-
-/* LINKS DA TABELA */
-
 .table-container a {
-    color: var(--venda-primary-dark);
+    color: var(--primary-dark);
     font-weight: 700;
     text-decoration: none;
-    transition: color var(--venda-ease);
+    transition: color var(--duration-fast) var(--ease-standard);
 }
 
 .table-container a:hover {
-    color: var(--venda-primary);
+    color: var(--primary);
 }
 
-
 /* ============================================================
-   BADGE DE VENDA (opcional)
-   ============================================================ */
-
-.venda-id {
-    display: inline-flex;
-    align-items: center;
-
-    min-height: 26px;
-    padding: 0 10px;
-
-    border-radius: 999px;
-    background: var(--venda-primary-soft);
-    color: var(--venda-primary-dark);
-
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 0.02em;
-}
-
-
-/* ============================================================
-   PAGINAÇÃO
+   6. PAGINAÇÃO
    ============================================================ */
 
 .pagination {
@@ -553,14 +424,13 @@
     align-items: center;
     justify-content: space-between;
     gap: 20px;
-
     padding: 18px 24px;
-    border-top: 1px solid var(--venda-border-soft);
-    background: #ffffff;
+    border-top: 1px solid var(--border-soft);
+    background: var(--bg-surface);
 }
 
 .pagination span {
-    color: var(--venda-text-soft);
+    color: var(--text-soft);
     font-size: 12px;
     font-weight: 600;
 }
@@ -569,21 +439,17 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     min-width: 26px;
     height: 26px;
     padding: 0 7px;
     margin: 0 2px;
-
-    border: 1px solid var(--venda-border);
-    border-radius: 8px;
-    background: #ffffff;
-
-    color: var(--venda-text);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--bg-surface);
+    color: var(--text);
     font-size: 12px;
     font-weight: 800;
-
-    box-shadow: var(--venda-shadow-sm);
+    box-shadow: var(--shadow-sm);
 }
 
 .pagination button {
@@ -591,837 +457,49 @@
     align-items: center;
     justify-content: center;
     gap: 6px;
-
     min-height: 38px;
     padding: 0 14px;
-
-    border: 1px solid var(--venda-border);
-    border-radius: var(--venda-radius-sm);
-    background: #ffffff;
-
-    color: var(--venda-text-soft);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg-surface);
+    color: var(--text-soft);
     font-family: inherit;
     font-size: 12px;
     font-weight: 700;
-
     cursor: pointer;
-
-    transition:
-        background var(--venda-ease),
-        border-color var(--venda-ease),
-        color var(--venda-ease),
-        box-shadow var(--venda-ease),
-        transform var(--venda-ease);
+    transition: all var(--duration-fast) var(--ease-standard);
 }
 
 .pagination button:hover:not(:disabled) {
-    background: var(--venda-primary-soft);
-    border-color: rgba(0, 174, 239, 0.35);
-    color: var(--venda-primary-dark);
+    background: var(--primary-soft);
+    border-color: var(--primary);
+    color: var(--primary-dark);
     transform: translateY(-1px);
     box-shadow: 0 6px 14px rgba(0, 174, 239, 0.14);
 }
 
 .pagination button:active:not(:disabled) {
     transform: translateY(0);
-    box-shadow: var(--venda-shadow-sm);
+    box-shadow: var(--shadow-sm);
 }
 
 .pagination button:disabled {
     opacity: 0.4;
     cursor: not-allowed;
-    background: var(--venda-bg-soft);
+    background: var(--bg-surface-2);
     box-shadow: none;
 }
 
-
 /* ============================================================
-   ESTADO VAZIO
-   ============================================================ */
-
-.empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-
-    min-height: 200px;
-    padding: 32px 24px;
-
-    text-align: center;
-}
-
-.empty-state p {
-    margin: 0;
-    color: var(--venda-text-muted);
-    font-size: 14px;
-}
-
-.empty-state .button-primary {
-    margin-top: 4px;
-}
-
-
-/* ============================================================
-   DETALHES DA VENDA — CARDS DE RESUMO
-   ============================================================ */
-
-.venda-info {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 16px;
-    margin-bottom: 24px;
-
-    animation: vendaInfoIn 460ms var(--venda-ease-bounce) both;
-}
-
-@keyframes vendaInfoIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-
-.info-card {
-    position: relative;
-    overflow: hidden;
-
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-
-    min-height: 108px;
-    padding: 20px 22px;
-    box-sizing: border-box;
-
-    background: #ffffff;
-    border: 1px solid var(--venda-border);
-    border-radius: var(--venda-radius);
-    box-shadow: var(--venda-shadow);
-
-    transition:
-        transform var(--venda-ease),
-        box-shadow var(--venda-ease),
-        border-color var(--venda-ease);
-}
-
-/* Linha Candy Blue no topo de cada card */
-.info-card::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        var(--venda-primary) 40%,
-        var(--venda-primary-dark) 60%,
-        transparent
-    );
-}
-
-.info-card:hover {
-    transform: translateY(-3px);
-    border-color: rgba(0, 174, 239, 0.22);
-    box-shadow: var(--venda-shadow-lg);
-}
-
-.info-card span {
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--venda-text-muted);
-}
-
-.info-card strong {
-    font-size: 22px;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    color: var(--venda-text);
-    font-variant-numeric: tabular-nums;
-}
-
-/* Cores semânticas — 2º = total (azul), 3º = lucro (verde) */
-.info-card:nth-child(2) strong { color: var(--venda-primary-dark); }
-.info-card:nth-child(3) strong { color: var(--venda-success); }
-
-
-/* ============================================================
-   NOVA VENDA — LAYOUT
-   ============================================================ */
-
-.nova-venda-page {
-    position: relative;
-}
-
-.nova-venda-page .page-section {
-    width: 100%;
-    animation: novaVendaIn
-        420ms var(--venda-ease-bounce);
-}
-
-@keyframes novaVendaIn {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-
-
-/* ============================================================
-   VENDA — FORM (NOVA VENDA)
-   ============================================================ */
-
-.venda-form {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-}
-
-.venda-form-header h2 {
-    margin: 0;
-    color: var(--venda-text);
-    font-size: 20px;
-    font-weight: 800;
-    letter-spacing: -0.01em;
-}
-
-.venda-form-header p {
-    margin: 6px 0 0;
-    color: var(--venda-text-muted);
-    font-size: 13px;
-}
-
-
-/* ============================================================
-   ITENS DA VENDA — CARRINHO
-   ============================================================ */
-
-.sale-items-section {
-    position: relative;
-    overflow: hidden;
-
-    background: #ffffff;
-    border: 1px solid var(--venda-border);
-    border-radius: var(--venda-radius);
-    box-shadow: var(--venda-shadow);
-
-    transition:
-        opacity var(--venda-ease),
-        transform var(--venda-ease),
-        box-shadow var(--venda-ease);
-}
-
-.sale-items-section::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        var(--venda-primary) 30%,
-        var(--venda-primary-dark) 70%,
-        transparent
-    );
-    opacity: 0.9;
-    z-index: 1;
-}
-
-
-/* CABEÇALHO DOS ITENS */
-
-.sale-items-section-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-
-    padding: 20px 22px;
-    border-bottom: 1px solid var(--venda-border-soft);
-}
-
-.sale-items-section-header > div {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    gap: 20px;
-}
-
-.sale-items-section-header h3 {
-    margin: 0;
-    font-size: 16px;
-    font-weight: 800;
-    letter-spacing: -0.01em;
-    color: var(--venda-text);
-}
-
-.sale-items-section-header span {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    min-width: 76px;
-    padding: 5px 11px;
-
-    border-radius: 999px;
-    background: var(--venda-primary-soft);
-    color: var(--venda-primary-dark);
-
-    font-size: 11px;
-    font-weight: 800;
-}
-
-
-/* MODO FOCO — carrinho secundário */
-
-.sale-items-focus-secondary {
-    opacity: 0.65;
-    transform: scale(0.995);
-    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.03);
-}
-
-
-/* ============================================================
-   LISTA DE ITENS
-   ============================================================ */
-
-.sale-items {
-    width: 100%;
-}
-
-.sale-items-header,
-.sale-item {
-    display: grid;
-
-    grid-template-columns:
-        minmax(180px, 2fr)
-        minmax(90px, 0.8fr)
-        minmax(120px, 1fr)
-        minmax(120px, 1fr)
-        100px;
-
-    align-items: center;
-
-    padding: 12px 22px;
-    gap: 12px;
-}
-
-.sale-items-header {
-    background: var(--venda-bg-soft);
-    border-bottom: 1px solid var(--venda-border);
-}
-
-.sale-items-header span {
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--venda-text-muted);
-}
-
-.sale-item {
-    min-height: 66px;
-    border-bottom: 1px solid var(--venda-border-soft);
-    background: #ffffff;
-
-    transition: background var(--venda-ease);
-}
-
-.sale-item:last-child {
-    border-bottom: none;
-}
-
-.sale-item:hover {
-    background: var(--venda-bg-hover);
-}
-
-.sale-item > strong:first-child {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--venda-text);
-}
-
-.sale-item > span {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--venda-text-soft);
-}
-
-.sale-item > span:nth-child(3) {
-    font-variant-numeric: tabular-nums;
-}
-
-.sale-item > strong:nth-child(4) {
-    font-size: 14px;
-    font-weight: 800;
-    color: var(--venda-primary-dark);
-    font-variant-numeric: tabular-nums;
-}
-
-
-/* BOTÃO REMOVER */
-
-.sale-remove-button {
-    justify-self: end;
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    min-height: 34px;
-    padding: 0 12px;
-
-    border: 1px solid var(--venda-danger-border);
-    border-radius: 8px;
-
-    background: var(--venda-danger-soft);
-    color: var(--venda-danger);
-
-    font-family: inherit;
-    font-size: 11px;
-    font-weight: 800;
-
-    cursor: pointer;
-
-    transition:
-        background var(--venda-ease),
-        border-color var(--venda-ease),
-        transform var(--venda-ease),
-        box-shadow var(--venda-ease);
-}
-
-.sale-remove-button:hover:not(:disabled) {
-    background: #fee2e2;
-    border-color: rgba(220, 38, 38, 0.35);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 10px rgba(220, 38, 38, 0.15);
-}
-
-.sale-remove-button:active:not(:disabled) {
-    transform: translateY(0);
-}
-
-.sale-remove-button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-
-/* ============================================================
-   ESTADO VAZIO DO CARRINHO
-   ============================================================ */
-
-.sale-items-section .empty-state {
-    min-height: 180px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 30px;
-    text-align: center;
-}
-
-.sale-items-section .empty-state p {
-    margin: 0 0 6px;
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--venda-text-soft);
-}
-
-.sale-items-section .empty-state span {
-    font-size: 13px;
-    color: var(--venda-text-muted);
-}
-
-
-/* ============================================================
-   TOTAL DA VENDA
-   ============================================================ */
-
-.sale-total {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    margin-top: 20px;
-    padding: 20px 24px;
-
-    border: 1px solid rgba(0, 174, 239, 0.20);
-    border-radius: var(--venda-radius-md);
-
-    background: linear-gradient(
-        135deg,
-        var(--venda-primary-soft) 0%,
-        #ffffff 100%
-    );
-
-    box-shadow: 0 6px 18px rgba(0, 174, 239, 0.06);
-}
-
-.sale-total span {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--venda-text-soft);
-    letter-spacing: 0.02em;
-}
-
-.sale-total strong {
-    font-size: 24px;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    color: var(--venda-primary-dark);
-    font-variant-numeric: tabular-nums;
-}
-
-
-/* ============================================================
-   AÇÕES FINAIS
-   ============================================================ */
-
-.sale-actions {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 4px;
-}
-
-.finish-sale-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-
-    min-width: 200px;
-    min-height: 48px;
-    padding: 0 22px;
-
-    border: none;
-    border-radius: var(--venda-radius-sm);
-
-    background: var(--venda-primary);
-    color: #ffffff;
-
-    font-family: inherit;
-    font-size: 14px;
-    font-weight: 800;
-    letter-spacing: 0.01em;
-
-    cursor: pointer;
-
-    box-shadow: 0 6px 16px rgba(0, 174, 239, 0.22);
-
-    transition:
-        background var(--venda-ease),
-        transform var(--venda-ease),
-        box-shadow var(--venda-ease);
-}
-
-.finish-sale-button:hover:not(:disabled) {
-    background: var(--venda-primary-dark);
-    transform: translateY(-2px);
-    box-shadow: 0 10px 24px rgba(0, 174, 239, 0.32);
-}
-
-.finish-sale-button:active:not(:disabled) {
-    transform: translateY(0) scale(0.98);
-}
-
-.finish-sale-button:disabled {
-    background: #cbd5e1;
-    box-shadow: none;
-    cursor: not-allowed;
-}
-
-
-/* ============================================================
-   MENSAGENS DO FORMULÁRIO
-   ============================================================ */
-
-.venda-form .form-error,
-.venda-form .form-success {
-    margin: 0;
-    padding: 12px 14px;
-    border-radius: var(--venda-radius-sm);
-    font-size: 13px;
-    font-weight: 600;
-
-    animation: vendaMsgIn 240ms var(--venda-ease-bounce);
-}
-
-@keyframes vendaMsgIn {
-    from { opacity: 0; transform: translateY(-4px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-
-.venda-form .form-error {
-    border: 1px solid var(--venda-danger-border);
-    background: var(--venda-danger-soft);
-    color: var(--venda-danger);
-}
-
-.venda-form .form-success {
-    border: 1px solid var(--venda-success-border);
-    background: var(--venda-success-soft);
-    color: var(--venda-success);
-}
-
-
-/* ============================================================
-   PRODUTOS DA VENDA (DetalhesVenda)
-   ============================================================ */
-
-.venda-produto-row {
-    opacity: 0;
-    animation: vendaProdutoIn
-        320ms var(--venda-ease-bounce) forwards;
-}
-
-.venda-produto-row:nth-child(1) { animation-delay: 30ms; }
-.venda-produto-row:nth-child(2) { animation-delay: 60ms; }
-.venda-produto-row:nth-child(3) { animation-delay: 90ms; }
-.venda-produto-row:nth-child(4) { animation-delay: 120ms; }
-.venda-produto-row:nth-child(5) { animation-delay: 150ms; }
-.venda-produto-row:nth-child(n+6) { animation-delay: 180ms; }
-
-@keyframes vendaProdutoIn {
-    from { opacity: 0; transform: translateX(-8px); }
-    to   { opacity: 1; transform: translateX(0); }
-}
-
-.venda-produto-row td:first-child strong {
-    color: var(--venda-text);
-    font-weight: 700;
-}
-
-.venda-produto-row td:nth-child(2) {
-    font-weight: 700;
-    color: var(--venda-text-soft);
-}
-
-.venda-produto-row td:nth-child(3),
-.venda-produto-row td:nth-child(4),
-.venda-produto-row td:nth-child(5) {
-    font-variant-numeric: tabular-nums;
-}
-
-
-/* ============================================================
-   LOADING / ERRO SIMPLES
-   ============================================================ */
-
-.page-container > p {
-    color: var(--venda-text-muted);
-    font-size: 14px;
-}
-
-.page-container > p + button {
-    margin-top: 12px;
-}
-
-
-/* ============================================================
-   RESPONSIVIDADE
-   ============================================================ */
-
-@media (max-width: 1200px) {
-    .vendas-filtros {
-        grid-template-columns:
-            minmax(110px, 0.9fr)
-            minmax(130px, 1fr)
-            minmax(100px, 0.9fr)
-            minmax(130px, 1fr)
-            minmax(100px, 0.9fr);
-    }
-
-    .filtros-acoes {
-        grid-column: 1 / -1;
-        justify-content: flex-end;
-    }
-}
-
-
-@media (max-width: 900px) {
-
-    .page-header {
-        align-items: flex-start;
-    }
-
-    .venda-info {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .vendas-filtros {
-        grid-template-columns: repeat(2, 1fr);
-        padding: 18px 20px;
-        gap: 12px;
-    }
-
-    .filtros-acoes {
-        grid-column: 1 / -1;
-    }
-
-    .filtros-acoes .button-primary,
-    .filtros-acoes .button-secondary {
-        flex: 1;
-    }
-}
-
-
-@media (max-width: 700px) {
-
-    .page-header {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 16px;
-    }
-
-    .page-header .button-primary,
-    .page-header .button-secondary {
-        width: 100%;
-    }
-
-    .content-card-header {
-        padding: 18px 20px;
-    }
-
-    .vendas-filtros {
-        grid-template-columns: 1fr;
-        padding: 16px 18px;
-    }
-
-    .vendas-resumo {
-        padding: 12px 18px;
-    }
-
-    .table-container th,
-    .table-container td {
-        padding: 0 14px;
-    }
-
-    .table-container th:first-child,
-    .table-container td:first-child {
-        padding-left: 18px;
-    }
-
-    .table-container th:last-child,
-    .table-container td:last-child {
-        padding-right: 18px;
-    }
-
-    .pagination {
-        flex-direction: column;
-        gap: 12px;
-        padding: 16px;
-    }
-
-    .pagination button {
-        width: 100%;
-    }
-
-    .venda-info {
-        grid-template-columns: 1fr;
-    }
-
-    /* Carrinho / Nova Venda */
-
-    .sale-items-section-header > div {
-        align-items: flex-start;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .sale-items {
-        overflow-x: auto;
-    }
-
-    .sale-items-header,
-    .sale-item {
-        min-width: 700px;
-        padding-left: 16px;
-        padding-right: 16px;
-    }
-
-    .sale-total {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-        padding: 16px;
-    }
-
-    .sale-actions {
-        width: 100%;
-    }
-
-    .finish-sale-button {
-        width: 100%;
-    }
-}
-
-
-/* ============================================================
-   ACESSIBILIDADE
-   ============================================================ */
-
-@media (prefers-reduced-motion: reduce) {
-
-    .page-container,
-    .content-card,
-    .vendas-filtros,
-    .vendas-resumo,
-    .table-container tbody tr,
-    .venda-info,
-    .info-card,
-    .nova-venda-page .page-section,
-    .venda-produto-row,
-    .venda-form .form-error,
-    .venda-form .form-success {
-        animation: none !important;
-    }
-
-    .venda-produto-row {
-        opacity: 1;
-    }
-
-    .button-primary,
-    .button-secondary,
-    .button,
-    .info-card,
-    .pagination button,
-    .sale-item,
-    .sale-remove-button,
-    .finish-sale-button,
-    .table-container tbody tr,
-    .filtro-group input,
-    .filtro-group label,
-    .sale-items-section {
-        transition: none !important;
-    }
-
-    .button-primary:hover:not(:disabled),
-    .button-secondary:hover:not(:disabled),
-    .info-card:hover,
-    .pagination button:hover:not(:disabled),
-    .sale-remove-button:hover:not(:disabled),
-    .finish-sale-button:hover:not(:disabled) {
-        transform: none;
-    }
-}
-
-/* ============================================================
-   BADGE DE STATUS DA VENDA
+   7. BADGES & ESTADOS (Venda)
    ============================================================ */
 
 .venda-status {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-
     padding: 5px 11px;
-    border-radius: 999px;
-
+    border-radius: var(--radius-full);
     font-size: 10px;
     font-weight: 800;
     letter-spacing: 0.05em;
@@ -1438,38 +516,28 @@
 }
 
 .venda-status-concluida {
-    background: var(--venda-success-soft);
-    color: var(--venda-success);
-    border: 1px solid var(--venda-success-border);
+    background: var(--success-soft);
+    color: var(--success);
+    border: 1px solid var(--success-border);
 }
 
 .venda-status-cancelada {
-    background: var(--venda-danger-soft);
-    color: var(--venda-danger);
-    border: 1px solid var(--venda-danger-border);
+    background: var(--danger-soft);
+    color: var(--danger);
+    border: 1px solid var(--danger-border);
 }
-
-
-/* ============================================================
-   LINHA CANCELADA
-   ============================================================ */
 
 .venda-row-cancelada {
     opacity: 0.75;
 }
 
 .venda-row-cancelada td {
-    color: var(--venda-text-muted);
+    color: var(--text-muted);
 }
 
 .venda-row-cancelada td:first-child strong {
     text-decoration: line-through;
 }
-
-
-/* ============================================================
-   AÇÕES DA LINHA
-   ============================================================ */
 
 .venda-actions {
     display: flex;
@@ -1479,62 +547,135 @@
 
 .venda-cancelar-btn {
     padding: 6px 12px;
-
-    border: 1px solid var(--venda-danger-border);
-    border-radius: 8px;
-
-    background: var(--venda-danger-soft);
-    color: var(--venda-danger);
-
+    border: 1px solid var(--danger-border);
+    border-radius: var(--radius-sm);
+    background: var(--danger-soft);
+    color: var(--danger);
     font-family: inherit;
     font-size: 11px;
     font-weight: 800;
-
     cursor: pointer;
-
-    transition:
-        background 220ms ease,
-        transform 220ms ease,
-        box-shadow 220ms ease;
+    transition: all var(--duration-fast) var(--ease-standard);
 }
 
 .venda-cancelar-btn:hover {
-    background: #fee2e2;
+    background: var(--danger);
+    color: var(--text-inverse);
     transform: translateY(-1px);
     box-shadow: 0 4px 10px rgba(220, 38, 38, 0.15);
 }
 
+/* Estado Vazio */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    min-height: 200px;
+    padding: 32px 24px;
+    text-align: center;
+}
 
-/* Botão grande nos detalhes */
+.empty-state p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+.empty-state .button-primary {
+    margin-top: 4px;
+}
+
+/* ============================================================
+   8. DETALHES DA VENDA
+   ============================================================ */
+
+.venda-info {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+    animation: vendaInfoIn 460ms var(--ease-bounce) both;
+}
+
+@keyframes vendaInfoIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.info-card {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-height: 108px;
+    padding: 20px 22px;
+    box-sizing: border-box;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    transition: all var(--duration-base) var(--ease-standard);
+}
+
+.info-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--primary) 40%, var(--primary-dark) 60%, transparent);
+}
+
+.info-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--primary);
+    box-shadow: var(--shadow-lg);
+}
+
+.info-card span {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.info-card strong {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+}
+
+.info-card:nth-child(2) strong { color: var(--primary-dark); }
+.info-card:nth-child(3) strong { color: var(--success); }
+
 .venda-cancelar-btn-destaque {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-
     min-height: 42px;
     padding: 0 18px;
-
-    border: 1px solid var(--venda-danger-border);
-    border-radius: var(--venda-radius-sm);
-
-    background: var(--venda-danger-soft);
-    color: var(--venda-danger);
-
+    border: 1px solid var(--danger-border);
+    border-radius: var(--radius-md);
+    background: var(--danger-soft);
+    color: var(--danger);
     font-family: inherit;
     font-size: 13px;
     font-weight: 700;
-
     cursor: pointer;
-
-    transition:
-        background 220ms ease,
-        transform 220ms ease,
-        box-shadow 220ms ease;
+    transition: all var(--duration-fast) var(--ease-standard);
 }
 
 .venda-cancelar-btn-destaque:hover {
-    background: #fee2e2;
+    background: var(--danger);
+    color: var(--text-inverse);
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(220, 38, 38, 0.15);
 }
@@ -1545,24 +686,16 @@
     gap: 10px;
 }
 
-
-/* ============================================================
-   MENSAGEM DE SUCESSO
-   ============================================================ */
-
 .venda-sucesso {
     margin-top: 16px;
     padding: 12px 16px;
-
-    border: 1px solid var(--venda-success-border);
-    border-radius: var(--venda-radius-sm);
-    background: var(--venda-success-soft);
-    color: var(--venda-success);
-
+    border: 1px solid var(--success-border);
+    border-radius: var(--radius-md);
+    background: var(--success-soft);
+    color: var(--success);
     font-size: 13px;
     font-weight: 600;
-
-    animation: vendaSucessoIn 280ms cubic-bezier(0.22, 1, 0.36, 1);
+    animation: vendaSucessoIn 280ms var(--ease-standard);
 }
 
 @keyframes vendaSucessoIn {
@@ -1570,27 +703,16 @@
     to   { opacity: 1; transform: translateY(0); }
 }
 
-
-/* ============================================================
-   INFO DE CANCELAMENTO (DetalhesVenda)
-   ============================================================ */
-
+/* Info Cancelamento */
 .venda-cancelada-info {
     position: relative;
     overflow: hidden;
-
     margin-bottom: 24px;
     padding: 22px 24px;
-
-    border: 1px solid var(--venda-danger-border);
-    border-radius: var(--venda-radius);
-    background: linear-gradient(
-        135deg,
-        var(--venda-danger-soft) 0%,
-        #ffffff 100%
-    );
-
-    animation: vendaCanceladaIn 380ms cubic-bezier(0.22, 1, 0.36, 1);
+    border: 1px solid var(--danger-border);
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, var(--danger-soft) 0%, var(--bg-surface) 100%);
+    animation: vendaCanceladaIn 380ms var(--ease-standard);
 }
 
 @keyframes vendaCanceladaIn {
@@ -1602,14 +724,11 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-
     padding: 5px 12px;
     margin-bottom: 16px;
-    border-radius: 999px;
-
-    background: var(--venda-danger);
-    color: #ffffff;
-
+    border-radius: var(--radius-full);
+    background: var(--danger);
+    color: var(--text-inverse);
     font-size: 10px;
     font-weight: 800;
     letter-spacing: 0.08em;
@@ -1633,46 +752,354 @@
     font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--venda-text-muted);
+    color: var(--text-muted);
 }
 
 .venda-cancelada-detalhes strong {
     font-size: 14px;
     font-weight: 700;
-    color: var(--venda-text);
+    color: var(--text);
 }
 
 .venda-cancelada-motivo {
     grid-column: 1 / -1;
     padding-top: 12px;
-    border-top: 1px solid var(--venda-danger-border);
+    border-top: 1px solid var(--danger-border);
 }
 
 .venda-cancelada-motivo strong {
     font-style: italic;
-    color: var(--venda-danger);
+    color: var(--danger);
 }
 
+/* ============================================================
+   9. NOVA VENDA — FORMULÁRIO (CARRINHO)
+   ============================================================ */
+
+.nova-venda-page {
+    position: relative;
+}
+
+.nova-venda-page .page-section {
+    width: 100%;
+    animation: novaVendaIn 420ms var(--ease-bounce);
+}
+
+@keyframes novaVendaIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.venda-form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.venda-form-header h2 {
+    margin: 0;
+    color: var(--text);
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.venda-form-header p {
+    margin: 6px 0 0;
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.sale-items-section {
+    position: relative;
+    overflow: hidden;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    transition: all var(--duration-base) var(--ease-standard);
+}
+
+.sale-items-section::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--primary) 30%, var(--primary-dark) 70%, transparent);
+    z-index: 1;
+}
+
+.sale-items-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 20px 22px;
+    border-bottom: 1px solid var(--border-soft);
+}
+
+.sale-items-section-header > div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 20px;
+}
+
+.sale-items-section-header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--text);
+}
+
+.sale-items-section-header span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 76px;
+    padding: 5px 11px;
+    border-radius: var(--radius-full);
+    background: var(--primary-soft);
+    color: var(--primary-dark);
+    font-size: 11px;
+    font-weight: 800;
+}
+
+/* Modo Foco (Efeito Secundário) */
+.sale-items-focus-secondary {
+    opacity: 0.65;
+    transform: scale(0.995);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Lista de Itens */
+.sale-items {
+    width: 100%;
+}
+
+.sale-items-header,
+.sale-item {
+    display: grid;
+    grid-template-columns:
+        minmax(180px, 2fr)
+        minmax(90px, 0.8fr)
+        minmax(120px, 1fr)
+        minmax(120px, 1fr)
+        100px;
+    align-items: center;
+    padding: 12px 22px;
+    gap: 12px;
+}
+
+.sale-items-header {
+    background: var(--bg-surface-2);
+    border-bottom: 1px solid var(--border);
+}
+
+.sale-items-header span {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.sale-item {
+    min-height: 66px;
+    border-bottom: 1px solid var(--border-soft);
+    background: var(--bg-surface);
+    transition: background var(--duration-fast) var(--ease-standard);
+}
+
+.sale-item:last-child {
+    border-bottom: none;
+}
+
+.sale-item:hover {
+    background: var(--bg-hover);
+}
+
+.sale-item > strong:first-child {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.sale-item > span {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-soft);
+}
+
+.sale-item > span:nth-child(3) {
+    font-variant-numeric: tabular-nums;
+}
+
+.sale-item > strong:nth-child(4) {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--primary-dark);
+    font-variant-numeric: tabular-nums;
+}
+
+.sale-remove-button {
+    justify-self: end;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 34px;
+    padding: 0 12px;
+    border: 1px solid var(--danger-border);
+    border-radius: var(--radius-sm);
+    background: var(--danger-soft);
+    color: var(--danger);
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all var(--duration-fast) var(--ease-standard);
+}
+
+.sale-remove-button:hover:not(:disabled) {
+    background: var(--danger);
+    color: var(--text-inverse);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(220, 38, 38, 0.15);
+}
+
+.sale-remove-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Estado Vazio do Carrinho */
+.sale-items-section .empty-state {
+    min-height: 180px;
+    padding: 30px;
+}
+
+.sale-items-section .empty-state p {
+    margin: 0 0 6px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-soft);
+}
+
+.sale-items-section .empty-state span {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+/* Total */
+.sale-total {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 20px;
+    padding: 20px 24px;
+    border: 1px solid var(--primary-soft);
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, var(--primary-soft) 0%, var(--bg-surface) 100%);
+    box-shadow: var(--shadow-sm);
+}
+
+.sale-total span {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-soft);
+}
+
+.sale-total strong {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--primary-dark);
+    font-variant-numeric: tabular-nums;
+}
+
+.sale-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 4px;
+}
+
+.finish-sale-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 200px;
+    min-height: 48px;
+    padding: 0 22px;
+    border: none;
+    border-radius: var(--radius-md);
+    background: var(--primary);
+    color: var(--text-on-primary);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 6px 16px rgba(0, 174, 239, 0.22);
+    transition: all var(--duration-base) var(--ease-standard);
+}
+
+.finish-sale-button:hover:not(:disabled) {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(0, 174, 239, 0.32);
+}
+
+.finish-sale-button:disabled {
+    background: var(--border);
+    color: var(--text-muted);
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
+/* Form Msgs */
+.venda-form .form-error,
+.venda-form .form-success {
+    margin: 0;
+    padding: 12px 14px;
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    font-weight: 600;
+    animation: vendaMsgIn 240ms var(--ease-standard);
+}
+
+@keyframes vendaMsgIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.venda-form .form-error {
+    border: 1px solid var(--danger-border);
+    background: var(--danger-soft);
+    color: var(--danger);
+}
+
+.venda-form .form-success {
+    border: 1px solid var(--success-border);
+    background: var(--success-soft);
+    color: var(--success);
+}
 
 /* ============================================================
-   MODAL DE CANCELAMENTO
+   10. MODAL DE CANCELAMENTO
    ============================================================ */
 
 .venda-modal-overlay {
     position: fixed;
     inset: 0;
-    z-index: 1000;
-
+    z-index: var(--z-modal);
     display: flex;
     align-items: center;
     justify-content: center;
-
     padding: 20px;
-
-    background: rgba(15, 23, 42, 0.55);
+    background: var(--bg-overlay);
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
-
     animation: vendaModalOverlayIn 220ms ease;
 }
 
@@ -1685,18 +1112,13 @@
     width: 100%;
     max-width: 520px;
     max-height: calc(100vh - 40px);
-
     display: flex;
     flex-direction: column;
-
-    background: #ffffff;
-    border-radius: 20px;
-
-    box-shadow:
-        0 20px 60px rgba(15, 23, 42, 0.25),
-        0 4px 12px rgba(15, 23, 42, 0.08);
-
-    animation: vendaModalIn 320ms cubic-bezier(0.22, 1, 0.36, 1);
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    animation: vendaModalIn 320ms var(--ease-bounce);
     overflow: hidden;
 }
 
@@ -1705,92 +1127,68 @@
     to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-
-/* CABEÇALHO */
-
 .venda-modal-header {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
     gap: 16px;
-
     padding: 22px 24px 18px;
-    border-bottom: 1px solid var(--venda-border-soft);
+    border-bottom: 1px solid var(--border-soft);
 }
 
 .venda-modal-overline {
     display: block;
     margin-bottom: 4px;
-
     font-size: 10px;
     font-weight: 800;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-
-    color: var(--venda-danger);
+    color: var(--danger);
 }
 
 .venda-modal-header h3 {
     margin: 0;
     font-size: 18px;
     font-weight: 800;
-    letter-spacing: -0.01em;
-    color: var(--venda-text);
+    color: var(--text);
 }
 
 .venda-modal-close {
     display: flex;
     align-items: center;
     justify-content: center;
-
     width: 32px;
     height: 32px;
     padding: 0;
-
     border: none;
     border-radius: 50%;
-    background: var(--venda-bg-soft);
-    color: var(--venda-text-soft);
-
+    background: var(--bg-surface-2);
+    color: var(--text-soft);
     font-size: 20px;
-    line-height: 1;
-
     cursor: pointer;
-
-    transition:
-        background 220ms ease,
-        color 220ms ease,
-        transform 220ms ease;
+    transition: all var(--duration-fast) var(--ease-standard);
 }
 
 .venda-modal-close:hover:not(:disabled) {
-    background: var(--venda-danger-soft);
-    color: var(--venda-danger);
+    background: var(--danger-soft);
+    color: var(--danger);
     transform: rotate(90deg);
 }
-
-
-/* CORPO */
 
 .venda-modal-body {
     padding: 22px 24px 24px;
     overflow-y: auto;
 }
 
-
-/* INFO DA VENDA */
-
 .venda-modal-info {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
-
     padding: 14px 16px;
     margin-bottom: 16px;
-
-    border: 1px solid var(--venda-border);
-    border-radius: var(--venda-radius-sm);
-    background: var(--venda-bg-soft);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg-surface-2);
 }
 
 .venda-modal-info > div {
@@ -1804,34 +1202,26 @@
     font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--venda-text-muted);
+    color: var(--text-muted);
 }
 
 .venda-modal-info strong {
     font-size: 14px;
     font-weight: 700;
-    color: var(--venda-text);
+    color: var(--text);
 }
-
-
-/* AVISO */
 
 .venda-modal-aviso {
     padding: 12px 14px;
     margin-bottom: 18px;
-
-    border: 1px solid rgba(217, 119, 6, 0.20);
-    border-radius: var(--venda-radius-sm);
-    background: #fef3c7;
-
-    color: #92400e;
+    border: 1px solid var(--warning-border);
+    border-radius: var(--radius-md);
+    background: var(--warning-soft);
+    color: var(--warning);
     font-size: 12px;
     font-weight: 600;
     line-height: 1.5;
 }
-
-
-/* CAMPO */
 
 .venda-modal-field {
     position: relative;
@@ -1841,78 +1231,60 @@
 .venda-modal-field label {
     display: block;
     margin-bottom: 7px;
-
     font-size: 10px;
     font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--venda-text-soft);
+    color: var(--text-soft);
 }
 
 .venda-modal-field textarea {
     width: 100%;
     padding: 12px 14px;
-
-    border: 1px solid var(--venda-border);
-    border-radius: var(--venda-radius-sm);
-    background: #ffffff;
-
-    color: var(--venda-text);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg-surface);
+    color: var(--text);
     font-family: inherit;
     font-size: 13px;
     line-height: 1.5;
-
     outline: none;
     resize: vertical;
     min-height: 82px;
-
-    transition:
-        border-color 220ms ease,
-        box-shadow 220ms ease;
+    transition: all var(--duration-fast) var(--ease-standard);
 }
 
 .venda-modal-field textarea:hover {
-    border-color: #cbd5e1;
+    border-color: var(--border-strong);
 }
 
 .venda-modal-field textarea:focus {
-    border-color: var(--venda-primary);
-    box-shadow: 0 0 0 3px var(--venda-primary-glow);
+    border-color: var(--primary);
+    box-shadow: var(--focus-ring);
 }
 
 .venda-modal-counter {
     position: absolute;
     right: 10px;
     bottom: 10px;
-
     padding: 2px 7px;
-
-    border-radius: 6px;
-    background: rgba(255, 255, 255, 0.85);
-
-    color: var(--venda-text-muted);
+    border-radius: var(--radius-sm);
+    background: var(--bg-surface-2);
+    color: var(--text-muted);
     font-size: 10px;
     font-weight: 700;
 }
 
-
-/* ERRO */
-
 .venda-modal-erro {
     padding: 10px 14px;
     margin-bottom: 14px;
-
-    border: 1px solid var(--venda-danger-border);
-    border-radius: var(--venda-radius-sm);
-    background: var(--venda-danger-soft);
-    color: var(--venda-danger);
-
+    border: 1px solid var(--danger-border);
+    border-radius: var(--radius-md);
+    background: var(--danger-soft);
+    color: var(--danger);
     font-size: 12px;
     font-weight: 600;
 }
-
-
-/* AÇÕES */
 
 .venda-modal-actions {
     display: flex;
@@ -1925,85 +1297,107 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     min-height: 42px;
     padding: 0 20px;
-
-    border: 1px solid var(--venda-danger);
-    border-radius: var(--venda-radius-sm);
-
-    background: var(--venda-danger);
-    color: #ffffff;
-
+    border: 1px solid var(--danger);
+    border-radius: var(--radius-md);
+    background: var(--danger);
+    color: var(--text-inverse);
     font-family: inherit;
     font-size: 13px;
     font-weight: 700;
-
     cursor: pointer;
-
-    transition:
-        background 220ms ease,
-        transform 220ms ease,
-        box-shadow 220ms ease;
+    transition: all var(--duration-fast) var(--ease-standard);
 }
 
 .venda-modal-confirmar:hover:not(:disabled) {
-    background: #b91c1c;
+    background: var(--danger);
+    opacity: 0.85;
     transform: translateY(-1px);
     box-shadow: 0 6px 16px rgba(220, 38, 38, 0.25);
 }
 
-.venda-modal-confirmar:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
+/* ============================================================
+   11. RESPONSIVIDADE
+   ============================================================ */
+
+@media (max-width: 1200px) {
+    .vendas-filtros {
+        grid-template-columns:
+            minmax(110px, 0.9fr)
+            minmax(130px, 1fr)
+            minmax(100px, 0.9fr)
+            minmax(130px, 1fr)
+            minmax(100px, 0.9fr);
+    }
+    .filtros-acoes { grid-column: 1 / -1; justify-content: flex-end; }
 }
 
-
-/* RESPONSIVO */
-
-@media (max-width: 600px) {
-    .venda-modal-overlay {
-        padding: 12px;
-        align-items: flex-end;
-    }
-
-    .venda-modal {
-        max-height: 90vh;
-        border-radius: 20px 20px 0 0;
-    }
-
-    .venda-modal-header,
-    .venda-modal-body {
-        padding-left: 20px;
-        padding-right: 20px;
-    }
-
-    .venda-modal-actions {
-        flex-direction: column-reverse;
-    }
-
-    .venda-modal-actions button {
-        width: 100%;
-    }
-
-    .venda-cancelada-detalhes {
-        grid-template-columns: 1fr;
-    }
-
-    .venda-detalhes-actions {
-        flex-direction: column;
-        align-items: stretch;
-        width: 100%;
-    }
-
-    .venda-cancelar-btn-destaque {
-        width: 100%;
-    }
+@media (max-width: 900px) {
+    .page-header { align-items: flex-start; }
+    .venda-info { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .vendas-filtros { grid-template-columns: repeat(2, 1fr); padding: 18px 20px; gap: 12px; }
+    .filtros-acoes { grid-column: 1 / -1; }
+    .filtros-acoes .button-primary, .filtros-acoes .button-secondary { flex: 1; }
 }
 
-.page-header-actions {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+@media (max-width: 700px) {
+    .page-header { flex-direction: column; align-items: stretch; gap: 16px; }
+    .page-header .button-primary, .page-header .button-secondary { width: 100%; }
+    .content-card-header { padding: 18px 20px; }
+    .vendas-filtros { grid-template-columns: 1fr; padding: 16px 18px; }
+    .vendas-resumo { padding: 12px 18px; }
+    .table-container th, .table-container td { padding: 0 14px; }
+    .table-container th:first-child, .table-container td:first-child { padding-left: 18px; }
+    .table-container th:last-child, .table-container td:last-child { padding-right: 18px; }
+    .pagination { flex-direction: column; gap: 12px; padding: 16px; }
+    .pagination button { width: 100%; }
+    .venda-info { grid-template-columns: 1fr; }
+    
+    .sale-items-section-header > div { align-items: flex-start; flex-direction: column; gap: 8px; }
+    .sale-items { overflow-x: auto; }
+    .sale-items-header, .sale-item { min-width: 700px; padding-left: 16px; padding-right: 16px; }
+    .sale-total { flex-direction: column; align-items: flex-start; gap: 8px; padding: 16px; }
+    .sale-actions { width: 100%; }
+    .finish-sale-button { width: 100%; }
+    
+    .venda-modal-overlay { padding: 12px; align-items: flex-end; }
+    .venda-modal { max-height: 90vh; border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+    .venda-modal-header, .venda-modal-body { padding-left: 20px; padding-right: 20px; }
+    .venda-modal-actions { flex-direction: column-reverse; }
+    .venda-modal-actions button { width: 100%; }
+    .venda-cancelada-detalhes { grid-template-columns: 1fr; }
+    .venda-detalhes-actions { flex-direction: column; align-items: stretch; width: 100%; }
+    .venda-cancelar-btn-destaque { width: 100%; }
+}
+
+/* ============================================================
+   12. ACESSIBILIDADE
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+    .page-container, .content-card, .vendas-filtros, .vendas-resumo,
+    .table-container tbody tr, .venda-info, .info-card,
+    .nova-venda-page .page-section, .venda-produto-row,
+    .venda-form .form-error, .venda-form .form-success {
+        animation: none !important;
+    }
+
+    .venda-produto-row { opacity: 1; }
+
+    .button-primary, .button-secondary, .button, .info-card,
+    .pagination button, .sale-item, .sale-remove-button,
+    .finish-sale-button, .table-container tbody tr,
+    .filtro-group input, .filtro-group label, .sale-items-section {
+        transition: none !important;
+    }
+
+    .button-primary:hover:not(:disabled),
+    .button-secondary:hover:not(:disabled),
+    .info-card:hover,
+    .pagination button:hover:not(:disabled),
+    .sale-remove-button:hover:not(:disabled),
+    .finish-sale-button:hover:not(:disabled) {
+        transform: none;
+    }
 }

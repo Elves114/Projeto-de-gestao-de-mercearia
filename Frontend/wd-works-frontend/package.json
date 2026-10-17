@@ -11,9 +11,14 @@
   },
   "dependencies": {
     "@formkit/auto-animate": "^0.10.0",
+    "@tsparticles/react": "^4.4.0",
+    "@tsparticles/slim": "^4.4.0",
     "axios": "^1.19.0",
+    "canvas-confetti": "^1.9.4",
+    "framer-motion": "^14.3.0",
     "lucide-react": "^1.45.0",
     "react": "^19.2.8",
+    "react-countup": "^6.5.3",
     "react-dom": "^19.2.8",
     "react-router-dom": "^7.18.2",
     "recharts": "^3.10.1"

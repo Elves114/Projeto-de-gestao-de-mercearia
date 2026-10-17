@@ -1,0 +1,49 @@
+/* ============================================================
+   SKELETON
+   ============================================================ */
+
+.skeleton {
+    border-radius: var(--radius-sm);
+    background: linear-gradient(
+        90deg,
+        var(--border-soft) 25%,
+        var(--bg-hover) 50%,
+        var(--border-soft) 75%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.3s infinite;
+}
+
+@keyframes skeleton-shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.skeleton-circle {
+    border-radius: 50%;
+}
+
+.skeleton-text {
+    height: 14px;
+    width: 80%;
+}
+
+.skeleton-line {
+    height: 10px;
+    width: 100%;
+}
+
+.skeleton-card {
+    height: 120px;
+    border-radius: var(--radius-md);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .skeleton {
+        animation: none;
+    }
+}
