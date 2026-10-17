@@ -16,6 +16,8 @@ import {
 } from "../../../services/api";
 
 import CategoriaForm from "../components/CategoriaForm";
+import ConfirmDialog from "../../../components/ui/ConfirmDialog";
+import { useToast } from "../../../contexts/useToast";
 
 import "../style/Categoria.css";
 
@@ -29,6 +31,8 @@ const TAMANHO_PAGINA = 10;
 
 function Categorias() {
 
+    const { error: toastError } = useToast();
+
     /* ============================================================
        ESTADO
        ============================================================ */
@@ -37,6 +41,11 @@ function Categorias() {
         carregando: true,
         categorias: [],
         erro: "",
+    });
+
+    const [confirmDialog, setConfirmDialog] = useState({
+        isOpen: false,
+        id: null,
     });
 
     const [pagina, setPagina] = useState(0);
@@ -475,7 +484,7 @@ function Categorias() {
             );
 
 
-            alert(
+            toastError(
                 obterMensagemErro(error)
             );
         }
@@ -487,19 +496,15 @@ function Categorias() {
        ELIMINAR
        ============================================================ */
 
-    async function eliminar(
+    function solicitarEliminacao(
         id
     ) {
+        setConfirmDialog({ isOpen: true, id });
+    }
 
-        const confirmar =
-            window.confirm(
-                "Tem certeza que deseja eliminar esta categoria?"
-            );
-
-
-        if (!confirmar) {
-            return;
-        }
+    async function confirmarEliminacao() {
+        const id = confirmDialog.id;
+        setConfirmDialog({ isOpen: false, id: null });
 
 
         try {
@@ -570,7 +575,7 @@ function Categorias() {
             );
 
 
-            alert(
+            toastError(
                 obterMensagemErro(error)
             );
 
@@ -1036,7 +1041,7 @@ function Categorias() {
                                                             type="button"
                                                             className="categoria-action categoria-action-delete"
                                                             onClick={() =>
-                                                                eliminar(
+                                                                solicitarEliminacao(
                                                                     categoria.id
                                                                 )
                                                             }
@@ -1131,6 +1136,21 @@ function Categorias() {
                 )}
 
             </section>
+
+            {/* ==================================================
+                CONFIRM DIALOG
+                ================================================== */}
+
+            <ConfirmDialog
+                isOpen={confirmDialog.isOpen}
+                title="Eliminar categoria"
+                message="Tem certeza que deseja eliminar esta categoria? Esta ação não pode ser desfeita."
+                confirmLabel="Eliminar"
+                cancelLabel="Cancelar"
+                confirmVariant="danger"
+                onConfirm={confirmarEliminacao}
+                onCancel={() => setConfirmDialog({ isOpen: false, id: null })}
+            />
 
         </div>
 

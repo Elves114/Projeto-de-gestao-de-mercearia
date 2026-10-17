@@ -1,61 +1,9 @@
 /* ============================================================
-   CATEGORIA.CSS
-   Página de gestão de categorias
-   Identidade: WD Works — Light + Candy Blue
+   CATEGORIA — CSS Unificado (Light + Dark Neon)
    ============================================================ */
 
-
 /* ============================================================
-   VARIÁVEIS
-   ============================================================ */
-
-:root {
-    /* Paleta principal */
-    --categoria-bg: #f4f7fb;
-    --categoria-card: #ffffff;
-
-    --categoria-border: #e5eaf1;
-    --categoria-border-soft: #eef2f7;
-
-    --categoria-text: #0f172a;
-    --categoria-text-soft: #475569;
-    --categoria-text-muted: #94a3b8;
-
-    --categoria-primary: #00aeef;
-    --categoria-primary-dark: #008fc5;
-    --categoria-primary-soft: #e0f2fe;
-    --categoria-primary-glow: rgba(0, 174, 239, 0.18);
-
-    --categoria-success: #16a34a;
-    --categoria-success-bg: #ecfdf3;
-
-    --categoria-danger: #dc2626;
-    --categoria-danger-bg: #fef2f2;
-
-    --categoria-warning: #d97706;
-
-    /* Sombras em 3 níveis */
-    --categoria-shadow-sm: 0 2px 6px rgba(15, 23, 42, 0.04);
-    --categoria-shadow:
-        0 1px 2px rgba(15, 23, 42, 0.04),
-        0 4px 14px rgba(15, 23, 42, 0.04);
-    --categoria-shadow-hover:
-        0 2px 4px rgba(15, 23, 42, 0.05),
-        0 10px 28px rgba(15, 23, 42, 0.08);
-
-    /* Radius */
-    --categoria-radius: 18px;
-    --categoria-radius-md: 14px;
-    --categoria-radius-sm: 10px;
-
-    /* Motion */
-    --categoria-ease: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
-    --categoria-ease-bounce: 0.32s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-
-/* ============================================================
-   PÁGINA
+   1. PÁGINA E CABEÇALHO
    ============================================================ */
 
 .categorias-page {
@@ -63,20 +11,15 @@
     min-height: 100%;
     padding: 28px;
     box-sizing: border-box;
-    background: var(--categoria-bg);
-    color: var(--categoria-text);
-    animation: categoriaPageIn 380ms var(--categoria-ease-bounce) both;
+    background: var(--bg-app);
+    color: var(--text);
+    animation: categoriaPageIn 380ms var(--ease-bounce) both;
 }
 
 @keyframes categoriaPageIn {
     from { opacity: 0; transform: translateY(8px); }
     to   { opacity: 1; transform: translateY(0); }
 }
-
-
-/* ============================================================
-   CABEÇALHO
-   ============================================================ */
 
 .categorias-page .page-header {
     display: flex;
@@ -91,19 +34,18 @@
     line-height: 1.2;
     font-weight: 800;
     letter-spacing: -0.03em;
-    color: var(--categoria-text);
+    color: var(--text);
 }
 
 .categorias-page .page-header p {
     margin: 0;
     font-size: 14px;
     line-height: 1.5;
-    color: var(--categoria-text-soft);
+    color: var(--text-soft);
 }
 
-
 /* ============================================================
-   CABEÇALHOS DE SECÇÃO
+   2. SECÇÕES
    ============================================================ */
 
 .categorias-page .section-header {
@@ -119,35 +61,29 @@
     font-size: 18px;
     font-weight: 800;
     letter-spacing: -0.02em;
-    color: var(--categoria-text);
+    color: var(--text);
 }
 
 .categorias-page .section-header p {
     margin: 0;
     font-size: 13px;
-    color: var(--categoria-text-soft);
+    color: var(--text-soft);
 }
 
-
 /* ============================================================
-   CARD DO FORMULÁRIO
+   3. FORMULÁRIO
    ============================================================ */
 
 .categoria-form-card {
     position: relative;
     overflow: hidden;
-
     padding: 24px;
     margin-bottom: 24px;
-
-    background: var(--categoria-card);
-    border: 1px solid var(--categoria-border);
-    border-radius: var(--categoria-radius);
-    box-shadow: var(--categoria-shadow);
-
-    transition:
-        box-shadow var(--categoria-ease),
-        transform var(--categoria-ease);
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    transition: box-shadow var(--duration-base) var(--ease-standard), transform var(--duration-base) var(--ease-standard);
 }
 
 /* Linha Candy Blue no topo */
@@ -161,17 +97,12 @@
     background: linear-gradient(
         90deg,
         transparent,
-        var(--categoria-primary) 30%,
-        var(--categoria-primary-dark) 70%,
+        var(--primary) 30%,
+        var(--primary-dark) 70%,
         transparent
     );
     opacity: 0.9;
 }
-
-
-/* ============================================================
-   FORMULÁRIO
-   ============================================================ */
 
 .categoria-form {
     display: flex;
@@ -191,7 +122,7 @@
     font-weight: 800;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: var(--categoria-text-soft);
+    color: var(--text-soft);
 }
 
 .categoria-form input {
@@ -199,51 +130,39 @@
     height: 46px;
     padding: 0 14px;
     box-sizing: border-box;
-
-    border: 1px solid var(--categoria-border);
-    border-radius: var(--categoria-radius-sm);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
     outline: none;
-    background: #ffffff;
-    color: var(--categoria-text);
+    background: var(--bg-surface);
+    color: var(--text);
     font-family: inherit;
     font-size: 14px;
     font-weight: 500;
-
-    transition:
-        border-color var(--categoria-ease),
-        box-shadow var(--categoria-ease),
-        background var(--categoria-ease);
+    transition: all var(--duration-fast) var(--ease-standard);
 }
 
 .categoria-form input::placeholder {
-    color: var(--categoria-text-muted);
+    color: var(--text-muted);
 }
 
 .categoria-form input:hover {
-    border-color: #cbd5e1;
+    border-color: var(--border-strong);
 }
 
 .categoria-form input:focus {
-    border-color: var(--categoria-primary);
-    background: #ffffff;
-    box-shadow: 0 0 0 3px var(--categoria-primary-glow);
+    border-color: var(--primary);
+    box-shadow: var(--focus-ring);
 }
-
-
-/* ============================================================
-   ERRO DO FORMULÁRIO
-   ============================================================ */
 
 .form-error {
     margin: 8px 0 0;
     font-size: 12px;
     font-weight: 600;
-    color: var(--categoria-danger);
+    color: var(--danger);
 }
 
-
 /* ============================================================
-   BOTÃO PRINCIPAL
+   4. BOTÕES GLOBAIS
    ============================================================ */
 
 .button-primary {
@@ -251,96 +170,64 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-
     min-height: 46px;
     padding: 0 20px;
-
-    border: 1px solid var(--categoria-primary);
-    border-radius: var(--categoria-radius-sm);
-
-    background: var(--categoria-primary);
-    color: #ffffff;
-
+    border: 1px solid var(--primary);
+    border-radius: var(--radius-md);
+    background: var(--primary);
+    color: var(--text-on-primary);
     font-family: inherit;
     font-size: 13px;
     font-weight: 700;
     white-space: nowrap;
-
     cursor: pointer;
-
     box-shadow: 0 4px 12px rgba(0, 174, 239, 0.22);
-
-    transition:
-        background var(--categoria-ease),
-        border-color var(--categoria-ease),
-        transform var(--categoria-ease),
-        box-shadow var(--categoria-ease);
+    transition: all var(--duration-base) var(--ease-standard);
 }
 
 .button-primary:hover:not(:disabled) {
-    background: var(--categoria-primary-dark);
-    border-color: var(--categoria-primary-dark);
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(0, 174, 239, 0.30);
 }
 
 .button-primary:active:not(:disabled) {
     transform: translateY(0) scale(0.98);
-    box-shadow: 0 4px 10px rgba(0, 174, 239, 0.22);
+    box-shadow: none;
 }
 
 .button-primary:disabled {
     opacity: 0.6;
     cursor: not-allowed;
     transform: none;
-    box-shadow: none;
 }
-
-
-/* ============================================================
-   BOTÃO SECUNDÁRIO
-   ============================================================ */
 
 .button-secondary {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-
     min-height: 46px;
     padding: 0 18px;
-
-    border: 1px solid var(--categoria-border);
-    border-radius: var(--categoria-radius-sm);
-
-    background: #ffffff;
-    color: var(--categoria-text-soft);
-
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg-surface);
+    color: var(--text-soft);
     font-family: inherit;
     font-size: 13px;
     font-weight: 700;
     white-space: nowrap;
-
     cursor: pointer;
-
-    transition:
-        background var(--categoria-ease),
-        border-color var(--categoria-ease),
-        color var(--categoria-ease),
-        transform var(--categoria-ease),
-        box-shadow var(--categoria-ease);
+    transition: all var(--duration-base) var(--ease-standard);
 }
 
 .button-secondary:hover:not(:disabled) {
-    background: var(--categoria-bg);
-    border-color: #cbd5e1;
-    color: var(--categoria-text);
+    background: var(--bg-surface-2);
+    border-color: var(--border-strong);
+    color: var(--text);
     transform: translateY(-2px);
-    box-shadow: var(--categoria-shadow-sm);
-}
-
-.button-secondary:active:not(:disabled) {
-    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
 }
 
 .button-secondary:disabled {
@@ -349,49 +236,33 @@
     transform: none;
 }
 
-
 /* ============================================================
-   CARD DA LISTAGEM
+   5. LISTAGEM E GRID BENTO
    ============================================================ */
 
 .categorias-list-card {
     position: relative;
     padding: 24px;
-    background: var(--categoria-card);
-    border: 1px solid var(--categoria-border);
-    border-radius: var(--categoria-radius);
-    box-shadow: var(--categoria-shadow);
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
 }
-
-
-/* ============================================================
-   CONTADOR DE CATEGORIAS
-   ============================================================ */
 
 .categoria-count {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     min-width: 36px;
     height: 34px;
     padding: 0 11px;
     box-sizing: border-box;
-
-    border-radius: 999px;
-
-    background: var(--categoria-primary-soft);
-    color: var(--categoria-primary-dark);
-
+    border-radius: var(--radius-full);
+    background: var(--primary-soft);
+    color: var(--primary-dark);
     font-size: 13px;
     font-weight: 800;
-    letter-spacing: -0.01em;
 }
-
-
-/* ============================================================
-   PESQUISA
-   ============================================================ */
 
 .categoria-search {
     display: flex;
@@ -406,38 +277,28 @@
     height: 46px;
     padding: 0 14px;
     box-sizing: border-box;
-
-    border: 1px solid var(--categoria-border);
-    border-radius: var(--categoria-radius-sm);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
     outline: none;
-    background: #ffffff;
-    color: var(--categoria-text);
+    background: var(--bg-surface);
+    color: var(--text);
     font-family: inherit;
     font-size: 14px;
-    font-weight: 500;
-
-    transition:
-        border-color var(--categoria-ease),
-        box-shadow var(--categoria-ease);
+    transition: all var(--duration-fast) var(--ease-standard);
 }
 
 .categoria-search input::placeholder {
-    color: var(--categoria-text-muted);
+    color: var(--text-muted);
 }
 
 .categoria-search input:hover {
-    border-color: #cbd5e1;
+    border-color: var(--border-strong);
 }
 
 .categoria-search input:focus {
-    border-color: var(--categoria-primary);
-    box-shadow: 0 0 0 3px var(--categoria-primary-glow);
+    border-color: var(--primary);
+    box-shadow: var(--focus-ring);
 }
-
-
-/* ============================================================
-   GRID BENTO
-   ============================================================ */
 
 .categorias-grid {
     display: grid;
@@ -446,94 +307,36 @@
     align-items: start;
 }
 
-
 /* ============================================================
-   CARD DA CATEGORIA
+   6. CARD DA CATEGORIA (Com Neon Reactivo)
    ============================================================ */
 
 .categoria-card {
     position: relative;
     overflow: hidden;
     min-width: 0;
-
-    background: var(--categoria-card);
-    border: 1px solid var(--categoria-border);
-    border-radius: 17px;
-
-    box-shadow:
-        0 1px 2px rgba(15, 23, 42, 0.03),
-        0 4px 14px rgba(15, 23, 42, 0.04);
-
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
     opacity: 0;
     transform: translateY(14px) scale(0.96);
-
-    animation:
-        categoriaEntrada 480ms var(--categoria-ease-bounce) forwards;
+    animation: categoriaEntrada 480ms var(--ease-bounce) forwards;
     animation-delay: var(--stagger-delay, 0ms);
-
-    transition:
-        transform var(--categoria-ease),
-        box-shadow var(--categoria-ease),
-        border-color var(--categoria-ease);
+    transition: all var(--duration-base) var(--ease-standard);
 }
 
-/* Halo decorativo Candy Blue no canto */
-.categoria-card::after {
-    content: "";
-    position: absolute;
-    top: -80px;
-    right: -80px;
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    background: radial-gradient(
-        circle,
-        rgba(0, 174, 239, 0.08) 0%,
-        rgba(0, 174, 239, 0) 70%
-    );
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 320ms ease;
-}
-
-.categoria-card:hover::after {
-    opacity: 1;
+@keyframes categoriaEntrada {
+    0% { opacity: 0; transform: translateY(18px) scale(0.96); }
+    65% { opacity: 1; transform: translateY(-2px) scale(1.01); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .categoria-card:hover {
     transform: translateY(-3px);
-    border-color: rgba(0, 174, 239, 0.22);
-    box-shadow:
-        0 2px 4px rgba(15, 23, 42, 0.04),
-        0 12px 32px rgba(15, 23, 42, 0.09);
+    border-color: var(--primary);
+    box-shadow: var(--shadow-lg);
 }
-
-
-/* ============================================================
-   ENTRADA EM CASCATA
-   ============================================================ */
-
-@keyframes categoriaEntrada {
-    0% {
-        opacity: 0;
-        transform: translateY(18px) scale(0.96);
-    }
-
-    65% {
-        opacity: 1;
-        transform: translateY(-2px) scale(1.01);
-    }
-
-    100% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
-
-/* ============================================================
-   CONTEÚDO PRINCIPAL DO CARD
-   ============================================================ */
 
 .categoria-card-main {
     position: relative;
@@ -541,11 +344,7 @@
     padding: 20px;
 }
 
-
-/* ============================================================
-   TOPO DO CARD
-   ============================================================ */
-
+/* Topo e Ícone */
 .categoria-card-top {
     display: flex;
     align-items: center;
@@ -553,54 +352,25 @@
     margin-bottom: 22px;
 }
 
-
-/* ============================================================
-   ÍCONE DA CATEGORIA
-   ============================================================ */
-
 .categoria-icon {
     width: 44px;
     height: 44px;
     flex-shrink: 0;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
-    border-radius: 13px;
-
-    background: linear-gradient(
-        135deg,
-        #e0f2fe 0%,
-        #bae6fd 100%
-    );
-
-    color: var(--categoria-primary-dark);
-
+    border-radius: var(--radius-md);
+    background: var(--primary-soft);
+    color: var(--primary-dark);
     font-size: 17px;
     font-weight: 800;
     letter-spacing: -0.5px;
-
-    box-shadow:
-        inset 0 0 0 1px rgba(0, 174, 239, 0.12),
-        0 4px 12px rgba(0, 174, 239, 0.08);
-
-    transition:
-        transform 320ms var(--categoria-ease-bounce),
-        box-shadow 320ms ease;
+    transition: all var(--duration-base) var(--ease-standard);
 }
 
 .categoria-card:hover .categoria-icon {
     transform: scale(1.04) rotate(-3deg);
-    box-shadow:
-        inset 0 0 0 1px rgba(0, 174, 239, 0.18),
-        0 6px 16px rgba(0, 174, 239, 0.15);
 }
-
-
-/* ============================================================
-   NOME
-   ============================================================ */
 
 .categoria-card-title {
     min-width: 0;
@@ -610,7 +380,7 @@
 .categoria-card-title h3 {
     overflow: hidden;
     margin: 0;
-    color: var(--categoria-text);
+    color: var(--text);
     font-size: 16px;
     font-weight: 800;
     letter-spacing: -0.01em;
@@ -618,36 +388,23 @@
     white-space: nowrap;
 }
 
-
-/* ============================================================
-   INPUT DE EDIÇÃO
-   ============================================================ */
-
 .categoria-edit-input {
     width: 100%;
     height: 38px;
     padding: 0 10px;
     box-sizing: border-box;
-
-    border: 1px solid var(--categoria-primary);
-    border-radius: 8px;
+    border: 1px solid var(--primary);
+    border-radius: var(--radius-sm);
     outline: none;
-
-    background: #ffffff;
-    color: var(--categoria-text);
-
+    background: var(--bg-surface);
+    color: var(--text);
     font-family: inherit;
     font-size: 14px;
     font-weight: 600;
-
-    box-shadow: 0 0 0 3px var(--categoria-primary-glow);
+    box-shadow: var(--focus-ring);
 }
 
-
-/* ============================================================
-   CONTADOR DE PRODUTOS
-   ============================================================ */
-
+/* Contador */
 .categoria-products {
     display: flex;
     align-items: baseline;
@@ -660,19 +417,18 @@
     line-height: 1;
     font-weight: 800;
     letter-spacing: -0.04em;
-    color: var(--categoria-text);
+    color: var(--text);
     font-variant-numeric: tabular-nums;
 }
 
 .categoria-products span {
     font-size: 12px;
     font-weight: 600;
-    color: var(--categoria-text-soft);
+    color: var(--text-soft);
 }
 
-
 /* ============================================================
-   AÇÕES
+   7. BOTÕES DE AÇÃO (Editar, Guardar, Eliminar)
    ============================================================ */
 
 .categoria-card-actions {
@@ -686,128 +442,86 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     min-height: 34px;
     padding: 0 12px;
-
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     border: 1px solid transparent;
-
     font-family: inherit;
     font-size: 11px;
     font-weight: 800;
     letter-spacing: 0.02em;
-
     cursor: pointer;
-
-    transition:
-        background var(--categoria-ease),
-        border-color var(--categoria-ease),
-        color var(--categoria-ease),
-        transform var(--categoria-ease),
-        box-shadow var(--categoria-ease);
+    transition: all var(--duration-fast) var(--ease-standard);
 }
 
-.categoria-action:hover {
-    transform: translateY(-1px);
-}
-
-.categoria-action:active {
-    transform: translateY(0) scale(0.97);
-}
-
-
-/* EDITAR */
+.categoria-action:hover { transform: translateY(-1px); }
+.categoria-action:active { transform: translateY(0) scale(0.97); }
 
 .categoria-action-edit {
-    border-color: rgba(0, 174, 239, 0.22);
-    background: var(--categoria-primary-soft);
-    color: var(--categoria-primary-dark);
+    border-color: var(--primary-soft);
+    background: var(--primary-soft);
+    color: var(--primary-dark);
 }
-
 .categoria-action-edit:hover {
-    background: #bae6fd;
-    border-color: rgba(0, 174, 239, 0.35);
+    border-color: var(--primary);
+    background: var(--bg-hover);
     box-shadow: 0 4px 10px rgba(0, 174, 239, 0.15);
 }
 
-
-/* GUARDAR */
-
 .categoria-action-save {
-    border-color: rgba(22, 163, 74, 0.22);
-    background: var(--categoria-success-bg);
-    color: var(--categoria-success);
+    border-color: var(--success-soft);
+    background: var(--success-soft);
+    color: var(--success);
 }
-
 .categoria-action-save:hover {
-    background: #dcfce7;
-    border-color: rgba(22, 163, 74, 0.35);
+    border-color: var(--success);
+    background: var(--bg-hover);
     box-shadow: 0 4px 10px rgba(22, 163, 74, 0.15);
 }
 
-
-/* CANCELAR */
-
 .categoria-action-cancel {
-    border-color: var(--categoria-border);
-    background: var(--categoria-bg);
-    color: var(--categoria-text-soft);
+    border-color: var(--border);
+    background: var(--bg-surface-2);
+    color: var(--text-soft);
 }
-
 .categoria-action-cancel:hover {
-    background: #f1f5f9;
-    border-color: #cbd5e1;
-    color: var(--categoria-text);
+    border-color: var(--border-strong);
+    background: var(--bg-hover);
+    color: var(--text);
 }
-
-
-/* ELIMINAR */
 
 .categoria-action-delete {
-    border-color: rgba(220, 38, 38, 0.22);
-    background: var(--categoria-danger-bg);
-    color: var(--categoria-danger);
+    border-color: var(--danger-border);
+    background: var(--danger-soft);
+    color: var(--danger);
 }
-
 .categoria-action-delete:hover {
-    background: #fee2e2;
-    border-color: rgba(220, 38, 38, 0.35);
+    border-color: var(--danger);
+    background: var(--bg-hover);
     box-shadow: 0 4px 10px rgba(220, 38, 38, 0.15);
 }
 
-
 /* ============================================================
-   ESTADO VAZIO
+   8. ESTADOS (Vazio, Loading, Erro)
    ============================================================ */
 
 .categorias-page .empty-state {
     min-height: 180px;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     padding: 30px;
     box-sizing: border-box;
-
-    border: 1px dashed #cbd5e1;
-    border-radius: var(--categoria-radius-md);
-    background: #fafcff;
-
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg-surface-2);
     text-align: center;
 }
-
 .categorias-page .empty-state p {
     margin: 0;
-    color: var(--categoria-text-muted);
+    color: var(--text-muted);
     font-size: 14px;
 }
-
-
-/* ============================================================
-   LOADING
-   ============================================================ */
 
 .categorias-loading {
     display: grid;
@@ -817,42 +531,28 @@
 
 .categoria-loading-card {
     height: 190px;
-    border-radius: 17px;
-
-    background: linear-gradient(
-        90deg,
-        #edf1f5 25%,
-        #f6f8fa 50%,
-        #edf1f5 75%
-    );
+    border-radius: var(--radius-lg);
+    background: linear-gradient(90deg, var(--bg-surface-2) 25%, var(--bg-hover) 50%, var(--bg-surface-2) 75%);
     background-size: 200% 100%;
-
     animation: categoriaSkeleton 1.2s infinite;
 }
-
 @keyframes categoriaSkeleton {
-    0%   { background-position: 200% 0; }
+    0% { background-position: 200% 0; }
     100% { background-position: -200% 0; }
 }
 
-
-/* ============================================================
-   ERRO
-   ============================================================ */
-
 .categoria-error {
     padding: 16px 18px;
-    border: 1px solid rgba(220, 38, 38, 0.18);
-    border-radius: var(--categoria-radius-sm);
-    background: var(--categoria-danger-bg);
-    color: var(--categoria-danger);
+    border: 1px solid var(--danger-border);
+    border-radius: var(--radius-md);
+    background: var(--danger-soft);
+    color: var(--danger);
     font-size: 14px;
     font-weight: 600;
 }
 
-
 /* ============================================================
-   PAGINAÇÃO
+   9. PAGINAÇÃO
    ============================================================ */
 
 .categoria-pagination {
@@ -860,17 +560,16 @@
     align-items: center;
     justify-content: space-between;
     gap: 20px;
-
     margin-top: 24px;
     padding-top: 20px;
-    border-top: 1px solid var(--categoria-border-soft);
+    border-top: 1px solid var(--border-soft);
 }
 
 .categoria-pagination-info {
     display: flex;
     align-items: center;
     gap: 7px;
-    color: var(--categoria-text-soft);
+    color: var(--text-soft);
     font-size: 12px;
     font-weight: 600;
 }
@@ -879,20 +578,16 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     min-width: 28px;
     height: 28px;
     padding: 0 7px;
-
-    border: 1px solid var(--categoria-border);
-    border-radius: 8px;
-    background: #ffffff;
-    color: var(--categoria-text);
-
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--bg-surface);
+    color: var(--text);
     font-size: 12px;
     font-weight: 800;
-
-    box-shadow: var(--categoria-shadow-sm);
+    box-shadow: var(--shadow-sm);
 }
 
 .categoria-pagination-actions {
@@ -906,48 +601,31 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-
     min-height: 36px;
     padding: 0 14px;
-
-    border: 1px solid var(--categoria-border);
-    border-radius: 9px;
-    background: #ffffff;
-    color: var(--categoria-text-soft);
-
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--bg-surface);
+    color: var(--text-soft);
     font-family: inherit;
     font-size: 12px;
     font-weight: 700;
-
     cursor: pointer;
-
-    box-shadow: var(--categoria-shadow-sm);
-
-    transition:
-        background var(--categoria-ease),
-        border-color var(--categoria-ease),
-        color var(--categoria-ease),
-        box-shadow var(--categoria-ease),
-        transform var(--categoria-ease);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--duration-fast) var(--ease-standard);
 }
 
 .categoria-pagination-btn:not(:disabled):hover {
-    background: var(--categoria-primary-soft);
-    border-color: rgba(0, 174, 239, 0.35);
-    color: var(--categoria-primary-dark);
+    background: var(--bg-hover);
+    border-color: var(--primary);
+    color: var(--primary-dark);
     transform: translateY(-1px);
-    box-shadow: 0 6px 14px rgba(0, 174, 239, 0.14);
-}
-
-.categoria-pagination-btn:not(:disabled):active {
-    transform: translateY(0);
-    box-shadow: var(--categoria-shadow-sm);
 }
 
 .categoria-pagination-btn:disabled {
-    opacity: 0.38;
+    opacity: 0.4;
     cursor: not-allowed;
-    background: var(--categoria-bg);
+    background: var(--bg-surface-2);
     box-shadow: none;
 }
 
@@ -956,152 +634,127 @@
     align-items: center;
     justify-content: center;
     font-size: 15px;
-    line-height: 1;
     opacity: 0.65;
-
-    transition:
-        transform var(--categoria-ease),
-        opacity var(--categoria-ease);
+    transition: transform var(--duration-fast) var(--ease-standard);
 }
 
-.categoria-pagination-btn:first-child:hover .categoria-pagination-icon {
-    transform: translateX(-2px);
-    opacity: 1;
-}
-
-.categoria-pagination-btn:last-child:hover .categoria-pagination-icon {
-    transform: translateX(2px);
-    opacity: 1;
-}
-
+.categoria-pagination-btn:first-child:hover .categoria-pagination-icon { transform: translateX(-2px); opacity: 1; }
+.categoria-pagination-btn:last-child:hover .categoria-pagination-icon { transform: translateX(2px); opacity: 1; }
 
 /* ============================================================
-   RESPONSIVIDADE
+   10. RESPONSIVIDADE
    ============================================================ */
 
 @media (max-width: 900px) {
-
-    .categorias-page {
-        padding: 20px;
-    }
-
-    .categoria-form {
-        align-items: stretch;
-        flex-direction: column;
-    }
-
-    .categoria-form .button-primary {
-        width: 100%;
-    }
+    .categorias-page { padding: 20px; }
+    .categoria-form { align-items: stretch; flex-direction: column; }
+    .categoria-form .button-primary { width: 100%; }
 }
-
 
 @media (max-width: 640px) {
-
-    .categorias-page {
-        padding: 15px;
-    }
-
-    .categorias-page .page-header {
-        margin-bottom: 20px;
-    }
-
-    .categorias-page .page-header h1 {
-        font-size: 25px;
-    }
-
-    .categoria-form-card,
-    .categorias-list-card {
-        padding: 17px;
-        border-radius: 15px;
-    }
-
-    .categorias-page .section-header {
-        align-items: flex-start;
-    }
-
-    .categorias-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .categoria-search {
-        align-items: stretch;
-        flex-direction: column;
-    }
-
-    .categoria-search input {
-        width: 100%;
-    }
-
-    .categoria-search .button-primary,
-    .categoria-search .button-secondary {
-        width: 100%;
-    }
-
-    .categoria-card-main {
-        padding: 17px;
-    }
-
-    /* Paginação em mobile — botões full width */
-    .categoria-pagination {
-        flex-direction: column;
-        align-items: stretch;
-        padding-top: 16px;
-    }
-
-    .categoria-pagination-info {
-        justify-content: center;
-    }
-
-    .categoria-pagination-actions {
-        justify-content: stretch;
-    }
-
-    .categoria-pagination-btn {
-        flex: 1;
-    }
+    .categorias-page { padding: 15px; }
+    .categorias-page .page-header { margin-bottom: 20px; }
+    .categorias-page .page-header h1 { font-size: 25px; }
+    .categoria-form-card, .categorias-list-card { padding: 17px; border-radius: var(--radius-md); }
+    .categorias-page .section-header { align-items: flex-start; }
+    .categorias-grid { grid-template-columns: 1fr; }
+    .categoria-search { align-items: stretch; flex-direction: column; }
+    .categoria-search input { width: 100%; }
+    .categoria-search .button-primary, .categoria-search .button-secondary { width: 100%; }
+    .categoria-card-main { padding: 17px; }
+    
+    .categoria-pagination { flex-direction: column; align-items: stretch; padding-top: 16px; }
+    .categoria-pagination-info { justify-content: center; }
+    .categoria-pagination-actions { justify-content: stretch; }
+    .categoria-pagination-btn { flex: 1; }
 }
 
+/* ============================================================
+   11. A MAGIA DO DARK MODE (Efeito Neon Reactivo)
+   ============================================================ */
+
+[data-theme="dark"] .categoria-card {
+    background: var(--bg-surface);
+    /* Borda base que ganha destaque ao interagir */
+    border: 1px solid var(--border); 
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hover no card: brilho neon suave nas bordas e halo */
+[data-theme="dark"] .categoria-card:hover {
+    border-color: var(--primary);
+    box-shadow: 
+        0 0 15px rgba(92, 200, 255, 0.12), 
+        0 0 30px rgba(92, 200, 255, 0.04),
+        inset 0 0 10px rgba(92, 200, 255, 0.05);
+    transform: translateY(-4px);
+}
+
+/* O ícone da categoria brilha intensamente no dark mode */
+[data-theme="dark"] .categoria-icon {
+    background: rgba(92, 200, 255, 0.1);
+    color: var(--primary); /* Azul mais brilhante */
+    box-shadow: 0 0 12px rgba(92, 200, 255, 0.15);
+}
+
+[data-theme="dark"] .categoria-card:hover .categoria-icon {
+    background: var(--primary);
+    color: var(--color-onyx); /* Texto escuro dentro do ícone brilhante */
+    box-shadow: 0 0 20px rgba(92, 200, 255, 0.4);
+    transform: scale(1.08) rotate(-3deg);
+}
+
+/* Inputs ficam com borda neon quando focados */
+[data-theme="dark"] .categoria-form input:focus,
+[data-theme="dark"] .categoria-search input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(92, 200, 255, 0.15), 0 0 15px rgba(92, 200, 255, 0.2);
+}
+
+/* Botão Editar ganha neon */
+[data-theme="dark"] .categoria-action-edit:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    box-shadow: 0 0 12px rgba(92, 200, 255, 0.2);
+}
+
+/* Botão Eliminar ganha neon vermelho */
+[data-theme="dark"] .categoria-action-delete:hover {
+    border-color: var(--danger);
+    color: var(--danger);
+    box-shadow: 0 0 12px rgba(255, 92, 108, 0.2);
+}
+
+/* Paginação brilha ao passar o rato */
+[data-theme="dark"] .categoria-pagination-btn:not(:disabled):hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    box-shadow: 0 0 12px rgba(92, 200, 255, 0.15);
+}
 
 /* ============================================================
-   ACESSIBILIDADE
+   12. ACESSIBILIDADE
    ============================================================ */
 
 @media (prefers-reduced-motion: reduce) {
-
-    .categorias-page,
-    .categoria-card,
-    .categoria-loading-card {
+    .categorias-page, .categoria-card, .categoria-loading-card {
         animation: none !important;
     }
-
-    .categoria-card {
-        opacity: 1;
-        transform: none;
-    }
-
-    .categoria-card::after {
-        opacity: 1;
-    }
-
-    .categoria-card,
-    .categoria-icon,
-    .categoria-action,
-    .categoria-pagination-btn,
-    .categoria-pagination-icon,
-    .button-primary,
-    .button-secondary,
-    .categoria-form input,
-    .categoria-search input {
+    .categoria-card { opacity: 1; transform: none; }
+    .categoria-card::after { opacity: 1; }
+    .categoria-card, .categoria-icon, .categoria-action, .categoria-pagination-btn, 
+    .categoria-pagination-icon, .button-primary, .button-secondary, 
+    .categoria-form input, .categoria-search input {
         transition: none !important;
     }
-
-    .categoria-card:hover,
-    .categoria-card:hover .categoria-icon,
-    .categoria-action:hover,
-    .categoria-pagination-btn:not(:disabled):hover,
-    .button-primary:hover:not(:disabled),
+    .categoria-card:hover, .categoria-card:hover .categoria-icon, .categoria-action:hover,
+    .categoria-pagination-btn:not(:disabled):hover, .button-primary:hover:not(:disabled),
     .button-secondary:hover:not(:disabled) {
         transform: none;
     }
+}
+/* Fallback: garante que os cartões são visíveis */
+.categoria-card {
+    opacity: 1 !important;
+    transform: none !important;
 }

@@ -1,6 +1,9 @@
 /* ============================================================
-   ESTOQUE.CSS
-   Gestão visual e animações da página de Stock
+   ESTOQUE — CSS Unificado (Light + Dark Neon)
+   ============================================================ */
+
+/* ============================================================
+   1. PÁGINA E HEADER
    ============================================================ */
 
 .estoque-page {
@@ -8,11 +11,8 @@
     min-height: 100%;
     padding: 28px;
     box-sizing: border-box;
+    color: var(--text);
 }
-
-/* ============================================================
-   HEADER
-   ============================================================ */
 
 .estoque-page .page-header {
     display: flex;
@@ -27,30 +27,46 @@
     font-size: 30px;
     font-weight: 800;
     letter-spacing: -0.5px;
+    color: var(--text);
 }
 
 .estoque-page .page-header p {
     margin: 0;
-    color: #6b7280;
+    color: var(--text-soft);
     font-size: 14px;
 }
 
 /* ============================================================
-   CARD
+   2. CARD PRINCIPAL
    ============================================================ */
 
 .estoque-list-card {
-    background: rgba(255, 255, 255, 0.94);
-    border: 1px solid #e7ebf2;
-    border-radius: 20px;
+    position: relative;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
     padding: 24px;
-    box-shadow:
-        0 8px 30px rgba(15, 23, 42, 0.05);
+    box-shadow: var(--shadow);
 }
 
-/* ============================================================
-   SECTION HEADER
-   ============================================================ */
+/* Linha Candy Blue no topo (padrão do resto da app) */
+.estoque-list-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--primary) 30%,
+        var(--primary-dark) 70%,
+        transparent
+    );
+    opacity: 0.9;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
 
 .estoque-list-card .section-header {
     display: flex;
@@ -63,36 +79,32 @@
 .estoque-list-card .section-header h2 {
     margin: 0 0 5px;
     font-size: 18px;
-    font-weight: 750;
+    font-weight: 800;
+    color: var(--text);
 }
 
 .estoque-list-card .section-header p {
     margin: 0;
-    color: #7a8494;
+    color: var(--text-muted);
     font-size: 13px;
 }
 
 .categoria-count {
     min-width: 36px;
     height: 36px;
-
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     padding: 0 10px;
-
-    border-radius: 12px;
-
-    background: #f1f5f9;
-    color: #334155;
-
+    border-radius: var(--radius-md);
+    background: var(--bg-surface-2);
+    color: var(--text-soft);
     font-size: 13px;
-    font-weight: 750;
+    font-weight: 800;
 }
 
 /* ============================================================
-   TABELA
+   3. TABELA
    ============================================================ */
 
 .table-container {
@@ -108,173 +120,108 @@
 
 .data-table thead th {
     padding: 13px 16px;
-
-    background: #f8fafc;
-
-    color: #64748b;
-
+    background: var(--bg-surface-2);
+    color: var(--text-muted);
     font-size: 11px;
     font-weight: 800;
-
     text-transform: uppercase;
     letter-spacing: 0.06em;
-
     text-align: left;
-
-    border-bottom: 1px solid #e8edf3;
+    border-bottom: 1px solid var(--border);
 }
 
-.data-table thead th:first-child {
-    border-top-left-radius: 12px;
-}
-
-.data-table thead th:last-child {
-    border-top-right-radius: 12px;
-}
+.data-table thead th:first-child { border-top-left-radius: var(--radius-md); }
+.data-table thead th:last-child  { border-top-right-radius: var(--radius-md); }
 
 .data-table tbody tr {
     position: relative;
-
     transition:
-        background-color 0.25s ease,
-        box-shadow 0.25s ease;
+        background-color var(--duration-fast) var(--ease-standard),
+        box-shadow var(--duration-fast) var(--ease-standard);
 }
 
 .data-table tbody tr:hover {
-    background: #fafcff;
+    background: var(--bg-hover);
 }
 
 .data-table tbody td {
     padding: 17px 16px;
-
-    color: #334155;
-
+    color: var(--text-soft);
     font-size: 14px;
-
-    border-bottom: 1px solid #edf1f5;
-
+    border-bottom: 1px solid var(--border-soft);
     vertical-align: middle;
 }
 
+.data-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
 .produto-nome {
-    color: #172033 !important;
+    color: var(--text) !important;
     font-weight: 700;
 }
 
 /* ============================================================
-   QUANTIDADE
+   4. QUANTIDADE E CONTADOR ANIMADO
    ============================================================ */
 
 .stock-quantidade-wrapper {
     position: relative;
-
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     min-width: 58px;
     min-height: 38px;
-
     overflow: hidden;
-
-    border-radius: 10px;
-
-    background: #f8fafc;
+    border-radius: var(--radius-md);
+    background: var(--bg-surface-2);
 }
-
-/*
-   Mantém o número visualmente centrado.
-*/
 
 .stock-quantidade {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     min-width: 42px;
     min-height: 34px;
-
     padding: 0 9px;
-
-    border-radius: 9px;
-
-    color: #172033;
-
+    border-radius: var(--radius-sm);
+    color: var(--text);
     font-size: 16px;
     font-weight: 800;
-
     position: relative;
     overflow: hidden;
 }
 
-/* ============================================================
-   CONTADOR ACETINADO
-   ============================================================ */
-
-/*
-   Número antigo:
-   sobe e desaparece.
-*/
-
 .stock-number-old {
     position: absolute;
     inset: 0;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
-    animation: stockNumberOut 420ms
-        cubic-bezier(.4, 0, .2, 1)
-        forwards;
+    animation: stockNumberOut 420ms cubic-bezier(.4, 0, .2, 1) forwards;
 }
-
-/*
-   Número novo:
-   começa abaixo e sobe.
-*/
 
 .stock-number-new {
     position: absolute;
     inset: 0;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
-    animation: stockNumberIn 420ms
-        cubic-bezier(.2, .8, .2, 1)
-        forwards;
+    animation: stockNumberIn 420ms cubic-bezier(.2, .8, .2, 1) forwards;
 }
 
 @keyframes stockNumberOut {
-
-    0% {
-        transform: translateY(0);
-        opacity: 1;
-    }
-
-    100% {
-        transform: translateY(-100%);
-        opacity: 0;
-    }
+    0%   { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(-100%); opacity: 0; }
 }
 
 @keyframes stockNumberIn {
-
-    0% {
-        transform: translateY(100%);
-        opacity: 0;
-    }
-
-    100% {
-        transform: translateY(0);
-        opacity: 1;
-    }
+    0%   { transform: translateY(100%); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
 }
 
 /* ============================================================
-   FLASH DE ENTRADA
+   5. FLASHES DE MOVIMENTAÇÃO (Entrada / Saída / Ajuste)
    ============================================================ */
 
 .stock-flash-entrada {
@@ -282,155 +229,104 @@
 }
 
 @keyframes stockFlashEntrada {
-
     0% {
-        background: rgba(34, 197, 94, 0.30);
-        box-shadow:
-            0 0 0 0 rgba(34, 197, 94, 0.20);
+        background: var(--success-soft);
+        box-shadow: 0 0 0 0 var(--success-soft);
     }
-
     45% {
-        background: rgba(34, 197, 94, 0.16);
-        box-shadow:
-            0 0 0 5px rgba(34, 197, 94, 0.06);
+        background: var(--success-soft);
+        box-shadow: 0 0 0 5px var(--success-soft);
     }
-
     100% {
         background: transparent;
-        box-shadow:
-            0 0 0 0 rgba(34, 197, 94, 0);
+        box-shadow: 0 0 0 0 transparent;
     }
 }
-
-/* ============================================================
-   FLASH DE SAÍDA
-   ============================================================ */
 
 .stock-flash-saida {
     animation: stockFlashSaida 700ms ease-out;
 }
 
 @keyframes stockFlashSaida {
-
     0% {
-        background: rgba(249, 115, 22, 0.30);
-        box-shadow:
-            0 0 0 0 rgba(249, 115, 22, 0.20);
+        background: var(--danger-soft);
+        box-shadow: 0 0 0 0 var(--danger-soft);
     }
-
     45% {
-        background: rgba(239, 68, 68, 0.14);
-        box-shadow:
-            0 0 0 5px rgba(239, 68, 68, 0.06);
+        background: var(--danger-soft);
+        box-shadow: 0 0 0 5px var(--danger-soft);
     }
-
     100% {
         background: transparent;
-        box-shadow:
-            0 0 0 0 rgba(239, 68, 68, 0);
+        box-shadow: 0 0 0 0 transparent;
     }
 }
-
-/* ============================================================
-   AJUSTE
-   ============================================================ */
 
 .stock-flash-ajuste {
     animation: stockFlashAjuste 650ms ease-out;
 }
 
 @keyframes stockFlashAjuste {
-
-    0% {
-        background: rgba(59, 130, 246, 0.20);
-    }
-
-    100% {
-        background: transparent;
-    }
+    0%   { background: var(--primary-soft); }
+    100% { background: transparent; }
 }
 
 /* ============================================================
-   ESTADOS
+   6. BADGES DE ESTADO (Normal / Baixo / Sem stock)
    ============================================================ */
 
 .stock-status {
     display: inline-flex;
     align-items: center;
-
     min-height: 28px;
-
     padding: 5px 10px;
-
-    border-radius: 999px;
-
+    border-radius: var(--radius-full);
     font-size: 11px;
     font-weight: 800;
-
     white-space: nowrap;
 }
 
 .stock-normal {
-    background: rgba(34, 197, 94, 0.10);
-    color: #15803d;
+    background: var(--success-soft);
+    color: var(--success);
 }
 
 .stock-baixo {
-    background: rgba(234, 179, 8, 0.13);
-    color: #a16207;
-
+    background: var(--warning-soft);
+    color: var(--warning);
     animation: criticalPulseYellow 2.2s ease-in-out infinite;
 }
 
 .stock-sem {
-    background: rgba(239, 68, 68, 0.12);
-    color: #dc2626;
-
+    background: var(--danger-soft);
+    color: var(--danger);
     animation: criticalPulseRed 1.8s ease-in-out infinite;
 }
 
-/* ============================================================
-   GLOW STOCK BAIXO
-   ============================================================ */
-
 @keyframes criticalPulseYellow {
-
-    0%,
-    100% {
-        box-shadow:
-            0 0 0 0 rgba(234, 179, 8, 0);
-    }
-
+    0%, 100% { box-shadow: 0 0 0 0 transparent; }
     50% {
         box-shadow:
-            0 0 0 5px rgba(234, 179, 8, 0.08),
-            0 0 15px rgba(234, 179, 8, 0.10);
+            0 0 0 5px rgba(217, 119, 6, 0.08),
+            0 0 15px rgba(217, 119, 6, 0.10);
     }
 }
 
-/* ============================================================
-   GLOW SEM STOCK
-   ============================================================ */
-
 @keyframes criticalPulseRed {
-
-    0%,
-    100% {
-        box-shadow:
-            0 0 0 0 rgba(239, 68, 68, 0);
+    0%, 100% {
+        box-shadow: 0 0 0 0 transparent;
         opacity: 0.88;
     }
-
     50% {
         box-shadow:
-            0 0 0 5px rgba(239, 68, 68, 0.07),
-            0 0 18px rgba(239, 68, 68, 0.13);
+            0 0 0 5px rgba(220, 38, 38, 0.07),
+            0 0 18px rgba(220, 38, 38, 0.13);
         opacity: 1;
     }
 }
 
 /* ============================================================
-   LINHA CRÍTICA
+   7. LINHAS CRÍTICAS
    ============================================================ */
 
 .stock-row-critical {
@@ -438,17 +334,8 @@
 }
 
 @keyframes criticalRowPulse {
-
-    0%,
-    100% {
-        box-shadow:
-            inset 3px 0 0 rgba(234, 179, 8, 0);
-    }
-
-    50% {
-        box-shadow:
-            inset 3px 0 0 rgba(234, 179, 8, 0.65);
-    }
+    0%, 100% { box-shadow: inset 3px 0 0 transparent; }
+    50%      { box-shadow: inset 3px 0 0 var(--warning); }
 }
 
 .stock-row-empty {
@@ -456,46 +343,30 @@
 }
 
 @keyframes emptyRowPulse {
-
-    0%,
-    100% {
-        box-shadow:
-            inset 3px 0 0 rgba(239, 68, 68, 0);
-    }
-
-    50% {
-        box-shadow:
-            inset 3px 0 0 rgba(239, 68, 68, 0.75);
-    }
+    0%, 100% { box-shadow: inset 3px 0 0 transparent; }
+    50%      { box-shadow: inset 3px 0 0 var(--danger); }
 }
 
 /* ============================================================
-   BOTÕES DA TABELA
+   8. BOTÕES DA TABELA
    ============================================================ */
 
 .data-table button {
-    border: 0;
-
+    border: 1px solid var(--border);
     padding: 8px 12px;
-
-    border-radius: 9px;
-
-    background: #f1f5f9;
-    color: #334155;
-
+    border-radius: var(--radius-sm);
+    background: var(--bg-surface-2);
+    color: var(--text-soft);
     font-size: 12px;
     font-weight: 700;
-
     cursor: pointer;
-
-    transition:
-        transform 0.15s ease,
-        background-color 0.2s ease,
-        box-shadow 0.2s ease;
+    transition: all var(--duration-fast) var(--ease-standard);
 }
 
 .data-table button:hover {
-    background: #e2e8f0;
+    background: var(--bg-hover);
+    border-color: var(--border-strong);
+    color: var(--text);
     transform: translateY(-1px);
 }
 
@@ -510,43 +381,34 @@
 }
 
 /* ============================================================
-   INPUT DE QUANTIDADE MÍNIMA
+   9. INPUT DE QUANTIDADE MÍNIMA
    ============================================================ */
 
 .data-table input[type="number"] {
     width: 90px;
-
     padding: 9px 10px;
-
-    border: 1px solid #dbe2ea;
-    border-radius: 9px;
-
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
     outline: none;
-
+    background: var(--bg-surface);
+    color: var(--text);
     font-size: 13px;
-
-    transition:
-        border-color 0.2s ease,
-        box-shadow 0.2s ease;
+    transition: all var(--duration-fast) var(--ease-standard);
 }
 
 .data-table input[type="number"]:focus {
-    border-color: #38bdf8;
-
-    box-shadow:
-        0 0 0 3px rgba(56, 189, 248, 0.12);
+    border-color: var(--primary);
+    box-shadow: var(--focus-ring);
 }
 
 /* ============================================================
-   EMPTY STATE
+   10. EMPTY STATE
    ============================================================ */
 
 .empty-state {
     padding: 55px 20px;
-
     text-align: center;
-
-    color: #7a8494;
+    color: var(--text-muted);
 }
 
 .empty-state p {
@@ -554,11 +416,73 @@
 }
 
 /* ============================================================
-   RESPONSIVO
+   11. PAGE HEADER ACTIONS
+   ============================================================ */
+
+.page-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* ============================================================
+   12. DARK MODE — Efeito Neon Reactivo
+   ============================================================ */
+
+/* Linha da tabela reage ao hover */
+[data-theme="dark"] .data-table tbody tr:hover {
+    background: var(--bg-hover);
+    box-shadow: inset 3px 0 0 var(--primary);
+}
+
+/* Badges brilham no hover */
+[data-theme="dark"] .stock-normal:hover {
+    box-shadow: 0 0 12px rgba(69, 212, 131, 0.3);
+}
+
+[data-theme="dark"] .stock-baixo:hover {
+    box-shadow: 0 0 14px rgba(255, 200, 87, 0.35);
+}
+
+[data-theme="dark"] .stock-sem:hover {
+    box-shadow: 0 0 14px rgba(255, 92, 108, 0.35);
+}
+
+/* Botões da tabela brilham ao interagir */
+[data-theme="dark"] .data-table button:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    box-shadow: 0 0 12px rgba(92, 200, 255, 0.15);
+}
+
+/* Input de quantidade mínima */
+[data-theme="dark"] .data-table input[type="number"]:focus {
+    border-color: var(--primary);
+    box-shadow:
+        0 0 0 3px var(--primary-glow),
+        0 0 15px rgba(92, 200, 255, 0.2);
+}
+
+/* Estado crítico ganha intensidade extra no dark */
+[data-theme="dark"] .stock-row-critical {
+    box-shadow: inset 3px 0 0 rgba(255, 200, 87, 0.3);
+}
+
+[data-theme="dark"] .stock-row-empty {
+    box-shadow: inset 3px 0 0 rgba(255, 92, 108, 0.3);
+}
+
+/* Contador de stock com brilho suave */
+[data-theme="dark"] .stock-quantidade {
+    text-shadow: 0 0 8px rgba(92, 200, 255, 0.3);
+}
+
+/* ============================================================
+   13. RESPONSIVO
    ============================================================ */
 
 @media (max-width: 800px) {
-
     .estoque-page {
         padding: 18px;
     }
@@ -577,12 +501,23 @@
     }
 }
 
+@media (max-width: 700px) {
+    .page-header-actions {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .page-header-actions .button {
+        width: 100%;
+    }
+}
+
 /* ============================================================
-   REDUÇÃO DE MOVIMENTO
+   14. ACESSIBILIDADE
    ============================================================ */
 
 @media (prefers-reduced-motion: reduce) {
-
     .stock-number-old,
     .stock-number-new,
     .stock-flash-entrada,
@@ -594,27 +529,15 @@
     .stock-row-empty {
         animation: none !important;
     }
-}
 
-/* ============================================================
-   PAGE HEADER — AÇÕES
-   ============================================================ */
-
-.page-header-actions {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-@media (max-width: 700px) {
-    .page-header-actions {
-        width: 100%;
-        flex-direction: column;
-        align-items: stretch;
+    .data-table tbody tr,
+    .data-table button,
+    .stock-status,
+    .data-table input[type="number"] {
+        transition: none !important;
     }
 
-    .page-header-actions .button {
-        width: 100%;
+    .data-table button:hover {
+        transform: none;
     }
 }

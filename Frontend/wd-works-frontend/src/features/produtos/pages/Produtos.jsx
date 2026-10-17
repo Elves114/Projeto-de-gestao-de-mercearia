@@ -8,6 +8,8 @@ import { listarCategorias } from "../../categorias/services/categoriaService";
 
 import ProdutoTable from "../components/ProdutoTable";
 import ProdutoForm from "../components/ProdutoForm";
+import ConfirmDialog from "../../../components/ui/ConfirmDialog";
+import { useToast } from "../../../contexts/useToast";
 import "../style/Produto.css";
 
 import {
@@ -19,6 +21,8 @@ import {
 } from "../services/produtoService";
 
 function Produtos() {
+
+   
 
     const [produtos, setProdutos] = useState([]);
 
@@ -43,6 +47,12 @@ function Produtos() {
     const [produtoRemovendo, setProdutoRemovendo] = useState(null);
 
     const [formFlash, setFormFlash] = useState(false);
+
+    const [confirmDialog, setConfirmDialog] = useState({
+        isOpen: false,
+        produto: null,
+        acao: null,
+    });
 
 
     const [filtros, setFiltros] = useState({
@@ -527,15 +537,15 @@ function Produtos() {
      */
 
     async function handleDesativarProduto(produto) {
+        setConfirmDialog({ isOpen: true, produto, acao: "desativar" });
+    }
 
-        const confirmar = window.confirm(
-            `Tem certeza que deseja desativar o produto "${produto.nome}"?`
-        );
+    async function handleConfirmarAcao() {
+        const { produto, acao } = confirmDialog;
+        setConfirmDialog({ isOpen: false, produto: null, acao: null });
 
-        if (!confirmar) {
-            return;
-        }
-
+        const handler = acao === "desativar" ? desativarProduto : ativarProduto;
+        const msgSucesso = acao === "desativar" ? "Produto desativado com sucesso." : "Produto ativado com sucesso.";
 
         try {
 
@@ -544,7 +554,7 @@ function Produtos() {
             setMensagem("");
 
 
-            await desativarProduto(
+            await handler(
                 produto.id
             );
 
@@ -572,9 +582,7 @@ function Produtos() {
             }, 350);
 
 
-            setMensagem(
-                "Produto desativado com sucesso."
-            );
+            setMensagem(msgSucesso);
 
 
             /*
@@ -636,7 +644,7 @@ function Produtos() {
         } catch (error) {
 
             console.error(
-                "Erro ao desativar produto:",
+                `Erro ao ${acao} produto:`,
                 error
             );
 
@@ -645,7 +653,6 @@ function Produtos() {
             );
 
         }
-
     }
 
 
@@ -656,109 +663,7 @@ function Produtos() {
      */
 
     async function handleAtivarProduto(produto) {
-
-        const confirmar = window.confirm(
-            `Tem certeza que deseja ativar o produto "${produto.nome}"?`
-        );
-
-        if (!confirmar) {
-            return;
-        }
-
-
-        try {
-
-            setErro("");
-
-            setMensagem("");
-
-
-            await ativarProduto(
-                produto.id
-            );
-
-
-            /*
-             * Animação de remoção.
-             */
-            setProdutoRemovendo(
-                produto.id
-            );
-
-
-            setTimeout(() => {
-
-                setProdutos(
-                    (produtosAtuais) =>
-                        produtosAtuais.filter(
-                            (item) =>
-                                item.id !== produto.id
-                        )
-                );
-
-                setProdutoRemovendo(null);
-
-            }, 350);
-
-
-            setMensagem(
-                "Produto ativado com sucesso."
-            );
-
-
-            /*
-             * Recarrega a página.
-             */
-            setTimeout(async () => {
-
-                try {
-
-                    const response =
-                        await listarProdutos(
-                            pagina,
-                            10,
-                            pesquisa,
-                            filtros
-                        );
-
-
-                    setProdutos(
-                        response.content || []
-                    );
-
-                    setTotalProdutos(
-                        response.page?.totalElements || 0
-                    );
-
-                    setTotalPaginas(
-                        response.page?.totalPages || 0
-                    );
-
-                } catch (error) {
-
-                    console.error(
-                        "Erro ao atualizar produtos:",
-                        error
-                    );
-
-                }
-
-            }, 400);
-
-
-        } catch (error) {
-
-            console.error(
-                "Erro ao ativar produto:",
-                error
-            );
-
-            setErro(
-                obterMensagemErro(error)
-            );
-
-        }
-
+        setConfirmDialog({ isOpen: true, produto, acao: "ativar" });
     }
 
 
@@ -1474,6 +1379,43 @@ function Produtos() {
                 </section>
 
             </div>
+
+            {/* =================================================
+                CONFIRM DIALOG
+            ================================================= */}
+
+            <ConfirmDialog
+                isOpen={confirmDialog.isOpen}
+                title={
+                    confirmDialog.acao === "desativar"
+                        ? "Desativar produto"
+                        : "Ativar produto"
+                }
+                message={
+                    confirmDialog.produto
+                        ? `Tem certeza que deseja ${confirmDialog.acao} o produto "${confirmDialog.produto.nome}"?`
+                        : ""
+                }
+                confirmLabel={
+                    confirmDialog.acao === "desativar"
+                        ? "Desativar"
+                        : "Ativar"
+                }
+                cancelLabel="Cancelar"
+                confirmVariant={
+                    confirmDialog.acao === "desativar"
+                        ? "danger"
+                        : "primary"
+                }
+                onConfirm={handleConfirmarAcao}
+                onCancel={() =>
+                    setConfirmDialog({
+                        isOpen: false,
+                        produto: null,
+                        acao: null,
+                    })
+                }
+            />
 
         </div>
 

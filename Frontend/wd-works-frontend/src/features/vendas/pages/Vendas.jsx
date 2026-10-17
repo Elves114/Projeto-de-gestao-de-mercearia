@@ -6,10 +6,13 @@ import VendaTabela from "../components/VendaTabela";
 import CancelarVendaModal from "../components/CancelarVendaModal";
 
 import { obterMensagemErro } from "../../../services/api";
+import { useToast } from "../../../contexts/useToast";
 
 import "../style/Venda.css";
 
 function Vendas() {
+  const { error: toastError } = useToast();
+
   /* ============================================================
        VENDAS
        ============================================================ */
@@ -186,7 +189,7 @@ function Vendas() {
       setVendaParaCancelar(null);
     } catch (error) {
       console.error("Erro ao cancelar venda:", error);
-      alert(obterMensagemErro(error));
+      toastError(obterMensagemErro(error));
     } finally {
       setCancelando(false);
     }

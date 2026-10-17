@@ -3,25 +3,7 @@
    Identidade: Onyx + Candy Blue
    ========================================================= */
 
-:root {
-    --sb-bg: #ffffff;
-    --sb-border: #e8edf3;
-    --sb-text-main: #5d6878;
-    --sb-text-dark: #111827;
-    --sb-text-muted: #8a94a6;
-    --sb-active-bg: rgba(0, 174, 239, 0.10);
-    --sb-active-bg-hover: rgba(0, 174, 239, 0.14);
-    --sb-active-color: #008fc5;
-    --sb-primary: #00aeef;
-    --sb-primary-glow: rgba(0, 174, 239, 0.35);
-
-    --sb-width-open: 260px;
-    --sb-width-closed: 78px;
-
-    --sb-transition: 0.28s cubic-bezier(0.4, 0, 0.2, 1);
-    --sb-ease-bounce: cubic-bezier(0.22, 1, 0.36, 1);
-}
-
+/* Tokens --sb-* definidos em styles/tokens.css */
 
 /* =========================================================
    SIDEBAR — CONTAINER
@@ -43,9 +25,7 @@
     background: var(--sb-bg);
     border-right: 1px solid var(--sb-border);
 
-    box-shadow:
-        8px 0 30px rgba(20, 30, 50, 0.04),
-        1px 0 0 rgba(20, 30, 50, 0.02);
+    box-shadow: var(--shadow-lg);
 
     z-index: 1000;
     will-change: width;
@@ -93,7 +73,7 @@
 }
 
 .sidebar-brand:hover {
-    background: #f8fafc;
+    background: var(--bg-surface-2);
 }
 
 .sidebar-brand:focus-visible {
@@ -121,11 +101,11 @@
 
     background: linear-gradient(
         135deg,
-        #1e293b 0%,
-        #0f172a 100%
+        var(--color-slate-800) 0%,
+        var(--color-slate-900) 100%
     );
 
-    color: #ffffff;
+    color: var(--color-white);
 
     font-size: 19px;
     font-weight: 800;
@@ -144,7 +124,7 @@
     transform: translateY(-2px) rotate(-4deg);
     box-shadow:
         0 12px 24px rgba(17, 24, 39, 0.22),
-        0 0 0 4px rgba(0, 174, 239, 0.08);
+        0 0 0 4px var(--primary-glow);
 }
 
 
@@ -192,7 +172,7 @@
     padding: 2px 2px 14px;
 
     scrollbar-width: thin;
-    scrollbar-color: #dce3ec transparent;
+    scrollbar-color: var(--border-strong) transparent;
 }
 
 .sidebar-nav::-webkit-scrollbar {
@@ -204,7 +184,7 @@
 }
 
 .sidebar-nav::-webkit-scrollbar-thumb {
-    background: #dce3ec;
+    background: var(--border-strong);
     border-radius: 10px;
 }
 
@@ -230,7 +210,7 @@
 
     padding: 0 11px;
 
-    color: #9aa4b2;
+    color: var(--text-muted);
 
     font-size: 10px;
     font-weight: 800;
@@ -302,7 +282,7 @@
     align-items: center;
     justify-content: center;
 
-    color: #7c8797;
+    color: var(--text-muted);
 
     transition:
         color var(--sb-transition),
@@ -323,7 +303,7 @@
 /* HOVER */
 
 .sidebar-link:hover {
-    background: #f4f7fb;
+    background: var(--bg-app);
     color: var(--sb-text-dark);
     transform: translateX(2px);
 }
@@ -360,7 +340,7 @@
 
     box-shadow:
         0 0 10px var(--sb-primary-glow),
-        0 0 20px rgba(0, 174, 239, 0.15);
+        0 0 20px var(--primary-glow);
 
     transform-origin: center;
     animation: sidebarIndicatorIn
@@ -433,7 +413,7 @@
 }
 
 .sidebar-user:hover {
-    background: #f8fafc;
+    background: var(--bg-surface-2);
 }
 
 
@@ -452,11 +432,11 @@
 
     background: linear-gradient(
         135deg,
-        #334155 0%,
-        #0f172a 100%
+        var(--color-slate-700) 0%,
+        var(--color-slate-900) 100%
     );
 
-    color: #ffffff;
+    color: var(--color-white);
 
     font-size: 14px;
     font-weight: 800;
@@ -474,7 +454,7 @@
     transform: scale(1.04);
     box-shadow:
         0 8px 18px rgba(17, 24, 39, 0.18),
-        0 0 0 3px rgba(0, 174, 239, 0.10);
+        0 0 0 3px var(--primary-glow);
 }
 
 
@@ -496,7 +476,7 @@
     max-width: 150px;
     overflow: hidden;
 
-    color: #1f2937;
+    color: var(--text);
 
     font-size: 12px;
     font-weight: 700;
@@ -504,23 +484,23 @@
 }
 
 .sidebar-user-info span {
-    color: #8b96a5;
+    color: var(--text-muted);
     font-size: 10px;
     font-weight: 600;
 }
 
 
 /* =========================================================
-   ESTADO FECHADO
+   ESTADO FECHADO — redesenhado
    ========================================================= */
 
 .sidebar:not(.open) {
     width: var(--sb-width-closed);
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
-
-/* Esconde textos suavemente */
-
+/* Esconde textos com fade suave (não display:none) */
 .sidebar:not(.open) .sidebar-brand-text,
 .sidebar:not(.open) .sidebar-group-title,
 .sidebar:not(.open) .sidebar-user-info,
@@ -531,65 +511,87 @@
     pointer-events: none;
 }
 
-
-/* Centraliza tudo */
-
-.sidebar:not(.open) .sidebar-brand,
-.sidebar:not(.open) .sidebar-link,
-.sidebar:not(.open) .sidebar-user {
+/* Marca — centralizada, sem padding extra */
+.sidebar:not(.open) .sidebar-brand {
     justify-content: center;
-    padding-left: 0;
-    padding-right: 0;
+    padding: 0;
+    margin-bottom: 18px;
     gap: 0;
 }
 
-.sidebar:not(.open) .sidebar-brand {
+/* Logo mantém-se do tamanho original, sem encolher */
+.sidebar:not(.open) .sidebar-logo {
+    width: 42px;
+    height: 42px;
+    font-size: 19px;
+}
+
+/* Nav — gap mais apertado entre grupos */
+.sidebar:not(.open) .sidebar-nav {
+    gap: 12px;
+    padding: 0 0 14px;
+}
+
+/* Link — quadrado centrado, sem padding lateral */
+.sidebar:not(.open) .sidebar-link {
+    justify-content: center;
+    padding: 0;
+    gap: 0;
     width: 100%;
-    margin-left: 0;
-    margin-right: 0;
 }
 
-.sidebar:not(.open) .sidebar-group {
-    align-items: center;
+/* Ícone — área 44x44 centrada */
+.sidebar:not(.open) .sidebar-link-icon {
+    width: 44px;
+    height: 44px;
+    transform: none;
 }
 
-
-/* Esconde título de grupo */
-
-.sidebar:not(.open) .sidebar-group-title {
-    display: none;
+/* Link ativo — indicador lateral volta a aparecer */
+.sidebar:not(.open) .sidebar-link.active::before {
+    top: 50%;
+    bottom: auto;
+    left: 0;
+    height: 22px;
+    width: 3px;
+    transform: translateY(-50%);
+    border-radius: 0 4px 4px 0;
 }
 
-
-/* Divisória entre grupos quando fechada */
-
-.sidebar:not(.open) .sidebar-group
-    + .sidebar-group {
+/* Divisória entre grupos (linha horizontal fina) */
+.sidebar:not(.open) .sidebar-group + .sidebar-group {
     position: relative;
+    padding-top: 14px;
+    margin-top: 4px;
 }
 
-.sidebar:not(.open) .sidebar-group
-    + .sidebar-group::before {
+.sidebar:not(.open) .sidebar-group + .sidebar-group::before {
     content: "";
     position: absolute;
-    top: -12px;
+    top: 0;
     left: 50%;
     transform: translateX(-50%);
-
-    width: 24px;
+    width: 28px;
     height: 1px;
-    background: var(--sb-border);
+    background: var(--border);
 }
 
-
-/* Divisória do utilizador encolhe */
+/* Utilizador — avatar centrado */
+.sidebar:not(.open) .sidebar-user {
+    justify-content: center;
+    padding: 0;
+    margin-top: 14px;
+    gap: 0;
+}
 
 .sidebar:not(.open) .sidebar-user::before {
     left: 50%;
     right: auto;
     transform: translateX(-50%);
-    width: 24px;
+    width: 28px;
 }
+
+/* Tooltip nativo (title) continua a funcionar — não tocamos */
 
 
 /* =========================================================

@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { LogOut } from "lucide-react";
 
 import { useAuth } from "../../../contexts/useAuth";
 import { useNavigate } from "react-router-dom";
+import ConfirmDialog from "../../../components/ui/ConfirmDialog";
 
 
 function PerfilSessao() {
@@ -9,17 +11,10 @@ function PerfilSessao() {
     const { logout } = useAuth();
     const navigate = useNavigate();
 
+    const [confirmOpen, setConfirmOpen] = useState(false);
 
-    function terminar() {
 
-        const confirmar = window.confirm(
-            "Tem a certeza que deseja terminar a sessão?"
-        );
-
-        if (!confirmar) {
-            return;
-        }
-
+    function confirmarLogout() {
         logout();
         navigate("/login", { replace: true });
     }
@@ -27,6 +22,7 @@ function PerfilSessao() {
 
     return (
 
+        <>
         <section className="perfil-painel perfil-painel-perigo">
 
             <header className="perfil-painel-header">
@@ -44,13 +40,25 @@ function PerfilSessao() {
             <button
                 type="button"
                 className="perfil-btn perfil-btn-perigo"
-                onClick={terminar}
+                onClick={() => setConfirmOpen(true)}
             >
                 <LogOut size={14} strokeWidth={2.4} />
                 Terminar sessão
             </button>
 
         </section>
+
+        <ConfirmDialog
+            isOpen={confirmOpen}
+            title="Terminar sessão"
+            message="Tem a certeza que deseja terminar a sessão?"
+            confirmLabel="Terminar"
+            cancelLabel="Cancelar"
+            confirmVariant="danger"
+            onConfirm={confirmarLogout}
+            onCancel={() => setConfirmOpen(false)}
+        />
+        </>
     );
 }
 

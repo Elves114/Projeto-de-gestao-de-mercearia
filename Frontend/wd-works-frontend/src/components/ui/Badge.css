@@ -1,0 +1,83 @@
+/* ============================================================
+   BADGE
+   ============================================================ */
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-full);
+    font-weight: 600;
+    white-space: nowrap;
+    line-height: 1;
+}
+
+/* ---------- Tamanhos ---------- */
+
+.badge-md {
+    padding: 3px 10px;
+    font-size: 11px;
+    letter-spacing: 0.03em;
+}
+
+.badge-sm {
+    padding: 2px 8px;
+    font-size: 10px;
+    letter-spacing: 0.04em;
+}
+
+.badge-lg {
+    padding: 4px 12px;
+    font-size: 12px;
+    letter-spacing: 0.03em;
+}
+
+/* ---------- Variantes ---------- */
+
+.badge-default {
+    background: var(--bg-hover);
+    color: var(--text-soft);
+    border: 1px solid var(--border);
+}
+
+.badge-primary {
+    background: var(--primary-soft);
+    color: var(--primary-dark);
+}
+
+.badge-success {
+    background: var(--success-soft);
+    color: var(--success);
+}
+
+.badge-warning {
+    background: var(--warning-soft);
+    color: var(--warning);
+}
+
+.badge-danger {
+    background: var(--danger-soft);
+    color: var(--danger);
+}
+
+.badge-info {
+    background: var(--info-soft);
+    color: var(--info);
+}
+
+/* ---------- Role badges ---------- */
+
+.badge-funcionario {
+    background: var(--role-funcionario-bg);
+    color: var(--role-funcionario);
+}
+
+.badge-gerente {
+    background: var(--role-gerente-bg);
+    color: var(--role-gerente);
+}
+
+.badge-admin {
+    background: var(--role-admin-bg);
+    color: var(--role-admin);
+}

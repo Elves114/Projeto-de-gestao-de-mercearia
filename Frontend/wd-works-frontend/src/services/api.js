@@ -12,6 +12,7 @@ const URLS_SEM_REFRESH = [
     "/auth/login",
     "/auth/refresh",
     "/auth/cadastro",
+    "/auth/me",       
 ];
 
 /* ============================================================

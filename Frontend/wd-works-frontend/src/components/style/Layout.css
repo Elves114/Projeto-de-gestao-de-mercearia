@@ -3,16 +3,6 @@
    APP LAYOUT
    ============================================================ */
 
-:root {
-    --sidebar-fechada: 78px;
-    --sidebar-aberta: 260px;
-
-    --layout-duration: 300ms;
-
-    --layout-ease: cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-
 /* ============================================================
    ESTRUTURA PRINCIPAL
    ============================================================ */
@@ -22,7 +12,7 @@
 
     display: flex;
 
-    background: #f4f7fb;
+    background: var(--bg-app);
 
     overflow-x: hidden;
 }
