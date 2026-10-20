@@ -1,5 +1,6 @@
 package WD.works.V2.venda.service;
 
+import WD.works.V2.alertaStock.event.StockAlteradoEvent;
 import WD.works.V2.alertaStock.service.AlertaStockService;
 import WD.works.V2.auditoria.service.AuditoriaService;
 import WD.works.V2.configuracao.context.EmpresaContext;
@@ -31,6 +32,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -54,6 +56,7 @@ class VendaServiceTest {
     @Mock private EmpresaContext empresaContext;
     @Mock private AuditoriaService auditoriaService;
     @Mock private AlertaStockService alertaStockService;
+    @Mock private ApplicationEventPublisher applicationEventPublisher;
 
     @InjectMocks
     private VendaService service;
@@ -78,7 +81,7 @@ class VendaServiceTest {
     }
 
     /* ==========================================================
-       CRIAR VENDA — caminho felizes
+       CRIAR VENDA — caminho feliz
        ========================================================== */
 
     @Test
@@ -115,9 +118,11 @@ class VendaServiceTest {
         assertThat(estoque.getQuantidade()).isEqualTo(97);
 
         verify(estoqueRepository).save(estoque);
-        verify(alertaStockService).verificarEstoque(estoque);
         verify(movimentoRepository).save(any());
         verify(auditoriaService).registrar(any());
+
+        // ★ Verifica que o evento foi publicado (I6)
+        verify(applicationEventPublisher).publishEvent(any(StockAlteradoEvent.class));
     }
 
     /* ==========================================================

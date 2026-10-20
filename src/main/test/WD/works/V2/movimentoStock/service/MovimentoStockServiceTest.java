@@ -1,5 +1,6 @@
 package WD.works.V2.movimentoStock.service;
 
+import WD.works.V2.alertaStock.event.StockAlteradoEvent;
 import WD.works.V2.alertaStock.service.AlertaStockService;
 import WD.works.V2.auditoria.service.AuditoriaService;
 import WD.works.V2.configuracao.context.UsuarioContext;
@@ -27,6 +28,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.Optional;
 
@@ -36,10 +38,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT)   // ← NOVO
+@MockitoSettings(strictness = Strictness.LENIENT)
 @DisplayName("MovimentoStockService — entradas, saídas e ajustes")
 class MovimentoStockServiceTest {
-
 
     @Mock private MovimentoStockRepository movimentoRepository;
     @Mock private EstoqueRepository estoqueRepository;
@@ -47,6 +48,7 @@ class MovimentoStockServiceTest {
     @Mock private UsuarioContext usuarioContext;
     @Mock private AlertaStockService alertaStockService;
     @Mock private AuditoriaService auditoriaService;
+    @Mock private ApplicationEventPublisher applicationEventPublisher;
 
     @InjectMocks
     private MovimentoStockService service;
@@ -94,7 +96,7 @@ class MovimentoStockServiceTest {
 
         assertThat(estoque.getQuantidade()).isEqualTo(150);
         verify(estoqueRepository).save(estoque);
-        verify(alertaStockService).verificarEstoque(estoque);
+        verify(applicationEventPublisher).publishEvent(any(StockAlteradoEvent.class));
     }
 
     /* ==========================================================
@@ -113,6 +115,7 @@ class MovimentoStockServiceTest {
         service.criar(request);
 
         assertThat(estoque.getQuantidade()).isEqualTo(70);
+        verify(applicationEventPublisher).publishEvent(any(StockAlteradoEvent.class));
     }
 
     @Test
@@ -143,10 +146,27 @@ class MovimentoStockServiceTest {
         request.setAcao(Acao.AJUSTE);
         request.setQuantidadeAjuste(250);
         request.setProdutoId(1L);
+        request.setDescricao("Ajuste após contagem física");   // ★ obrigatório (I4)
 
         service.criar(request);
 
         assertThat(estoque.getQuantidade()).isEqualTo(250);
+        verify(applicationEventPublisher).publishEvent(any(StockAlteradoEvent.class));
+    }
+
+    @Test
+    @DisplayName("AJUSTE rejeitado sem descrição (I4)")
+    void ajusteRejeitadoSemDescricao() {
+
+        MovimentoStockRequest request = new MovimentoStockRequest();
+        request.setAcao(Acao.AJUSTE);
+        request.setQuantidadeAjuste(250);
+        request.setProdutoId(1L);
+        // Sem descrição → deve falhar
+
+        assertThatThrownBy(() -> service.criar(request))
+                .isInstanceOf(RegraNegocioException.class)
+                .hasMessageContaining("descrição justificativa");
     }
 
     /* ==========================================================
@@ -165,6 +185,7 @@ class MovimentoStockServiceTest {
         service.criar(request);
 
         assertThat(estoque.getQuantidade()).isEqualTo(120);
+        verify(applicationEventPublisher).publishEvent(any(StockAlteradoEvent.class));
     }
 
     /* ==========================================================

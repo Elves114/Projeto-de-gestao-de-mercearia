@@ -5,6 +5,7 @@ import WD.works.V2.empresa.entity.Empresa;
 import WD.works.V2.empresa.repository.EmpresaRepository;
 import WD.works.V2.exception.RecursoNaoEncontradoException;
 import WD.works.V2.exception.RegraNegocioException;
+import WD.works.V2.usuario.auth.service.RefreshTokenService;
 import WD.works.V2.usuario.dto.UsuarioAtualizacaoRequest;
 import WD.works.V2.usuario.dto.UsuarioRequest;
 import WD.works.V2.usuario.dto.UsuarioResponse;
@@ -34,6 +35,7 @@ public class UsuarioService {
     private final PasswordEncoder passwordEncoder;
     private final SecurityUtils securityUtils;
     private final AuditoriaService auditoriaService;
+    private final RefreshTokenService refreshTokenService;
 
 
     /*
@@ -518,6 +520,9 @@ public class UsuarioService {
         );
 
         usuarioRepository.save(usuario);
+        // ★ SEGURANÇA: revoga todos os refresh tokens do utilizador
+        // Se um atacante tem um token, perde acesso após mudança de senha
+        refreshTokenService.revogarTodos(usuario.getId());
 
         /*
          * 4) Auditoria.

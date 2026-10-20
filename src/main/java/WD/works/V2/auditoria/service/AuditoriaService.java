@@ -43,7 +43,7 @@ public class AuditoriaService {
      * automaticamente o usuário e a empresa
      * do contexto atual.
      */
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public AuditoriaResponse registrar(AuditoriaRequest request) {
 
         validarRequest(request);

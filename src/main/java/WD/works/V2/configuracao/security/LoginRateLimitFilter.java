@@ -14,14 +14,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-/**
- * Aplica rate limit ao endpoint /auth/login.
- *
- * Chave = IP + email.
- *
- * Lê o corpo do pedido UMA VEZ (via CachedBodyHttpServletRequest)
- * para extrair o email, sem impedir o controller de o ler depois.
- */
 @Component
 @RequiredArgsConstructor
 public class LoginRateLimitFilter extends OncePerRequestFilter {
@@ -36,89 +28,93 @@ public class LoginRateLimitFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
-        // Só se aplica a POST /auth/login
-        if (!request.getRequestURI().equals("/auth/login")
-                || !request.getMethod().equalsIgnoreCase("POST")) {
+        String path = request.getRequestURI();
 
+        if (!request.getMethod().equalsIgnoreCase("POST")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // Faz cache do corpo para poder ler o email
-        // sem consumir o stream antes do controller
-        CachedBodyHttpServletRequest cachedRequest =
-                new CachedBodyHttpServletRequest(request);
+        String chave = null;
 
-        String ip = obterIp(cachedRequest);
-        String email = extrairEmail(cachedRequest);
-
-        String chave = ip + "|" + (email != null ? email.toLowerCase() : "anon");
-
-        if (!loginRateLimitService.permitido(chave)) {
-
-            response.setStatus(429);
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-
-            response.getWriter().write("""
-                {
-                  "status": 429,
-                  "erro": "Too Many Requests",
-                  "mensagem": "Demasiadas tentativas de login. Tente novamente em alguns segundos."
-                }
-            """);
-
+        // /auth/login → chave = IP + email
+        if (path.equals("/auth/login")) {
+            CachedBodyHttpServletRequest cached =
+                    new CachedBodyHttpServletRequest(request);
+            String ip = obterIp(cached);
+            String email = extrairEmail(cached);
+            chave = "login:" + ip + "|" +
+                    (email != null ? email.toLowerCase() : "anon");
+            if (!loginRateLimitService.permitido(chave)) {
+                responder429(response);
+                return;
+            }
+            filterChain.doFilter(cached, response);
             return;
         }
 
-        // Continua com o request em cache
-        filterChain.doFilter(cachedRequest, response);
+        // /auth/refresh → chave = IP
+        if (path.equals("/auth/refresh")) {
+            String ip = obterIp(request);
+            chave = "refresh:" + ip;
+            if (!loginRateLimitService.permitido(chave)) {
+                responder429(response);
+                return;
+            }
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        // /auth/recuperar-senha → chave = IP + email
+        if (path.equals("/auth/recuperar-senha")) {
+            CachedBodyHttpServletRequest cached =
+                    new CachedBodyHttpServletRequest(request);
+            String ip = obterIp(cached);
+            String email = extrairEmail(cached);
+            chave = "recuperar:" + ip + "|" +
+                    (email != null ? email.toLowerCase() : "anon");
+            if (!loginRateLimitService.permitido(chave)) {
+                responder429(response);
+                return;
+            }
+            filterChain.doFilter(cached, response);
+            return;
+        }
+
+        filterChain.doFilter(request, response);
     }
 
-    /**
-     * Obtém o IP real do cliente, tratando proxies.
-     */
+    private void responder429(HttpServletResponse response) throws IOException {
+        response.setStatus(429);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write("""
+            {
+              "status": 429,
+              "erro": "Too Many Requests",
+              "mensagem": "Demasiados pedidos. Tente novamente em alguns segundos."
+            }
+        """);
+    }
+
     private String obterIp(HttpServletRequest request) {
-
         String xff = request.getHeader("X-Forwarded-For");
-
         if (xff != null && !xff.isBlank()) {
             return xff.split(",")[0].trim();
         }
-
         String realIp = request.getHeader("X-Real-IP");
-
-        if (realIp != null && !realIp.isBlank()) {
-            return realIp;
-        }
-
+        if (realIp != null && !realIp.isBlank()) return realIp;
         return request.getRemoteAddr();
     }
 
-    /**
-     * Extrai o campo "email" do corpo JSON.
-     * Devolve null se não existir ou não for JSON válido.
-     */
     private String extrairEmail(CachedBodyHttpServletRequest request) {
-
         try {
-
             byte[] body = request.getCachedBody();
-
-            if (body == null || body.length == 0) {
-                return null;
-            }
-
+            if (body == null || body.length == 0) return null;
             String json = new String(body, StandardCharsets.UTF_8);
-
             JsonNode node = objectMapper.readTree(json);
-
-            return node.has("email")
-                    ? node.get("email").asText()
-                    : null;
-
+            return node.has("email") ? node.get("email").asText() : null;
         } catch (Exception e) {
-
             return null;
         }
     }

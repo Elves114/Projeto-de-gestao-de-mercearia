@@ -384,28 +384,26 @@ public class ProdutoService {
     @Transactional
     public void desativar(Long id) {
 
-        Long empresaId =
-                empresaContext.getEmpresaIdAtual();
-
-        Produto produto =
-                buscarProdutoDaEmpresa(
-                        id,
-                        empresaId
-                );
+        Long empresaId = empresaContext.getEmpresaIdAtual();
+        Produto produto = buscarProdutoDaEmpresa(id, empresaId);
 
         if (produto.getStatus() == StatusProduto.INATIVO) {
+            throw new RegraNegocioException("O produto já está inativo.");
+        }
 
+        // ★ NOVO: bloquear desativação com stock > 0
+        Estoque estoque = buscarEstoqueDoProduto(produto.getId(), empresaId);
+
+        if (estoque.getQuantidade() > 0) {
             throw new RegraNegocioException(
-                    "O produto já está inativo."
+                    "Não é possível desativar produto com estoque ("
+                            + estoque.getQuantidade() + " unidades). "
+                            + "Zere o estoque primeiro."
             );
         }
 
         produto.setStatus(StatusProduto.INATIVO);
-
-        produto.setUltimaAlteracaoPor(
-                usuarioContext.getUsuarioAtual()
-        );
-
+        produto.setUltimaAlteracaoPor(usuarioContext.getUsuarioAtual());
         produtoRepository.save(produto);
 
         auditoriaService.registrar(
@@ -416,8 +414,7 @@ public class ProdutoService {
                         "Produto '" +
                                 produto.getNome() +
                                 "' foi desativado."
-                )
-        );
+                ));
     }
 
     /*
