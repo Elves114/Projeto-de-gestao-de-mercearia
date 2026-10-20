@@ -155,16 +155,6 @@ public class MovimentoStockService {
         estoqueRepository.save(estoque);
 
         /*
-         * Verifica se o estoque está abaixo
-         * ou igual à quantidade mínima.
-         *
-         * Pode:
-         * - criar um novo alerta;
-         * - manter um alerta existente;
-         * - resolver um alerta existente.
-         */
-        applicationEventPublisher.publishEvent(new StockAlteradoEvent(estoque));
-        /*
          * Cria o histórico do movimento
          */
         MovimentoStock movimento =
@@ -207,6 +197,13 @@ public class MovimentoStockService {
 
         MovimentoStock movimentoSalvo =
                 movimentoRepository.save(movimento);
+
+        /*
+         * Publica o evento após o save do movimento.
+         * Se o retry re-executar, o evento não é publicado
+         * duas vezes com valores diferentes.
+         */
+        applicationEventPublisher.publishEvent(new StockAlteradoEvent(estoque));
 
         /*
          * Auditoria.

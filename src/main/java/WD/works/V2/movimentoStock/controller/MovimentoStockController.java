@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -127,7 +128,7 @@ public class MovimentoStockController {
             @RequestParam(required = false)
             String produto,
 
-            Pageable pageable
+            @ParameterObject Pageable pageable
     ) {
 
         return ResponseEntity.ok(
@@ -176,7 +177,7 @@ public class MovimentoStockController {
             )
             @PathVariable Long produtoId,
 
-            Pageable pageable
+            @ParameterObject Pageable pageable
     ) {
 
         return ResponseEntity.ok(

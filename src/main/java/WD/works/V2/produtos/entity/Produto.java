@@ -109,4 +109,7 @@ public class Produto {
             length = 20
     )
     private StatusProduto status;
+
+    @Version
+    private Long version;
 }

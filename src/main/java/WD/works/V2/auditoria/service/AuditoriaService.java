@@ -92,7 +92,7 @@ public class AuditoriaService {
      * Este método NÃO chama outro registrar(),
      * evitando recursão infinita.
      */
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public AuditoriaResponse registrar(
             AuditoriaRequest request,
             Usuario usuario,

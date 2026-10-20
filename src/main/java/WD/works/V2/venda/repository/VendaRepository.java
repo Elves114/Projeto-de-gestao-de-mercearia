@@ -4,6 +4,7 @@ import WD.works.V2.dashboard.dto.VendaGraficoResponse;
 import WD.works.V2.venda.entity.Venda;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,11 +17,13 @@ import java.util.Optional;
 public interface VendaRepository
         extends JpaRepository<Venda, Long> {
 
+    @EntityGraph(attributePaths = {"itens", "itens.produto", "usuario", "canceladaPor"})
     Optional<Venda> findByIdAndEmpresaId(
             Long id,
             Long empresaId
     );
 
+    @EntityGraph(attributePaths = {"usuario"})
     Page<Venda> findByEmpresaIdOrderByDataVendaDesc(
             Long empresaId,
             Pageable pageable

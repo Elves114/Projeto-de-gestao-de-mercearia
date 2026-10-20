@@ -1,5 +1,7 @@
 package WD.works.V2.usuario.auth.service;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 import io.github.bucket4j.Refill;
@@ -7,8 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Rate limit do login.
@@ -31,7 +32,10 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class LoginRateLimitService {
 
-    private final Map<String, Bucket> buckets = new ConcurrentHashMap<>();
+    private final Cache<String, Bucket> buckets = Caffeine.newBuilder()
+            .expireAfterAccess(1, TimeUnit.HOURS)
+            .maximumSize(50_000)
+            .build();
 
     private final int capacidade;
     private final int tokensPorPeriodo;
@@ -51,7 +55,7 @@ public class LoginRateLimitService {
     }
 
     private Bucket obterBucket(String chave) {
-        return buckets.computeIfAbsent(chave, k -> criarBucket());
+        return buckets.get(chave, k -> criarBucket());
     }
 
     private Bucket criarBucket() {

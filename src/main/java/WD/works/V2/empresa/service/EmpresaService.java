@@ -41,8 +41,8 @@ public class EmpresaService {
 
         Empresa empresaSalva = empresaRepository.save(empresa);
 
-        // ★ Auditoria local (não depende do AuthService)
-        // Nota: o AuthService ainda pode auditar com o admin associado
+        // A auditoria da criação da empresa é feita em AuthService.cadastrar(),
+        // onde já existe o admin associado.
         return converterParaResponse(empresaSalva);
     }
 
