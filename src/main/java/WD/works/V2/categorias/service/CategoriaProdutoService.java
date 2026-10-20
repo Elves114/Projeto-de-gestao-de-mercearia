@@ -13,6 +13,7 @@ import WD.works.V2.empresa.repository.EmpresaRepository;
 import WD.works.V2.exception.RecursoNaoEncontradoException;
 import WD.works.V2.exception.RegraNegocioException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,7 @@ public class CategoriaProdutoService {
      */
 
     @Transactional
+    @CacheEvict(value = {"produtos", "dashboard"}, allEntries = true)
     public CategoriaProdutoResponse criar(
             CategoriaProdutoRequest request
     ) {
@@ -138,6 +140,7 @@ public class CategoriaProdutoService {
      */
 
     @Transactional
+    @CacheEvict(value = {"produtos", "dashboard"}, allEntries = true)
     public CategoriaProdutoResponse atualizar(
             Long id,
             CategoriaProdutoRequest request
@@ -189,6 +192,7 @@ public class CategoriaProdutoService {
      */
 
     @Transactional
+    @CacheEvict(value = {"produtos", "dashboard"}, allEntries = true)
     public void eliminar(
             Long id
     ) {

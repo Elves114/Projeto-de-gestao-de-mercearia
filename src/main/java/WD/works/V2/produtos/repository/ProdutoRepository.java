@@ -13,73 +13,44 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-
-
-public interface ProdutoRepository
-        extends JpaRepository<Produto, Long> {
+public interface ProdutoRepository extends JpaRepository<Produto, Long> {
 
     @EntityGraph(attributePaths = {"categoria"})
     Page<Produto> findByEmpresaIdOrderByNomeAsc(Long empresaId, Pageable pageable);
 
+    boolean existsByIdAndEmpresaId(Long id, Long empresaId);
 
-    boolean existsByIdAndEmpresaId(
-            Long id,
-            Long empresaId
-    );
+    List<Produto> findByEmpresaId(Long empresaId);
 
-    List<Produto> findByEmpresaId(
-            Long empresaId
-    );
+    Optional<Produto> findByIdAndEmpresaId(Long id, Long empresaId);
 
-    Optional<Produto> findByIdAndEmpresaId(
-            Long id,
-            Long empresaId
-    );
+    Optional<Produto> findByNomeAndEmpresaId(String nome, Long empresaId);
 
-    Optional<Produto> findByNomeAndEmpresaId(
-            String nome,
-            Long empresaId
-    );
+    boolean existsByNomeAndEmpresaId(String nome, Long empresaId);
 
-    boolean existsByNomeAndEmpresaId(
-            String nome,
-            Long empresaId
-    );
+    Page<Produto> findByEmpresaIdAndNomeContainingIgnoreCase(Long empresaId, String nome, Pageable pageable);
 
-    Page<Produto> findByEmpresaIdAndNomeContainingIgnoreCase(
-            Long empresaId,
-            String nome,
-            Pageable pageable
-    );
+    boolean existsByCategoriaIdAndEmpresaId(Long categoriaId, Long empresaId);
 
-    boolean existsByCategoriaIdAndEmpresaId(
-            Long categoriaId,
-            Long empresaId
-    );
-
-    long countByEmpresaIdAndStatus(
-            Long empresaId,
-            StatusProduto status
-    );
-
-
+    long countByEmpresaIdAndStatus(Long empresaId, StatusProduto status);
 
     @EntityGraph(attributePaths = {"categoria"})
     @Query("""
-SELECT p
-FROM Produto p
-JOIN Estoque e ON e.produto.id = p.id
-WHERE p.empresa.id = :empresaId
-  AND (:status IS NULL OR p.status = :status)
-  AND (:nome IS NULL OR LOWER(p.nome) LIKE LOWER(CONCAT('%', CAST(:nome AS string), '%')))
-  AND (:categoriaId IS NULL OR p.categoria.id = :categoriaId)
-  AND (:precoMin IS NULL OR p.precoVenda >= :precoMin)
-  AND (:precoMax IS NULL OR p.precoVenda <= :precoMax)
-  AND (:quantidadeMin IS NULL OR e.quantidade >= :quantidadeMin)
-  AND (:quantidadeMax IS NULL OR e.quantidade <= :quantidadeMax)
-ORDER BY p.nome ASC
-""")
-
+    SELECT p FROM Produto p
+    WHERE p.empresa.id = :empresaId
+      AND (:status IS NULL OR p.status = :status)
+      AND (:nome IS NULL OR LOWER(p.nome) LIKE LOWER(CONCAT('%', CAST(:nome AS string), '%')))
+      AND (:categoriaId IS NULL OR p.categoria.id = :categoriaId)
+      AND (:precoMin IS NULL OR p.precoVenda >= :precoMin)
+      AND (:precoMax IS NULL OR p.precoVenda <= :precoMax)
+      AND EXISTS (
+          SELECT 1 FROM Estoque e
+          WHERE e.produto.id = p.id
+            AND (:quantidadeMin IS NULL OR e.quantidade >= :quantidadeMin)
+            AND (:quantidadeMax IS NULL OR e.quantidade <= :quantidadeMax)
+      )
+    ORDER BY p.nome ASC
+    """)
     Page<Produto> pesquisarComFiltros(
             @Param("empresaId") Long empresaId,
             @Param("status") StatusProduto status,

@@ -22,6 +22,8 @@ import WD.works.V2.usuario.repository.UsuarioRepository;
 import WD.works.V2.usuario.service.UsuarioService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -35,6 +37,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
+
+    private static final Logger log = LoggerFactory.getLogger(AuthService.class);
 
     @Value("${app.frontend.url:http://localhost:5173}")
     private String frontendUrl;
@@ -172,18 +176,22 @@ public class AuthService {
         AuthResponse response = gerarRespostaAutenticacao(usuario, httpRequest);
 
         // 4. Auditoria
-        auditoriaService.registrar(
-                new AuditoriaRequest(
-                        TipoAuditoria.LOGIN,
-                        "usuario",
-                        usuario.getId().toString(),
-                        "Access token renovado via refresh."
-                ),
-                usuario,
-                usuario.getEmpresa(),
-                GravidadeAuditoria.INFO,
-                null
-        );
+        try {
+            auditoriaService.registrar(
+                    new AuditoriaRequest(
+                            TipoAuditoria.LOGIN,
+                            "usuario",
+                            usuario.getId().toString(),
+                            "Access token renovado via refresh."
+                    ),
+                    usuario,
+                    usuario.getEmpresa(),
+                    GravidadeAuditoria.INFO,
+                    null
+            );
+        } catch (Exception e) {
+            log.warn("Falha ao registar auditoria de refresh", e);
+        }
 
         return response;
     }

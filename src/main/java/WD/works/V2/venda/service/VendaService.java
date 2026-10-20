@@ -403,6 +403,18 @@ public class VendaService {
 
     @CacheEvict(value = {"dashboard", "produtos"}, allEntries = true)
     @Transactional
+    @Retryable(
+            retryFor = {
+                    org.springframework.orm.ObjectOptimisticLockingFailureException.class,
+                    org.springframework.dao.OptimisticLockingFailureException.class
+            },
+            maxAttempts = 3,
+            backoff = @Backoff(
+                    delay = 50,
+                    multiplier = 2,
+                    maxDelay = 500
+            )
+    )
     public VendaResponse cancelar(
             Long vendaId,
             CancelarVendaRequest request
@@ -589,6 +601,33 @@ public class VendaService {
     ) {
         throw new RegraNegocioException(
                 "Não foi possível concluir a venda. Tente novamente."
+        );
+    }
+
+    /**
+     * Métodos recover para cancelar().
+     * Chamados quando as 3 tentativas falham.
+     */
+    @Recover
+    public VendaResponse recoverCancelar(
+            org.springframework.dao.OptimisticLockingFailureException ex,
+            Long vendaId,
+            CancelarVendaRequest request
+    ) {
+        throw new RegraNegocioException(
+                "O estoque foi alterado por outra operação ao mesmo tempo. "
+                        + "Por favor, tente novamente."
+        );
+    }
+
+    @Recover
+    public VendaResponse recoverCancelar(
+            org.springframework.transaction.TransactionSystemException ex,
+            Long vendaId,
+            CancelarVendaRequest request
+    ) {
+        throw new RegraNegocioException(
+                "Não foi possível concluir o cancelamento. Tente novamente."
         );
     }
 

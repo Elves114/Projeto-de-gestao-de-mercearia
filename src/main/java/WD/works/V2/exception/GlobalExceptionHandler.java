@@ -335,5 +335,24 @@ public class GlobalExceptionHandler {
                 request.getRequestURI()
         );
     }
+
+    @ExceptionHandler(org.springframework.transaction.TransactionSystemException.class)
+    public ResponseEntity<Map<String, Object>> tratarTransactionSystem(
+            org.springframework.transaction.TransactionSystemException ex,
+            HttpServletRequest request
+    ) {
+
+        log.error(
+                "Falha de transação: {}",
+                request.getRequestURI(),
+                ex
+        );
+
+        return criarResposta(
+                HttpStatus.CONFLICT,
+                "Não foi possível concluir a operação. Tente novamente.",
+                request.getRequestURI()
+        );
+    }
 }
 

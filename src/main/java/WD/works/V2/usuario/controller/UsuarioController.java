@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -272,7 +273,7 @@ public class UsuarioController {
     public ResponseEntity<Page<UsuarioResponse>> listarPorEmpresa(
 
 
-            Pageable pageable
+            @ParameterObject Pageable pageable
 
     ) {
 
@@ -456,7 +457,7 @@ public class UsuarioController {
     @PreAuthorize("hasAuthority('USUARIO_VISUALIZAR')")
     @GetMapping("/pesquisar")
     public ResponseEntity<Page<UsuarioResponse>> pesquisar(
-            @Parameter(name = "termo", description = "Nome ou email do usuário.", required = true, in = ParameterIn.QUERY, example = "joao") @RequestParam String termo, Pageable pageable) {
+            @Parameter(name = "termo", description = "Nome ou email do usuário.", required = true, in = ParameterIn.QUERY, example = "joao") @RequestParam String termo, @ParameterObject Pageable pageable) {
         return ResponseEntity.ok(usuarioService.pesquisar(termo, pageable));
     }
 

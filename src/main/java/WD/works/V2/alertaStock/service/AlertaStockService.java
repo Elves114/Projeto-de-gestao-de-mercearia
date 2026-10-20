@@ -7,6 +7,7 @@ import WD.works.V2.alertaStock.repository.AlertaStockRepository;
 import WD.works.V2.configuracao.context.UsuarioContext;
 import WD.works.V2.empresa.entity.Empresa;
 import WD.works.V2.estoque.entity.Estoque;
+import WD.works.V2.estoque.repository.EstoqueRepository;
 import WD.works.V2.exception.RecursoNaoEncontradoException;
 import WD.works.V2.exception.RegraNegocioException;
 import WD.works.V2.usuario.entity.Usuario;
@@ -28,6 +29,7 @@ import java.time.LocalDateTime;
 public class AlertaStockService {
 
     private final AlertaStockRepository alertaStockRepository;
+    private final EstoqueRepository estoqueRepository;
     private final UsuarioContext usuarioContext;
 
     private static final Logger log =
@@ -61,7 +63,11 @@ public class AlertaStockService {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onStockAlterado(StockAlteradoEvent event) {
         try {
-            verificarEstoque(event.getEstoque());
+            Long estoqueId = event.getEstoque().getId();
+            Estoque fresco = estoqueRepository.findById(estoqueId).orElse(null);
+            if (fresco != null) {
+                verificarEstoque(fresco);
+            }
         } catch (Exception e) {
             log.error("Falha ao verificar alerta de stock", e);
         }
