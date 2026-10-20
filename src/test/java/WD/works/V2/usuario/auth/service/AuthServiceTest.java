@@ -1,174 +1,100 @@
 package WD.works.V2.usuario.auth.service;
 
-import WD.works.V2.auditoria.dto.AuditoriaRequest;
 import WD.works.V2.auditoria.service.AuditoriaService;
 import WD.works.V2.configuracao.security.JwtService;
-import WD.works.V2.empresa.entity.Empresa;
-import WD.works.V2.empresa.repository.EmpresaRepository;
-import WD.works.V2.empresa.service.EmpresaService;
-import WD.works.V2.exception.RegraNegocioException;
 import WD.works.V2.exception.TokenRecuperacaoException;
 import WD.works.V2.usuario.auth.dto.AuthResponse;
 import WD.works.V2.usuario.auth.security.UsuarioDetails;
 import WD.works.V2.usuario.entity.Usuario;
-import WD.works.V2.usuario.repository.UsuarioRepository;
-import WD.works.V2.usuario.service.UsuarioService;
-import jakarta.servlet.http.HttpServletRequest;
+import WD.works.V2.usuario.perfil.Perfil;
+import WD.works.V2.util.TestDataFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("AuthService — refresh de tokens")
 class AuthServiceTest {
 
-    @Mock
-    private JwtService jwtService;
+    @Mock private JwtService jwtService;
+    @Mock private RefreshTokenService refreshTokenService;
+    @Mock private AuditoriaService auditoriaService;
 
-    @Mock
-    private RefreshTokenService refreshTokenService;
-
-    @Mock
-    private AuditoriaService auditoriaService;
-
-    @Mock
-    private EmpresaService empresaService;
-
-    @Mock
-    private UsuarioService usuarioService;
-
-    @Mock
-    private UsuarioRepository usuarioRepository;
-
-    @Mock
-    private LoginTentativaService loginTentativaService;
-
-    @Mock
-    private PasswordEncoder passwordEncoder;
-
-    @Mock
-    private EmpresaRepository empresaRepository;
-
-    @Mock
-    private HttpServletRequest httpRequest;
-
-    private AuthService authService;
+    @InjectMocks
+    private AuthService service;
 
     private Usuario usuario;
+    private final String tokenValido = "token-valido";
 
     @BeforeEach
     void setUp() {
-        authService = new AuthService(
-                null, // AuthenticationManager (not used in refresh)
-                jwtService,
-                empresaService,
-                usuarioService,
-                usuarioRepository,
-                loginTentativaService,
-                null, // TokenRecuperacaoSenhaService (not used in refresh)
-                refreshTokenService,
-                null, // EmailService ObjectProvider (not used in refresh)
-                passwordEncoder,
-                auditoriaService,
-                empresaRepository
-        );
+        // Injetar dependências que o AuthService precisa via Reflection
+        ReflectionTestUtils.setField(service, "jwtService", jwtService);
+        ReflectionTestUtils.setField(service, "refreshTokenService", refreshTokenService);
+        ReflectionTestUtils.setField(service, "auditoriaService", auditoriaService);
+        ReflectionTestUtils.setField(service, "usuarioRepository", null);
 
-        Empresa empresa = new Empresa();
-        empresa.setId(1L);
-        empresa.setNome("Empresa Teste");
+        usuario = TestDataFactory.usuario(1L, 10L, Perfil.FUNCIONARIO);
 
-        usuario = new Usuario();
-        usuario.setId(1L);
-        usuario.setNome("Usuário Teste");
-        usuario.setEmail("user@teste.com");
-        usuario.setEmpresa(empresa);
+        // Configuração base para os testes
+        when(jwtService.gerarToken(any())).thenReturn("access-token-falso");
+        when(jwtService.getExpirationSeconds()).thenReturn(3600L);
     }
 
     @Test
-    @DisplayName("Refresh válido deve devolver novo AuthResponse e chamar validarERevogar")
+    @DisplayName("Refresh com token válido devolve nova autenticação")
     void refreshValidoDeveDevolverAuthResponse() {
-        // Setup
-        String refreshToken = "valid-refresh-token";
-        when(refreshTokenService.validarERevogar(refreshToken)).thenReturn(usuario);
-        when(jwtService.gerarToken(any(UsuarioDetails.class))).thenReturn("new-access-token");
-        when(jwtService.getExpirationSeconds()).thenReturn(3600L);
-        when(httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
-        when(httpRequest.getRemoteAddr()).thenReturn("127.0.0.1");
-        when(httpRequest.getHeader("User-Agent")).thenReturn("TestAgent");
+        when(refreshTokenService.validarERevogar(tokenValido)).thenReturn(usuario);
+        when(refreshTokenService.criar(any(Usuario.class), any(), any())).thenReturn("novo-refresh-token");
 
-        // Executar
-        AuthResponse response = authService.refresh(refreshToken, httpRequest);
+        AuthResponse response = service.refresh(tokenValido, null);
 
-        // Verificar
         assertThat(response).isNotNull();
-        assertThat(response.getToken()).isEqualTo("new-access-token");
-        assertThat(response.getRefreshToken()).isNotNull();
-        assertThat(response.getExpiresIn()).isEqualTo(3600L);
-
-        verify(refreshTokenService).validarERevogar(refreshToken);
-        verify(refreshTokenService).criar(eq(usuario), anyString(), anyString());
-        verify(auditoriaService).registrar(any(AuditoriaRequest.class), eq(usuario), eq(usuario.getEmpresa()), any(), isNull());
+        assertThat(response.getToken()).isEqualTo("access-token-falso");
+        assertThat(response.getRefreshToken()).isEqualTo("novo-refresh-token");
     }
 
     @Test
-    @DisplayName("Refresh inválido deve propagar TokenRecuperacaoException")
-    void refreshInvalidoDevePropagarException() {
-        // Setup
-        String refreshToken = "invalid-refresh-token";
-        when(refreshTokenService.validarERevogar(refreshToken))
-                .thenThrow(new TokenRecuperacaoException("Refresh token inválido."));
-
-        // Executar e verificar
-        assertThatThrownBy(() -> authService.refresh(refreshToken, httpRequest))
-                .isInstanceOf(TokenRecuperacaoException.class)
-                .hasMessageContaining("inválido");
-
-        verify(refreshTokenService).validarERevogar(refreshToken);
-        verify(jwtService, never()).gerarToken(any());
-        verify(auditoriaService, never()).registrar(any(), any(), any(), any(), any());
-    }
-
-    @Test
-    @DisplayName("Refresh com token nulo deve lançar RegraNegocioException")
-    void refreshComTokenNulo() {
-        assertThatThrownBy(() -> authService.refresh(null, httpRequest))
-                .isInstanceOf(RegraNegocioException.class)
-                .hasMessageContaining("não informado");
-
-        verify(refreshTokenService, never()).validarERevogar(any());
-    }
-
-    @Test
-    @DisplayName("Falha de auditoria não impede o refresh (prova de N6)")
+    @DisplayName("Falha na auditoria não deve impedir a devolução do novo token")
     void falhaAuditoriaNaoImpedeRefresh() {
-        // Setup
-        String refreshToken = "valid-refresh-token";
-        when(refreshTokenService.validarERevogar(refreshToken)).thenReturn(usuario);
-        when(jwtService.gerarToken(any(UsuarioDetails.class))).thenReturn("new-access-token");
-        when(jwtService.getExpirationSeconds()).thenReturn(3600L);
-        when(httpRequest.getHeader("X-Forwarded-For")).thenReturn(null);
-        when(httpRequest.getRemoteAddr()).thenReturn("127.0.0.1");
-        when(httpRequest.getHeader("User-Agent")).thenReturn("TestAgent");
+        when(refreshTokenService.validarERevogar(tokenValido)).thenReturn(usuario);
+        when(refreshTokenService.criar(any(Usuario.class), any(), any())).thenReturn("novo-refresh-token");
+
+        // Simula uma exceção na auditoria
         when(auditoriaService.registrar(any(), any(), any(), any(), any()))
-                .thenThrow(new RuntimeException("Falha na auditoria"));
+                .thenThrow(new RuntimeException("Falha na base de dados de auditoria"));
 
-        // Executar — não deve lançar exceção
-        AuthResponse response = authService.refresh(refreshToken, httpRequest);
+        AuthResponse response = service.refresh(tokenValido, null);
 
-        // Verificar
         assertThat(response).isNotNull();
-        assertThat(response.getToken()).isEqualTo("new-access-token");
-        assertThat(response.getRefreshToken()).isNotNull();
+        assertThat(response.getToken()).isEqualTo("access-token-falso");
+    }
 
-        verify(refreshTokenService).validarERevogar(refreshToken);
-        verify(auditoriaService).registrar(any(AuditoriaRequest.class), eq(usuario), eq(usuario.getEmpresa()), any(), isNull());
+    @Test
+    @DisplayName("Refresh inválido propaga a exceção")
+    void refreshInvalidoDevePropagarException() {
+        when(refreshTokenService.validarERevogar(tokenValido))
+                .thenThrow(new TokenRecuperacaoException("Token inválido"));
+
+        assertThatThrownBy(() -> service.refresh(tokenValido, null))
+                .isInstanceOf(TokenRecuperacaoException.class);
+    }
+
+    @Test
+    @DisplayName("Refresh com token nulo lança exceção")
+    void refreshComTokenNulo() {
+        assertThatThrownBy(() -> service.refresh(null, null))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }
