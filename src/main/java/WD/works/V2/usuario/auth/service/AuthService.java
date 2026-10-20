@@ -165,11 +165,8 @@ public class AuthService {
             throw new RegraNegocioException("Refresh token não informado.");
         }
 
-        // 1. Valida (não revoga)
-        Usuario usuario = refreshTokenService.validar(refreshToken);
 
-        // 2. Revoga o token antigo (rotação)
-        refreshTokenService.revogar(refreshToken);
+        Usuario usuario = refreshTokenService.validarERevogar(refreshToken);
 
         // 3. Gera novo par
         AuthResponse response = gerarRespostaAutenticacao(usuario, httpRequest);

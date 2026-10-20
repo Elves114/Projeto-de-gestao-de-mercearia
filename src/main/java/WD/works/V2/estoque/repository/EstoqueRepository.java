@@ -3,6 +3,7 @@ package WD.works.V2.estoque.repository;
 import WD.works.V2.estoque.entity.Estoque;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,25 +16,11 @@ public interface EstoqueRepository
 
     Optional<Estoque> findByProdutoId(Long produtoId);
 
-    Optional<Estoque> findByIdAndEmpresaId(
-            Long id,
-            Long empresaId
-    );
-
-    Optional<Estoque> findByProdutoIdAndEmpresaId(
-            Long produtoId,
-            Long empresaId
-    );
-
     List<Estoque> findByProdutoIdInAndEmpresaId(
             List<Long> produtoIds,
             Long empresaId
     );
 
-    Page<Estoque> findByEmpresaId(
-            Long empresaId,
-            Pageable pageable
-    );
    @Query(" SELECT COALESCE(SUM(e.quantidade), 0) FROM Estoque e WHERE e.empresa.id = :empresaId ")
     long somarStockPorEmpresa(@Param("empresaId") Long empresaId);
 
@@ -55,5 +42,15 @@ public interface EstoqueRepository
     long countEstoqueBaixoPorEmpresa( @Param("empresaId") Long empresaId );
 
     long countByEmpresaIdAndQuantidade(Long empresaId, Integer quantidade);
+
+
+    @EntityGraph(attributePaths = {"produto", "empresa"})
+    Page<Estoque> findByEmpresaId(Long empresaId, Pageable pageable);
+
+    @EntityGraph(attributePaths = {"produto", "empresa"})
+    Optional<Estoque> findByIdAndEmpresaId(Long id, Long empresaId);
+
+    @EntityGraph(attributePaths = {"produto", "empresa"})
+    Optional<Estoque> findByProdutoIdAndEmpresaId(Long produtoId, Long empresaId);
 
 }

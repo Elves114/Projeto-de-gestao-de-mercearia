@@ -1,5 +1,6 @@
 package WD.works.V2.venda.service;
 
+import WD.works.V2.alertaStock.event.StockAlteradoEvent;
 import WD.works.V2.alertaStock.service.AlertaStockService;
 import WD.works.V2.auditoria.dto.AuditoriaRequest;
 import WD.works.V2.auditoria.gravidade.GravidadeAuditoria;
@@ -30,6 +31,7 @@ import WD.works.V2.venda.repository.VendaRepository;
 import WD.works.V2.venda.status.StatusVenda;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.retry.annotation.Backoff;
@@ -59,9 +61,11 @@ public class VendaService {
 
     private final AuditoriaService auditoriaService;
     private final AlertaStockService alertaStockService;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
 
     @CacheEvict(value = {"dashboard", "produtos"}, allEntries = true)
+    @Transactional
     @Retryable(
             retryFor = {
                     org.springframework.orm.ObjectOptimisticLockingFailureException.class,
@@ -219,9 +223,7 @@ public class VendaService {
                     estoque
             );
 
-            alertaStockService.verificarEstoque(
-                    estoque
-            );
+            applicationEventPublisher.publishEvent(new StockAlteradoEvent(estoque));
 
             /*
              * ====================================================
@@ -451,7 +453,7 @@ public class VendaService {
             estoqueRepository.save(estoque);
 
             // Verifica se o alerta de stock deve ser resolvido
-            alertaStockService.verificarEstoque(estoque);
+            applicationEventPublisher.publishEvent(new StockAlteradoEvent(estoque));
 
             // Movimento de DEVOLUCAO (rastreabilidade)
             MovimentoStock movimento = new MovimentoStock();
@@ -582,15 +584,13 @@ public class VendaService {
 
     @Recover
     public VendaResponse recoverCriar(
-            org.springframework.orm.ObjectOptimisticLockingFailureException ex,
+            org.springframework.transaction.TransactionSystemException ex,
             VendaRequest request
     ) {
         throw new RegraNegocioException(
-                "O estoque foi alterado por outra operação ao mesmo tempo. "
-                        + "Por favor, tente novamente."
+                "Não foi possível concluir a venda. Tente novamente."
         );
     }
-
 
     /**
      * Valida todos os produtos e respectivos estoques

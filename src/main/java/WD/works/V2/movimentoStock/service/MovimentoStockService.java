@@ -1,5 +1,6 @@
 package WD.works.V2.movimentoStock.service;
 
+import WD.works.V2.alertaStock.event.StockAlteradoEvent;
 import WD.works.V2.alertaStock.service.AlertaStockService;
 import WD.works.V2.auditoria.dto.AuditoriaRequest;
 import WD.works.V2.auditoria.service.AuditoriaService;
@@ -19,6 +20,7 @@ import WD.works.V2.usuario.entity.Usuario;
 import WD.works.V2.configuracao.context.UsuarioContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.retry.annotation.Backoff;
@@ -37,8 +39,8 @@ public class MovimentoStockService {
     private final EstoqueRepository estoqueRepository;
     private final ProdutoRepository produtoRepository;
     private final UsuarioContext usuarioContext;
-    private final AlertaStockService alertaStockService;
     private final AuditoriaService auditoriaService;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @CacheEvict(value = {"dashboard", "produtos", "estoques"}, allEntries = true)
     @Retryable(
@@ -127,19 +129,16 @@ public class MovimentoStockService {
             }
 
             case AJUSTE -> {
+                validarQuantidadeAjuste(request.getQuantidadeAjuste());
 
-                validarQuantidadeAjuste(
-                        request.getQuantidadeAjuste()
-                );
+                if (request.getDescricao() == null || request.getDescricao().isBlank()) {
+                    throw new RegraNegocioException(
+                            "O ajuste exige uma descrição justificativa."
+                    );
+                }
 
-                quantidadePosterior =
-                        request.getQuantidadeAjuste();
-
-                quantidadeMovimentada =
-                        Math.abs(
-                                quantidadePosterior
-                                        - quantidadeAnterior
-                        );
+                quantidadePosterior = request.getQuantidadeAjuste();
+                quantidadeMovimentada = Math.abs(quantidadePosterior - quantidadeAnterior);
             }
 
             default -> throw new RegraNegocioException(
@@ -164,9 +163,7 @@ public class MovimentoStockService {
          * - manter um alerta existente;
          * - resolver um alerta existente.
          */
-        alertaStockService.verificarEstoque(
-                estoque
-        );
+        applicationEventPublisher.publishEvent(new StockAlteradoEvent(estoque));
         /*
          * Cria o histórico do movimento
          */

@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import jakarta.persistence.LockModeType;
+import org.springframework.data.jpa.repository.Lock;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -36,4 +38,9 @@ public interface RefreshTokenRepository
     int limparAntigos(@Param("limite") LocalDateTime limite);
 
     long countByUsuarioIdAndRevogadoFalse(Long usuarioId);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT rt FROM RefreshToken rt WHERE rt.tokenHash = :hash")
+    Optional<RefreshToken> findByTokenHashComLock(@Param("hash") String hash);
+
 }

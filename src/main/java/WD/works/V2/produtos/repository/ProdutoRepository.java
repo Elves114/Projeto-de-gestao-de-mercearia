@@ -7,18 +7,20 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.jpa.repository.EntityGraph;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+
+
 public interface ProdutoRepository
         extends JpaRepository<Produto, Long> {
 
-    Page<Produto> findByEmpresaIdOrderByNomeAsc(
-            Long empresaId,
-            Pageable pageable
-    );
+    @EntityGraph(attributePaths = {"categoria"})
+    Page<Produto> findByEmpresaIdOrderByNomeAsc(Long empresaId, Pageable pageable);
+
 
     boolean existsByIdAndEmpresaId(
             Long id,
@@ -62,6 +64,7 @@ public interface ProdutoRepository
 
 
 
+    @EntityGraph(attributePaths = {"categoria"})
     @Query("""
 SELECT p
 FROM Produto p
@@ -76,6 +79,7 @@ WHERE p.empresa.id = :empresaId
   AND (:quantidadeMax IS NULL OR e.quantidade <= :quantidadeMax)
 ORDER BY p.nome ASC
 """)
+
     Page<Produto> pesquisarComFiltros(
             @Param("empresaId") Long empresaId,
             @Param("status") StatusProduto status,

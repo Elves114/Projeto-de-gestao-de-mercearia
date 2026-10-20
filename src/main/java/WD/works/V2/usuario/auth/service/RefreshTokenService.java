@@ -194,6 +194,39 @@ public class RefreshTokenService {
         }
     }
 
+    /**
+     * Valida e revoga ATOMICAMENTE o refresh token.
+     * Usa lock pessimista para evitar race condition.
+     */
+    @Transactional
+    public Usuario validarERevogar(String token) {
+
+        if (token == null || token.isBlank()) {
+            throw new TokenRecuperacaoException(
+                    "Refresh token não informado."
+            );
+        }
+
+        String hash = gerarHash(token);
+
+        RefreshToken entity = repository.findByTokenHashComLock(hash)
+                .orElseThrow(() -> new TokenRecuperacaoException(
+                        "Refresh token inválido."
+                ));
+
+        if (entity.isRevogado() || entity.isExpirado()) {
+            throw new TokenRecuperacaoException(
+                    "Refresh token inválido ou expirado."
+            );
+        }
+
+        entity.setRevogado(true);
+        entity.setRevogadoEm(LocalDateTime.now());
+        repository.save(entity);
+
+        return entity.getUsuario();
+    }
+
     private String truncar(String valor, int max) {
         if (valor == null) return null;
         return valor.length() > max

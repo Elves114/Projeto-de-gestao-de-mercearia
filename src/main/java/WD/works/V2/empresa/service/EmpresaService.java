@@ -25,7 +25,6 @@ public class EmpresaService {
     private final SecurityUtils securityUtils;
     private final AuditoriaService auditoriaService;
 
-
     @Transactional
     public EmpresaResponse criarInicial(EmpresaRequest request) {
 
@@ -33,40 +32,31 @@ public class EmpresaService {
         validarEmail(request.getEmail());
 
         Empresa empresa = new Empresa();
-
         empresa.setNome(request.getNome());
         empresa.setNuit(request.getNuit());
         empresa.setEmail(request.getEmail());
         empresa.setContacto(request.getContacto());
         empresa.setEndereco(request.getEndereco());
-
         empresa.setStatus(Status.ATIVO);
 
-        Empresa empresaSalva =
-                empresaRepository.save(empresa);
+        Empresa empresaSalva = empresaRepository.save(empresa);
 
+        // ★ Auditoria local (não depende do AuthService)
+        // Nota: o AuthService ainda pode auditar com o admin associado
         return converterParaResponse(empresaSalva);
     }
 
-    @Transactional
-    public EmpresaResponse atualizar(
-            Long id,
+    /**
+     * Método privado comum — elimina duplicação entre
+     * atualizar() e atualizarMinhaEmpresa().
+     */
+    private EmpresaResponse aplicarAtualizacao(
+            Empresa empresa,
             EmpresaRequest request
     ) {
 
-        validarAcessoEmpresa(id);
-
-        Empresa empresa = buscarEntidadePorId(id);
-
-        validarNuitNaAtualizacao(
-                request.getNuit(),
-                empresa.getId()
-        );
-
-        validarEmailNaAtualizacao(
-                request.getEmail(),
-                empresa.getId()
-        );
+        validarNuitNaAtualizacao(request.getNuit(), empresa.getId());
+        validarEmailNaAtualizacao(request.getEmail(), empresa.getId());
 
         empresa.setNome(request.getNome());
         empresa.setNuit(request.getNuit());
@@ -74,26 +64,33 @@ public class EmpresaService {
         empresa.setContacto(request.getContacto());
         empresa.setEndereco(request.getEndereco());
 
-        Empresa empresaAtualizada =
-                empresaRepository.save(empresa);
+        Empresa salva = empresaRepository.save(empresa);
 
         auditoriaService.registrar(
                 new AuditoriaRequest(
                         TipoAuditoria.ALTERACAO,
                         "empresa",
-                        empresaAtualizada.getId().toString(),
-                        "Empresa '" +
-                                empresaAtualizada.getNome() +
-                                "' foi atualizada."
+                        salva.getId().toString(),
+                        "Empresa '" + salva.getNome() + "' foi atualizada."
                 )
         );
 
-        return converterParaResponse(empresaAtualizada);
-
+        return converterParaResponse(salva);
     }
 
+    @Transactional
+    public EmpresaResponse atualizar(Long id, EmpresaRequest request) {
+        validarAcessoEmpresa(id);
+        Empresa empresa = buscarEntidadePorId(id);
+        return aplicarAtualizacao(empresa, request);
+    }
 
-
+    @Transactional
+    public EmpresaResponse atualizarMinhaEmpresa(EmpresaRequest request) {
+        Long empresaId = securityUtils.getEmpresaId();
+        Empresa empresa = buscarEntidadePorId(empresaId);
+        return aplicarAtualizacao(empresa, request);
+    }
 
     /*
      * ============================================================
@@ -200,46 +197,6 @@ public class EmpresaService {
         return converterParaResponse(empresa);
     }
 
-    @Transactional
-    public EmpresaResponse atualizarMinhaEmpresa(
-            EmpresaRequest request
-    ) {
-
-        Long empresaId = securityUtils.getEmpresaId();
-
-        Empresa empresa = buscarEntidadePorId(empresaId);
-
-        validarNuitNaAtualizacao(
-                request.getNuit(),
-                empresa.getId()
-        );
-
-        validarEmailNaAtualizacao(
-                request.getEmail(),
-                empresa.getId()
-        );
-
-        empresa.setNome(request.getNome());
-        empresa.setNuit(request.getNuit());
-        empresa.setEmail(request.getEmail());
-        empresa.setContacto(request.getContacto());
-        empresa.setEndereco(request.getEndereco());
-
-        Empresa empresaAtualizada =
-                empresaRepository.save(empresa);
-
-        auditoriaService.registrar(
-                new AuditoriaRequest(
-                        TipoAuditoria.ALTERACAO,
-                        "empresa",
-                        empresaAtualizada.getId().toString(),
-                        "Empresa '" +
-                                empresaAtualizada.getNome() +
-                                "' foi atualizada."
-                )
-        );
-        return converterParaResponse(empresaAtualizada);
-    }
 
     @Transactional
     public EmpresaResponse ativarMinhaEmpresa() {

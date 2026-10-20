@@ -2,6 +2,7 @@ package WD.works.V2.alertaStock.service;
 
 import WD.works.V2.alertaStock.dto.AlertaStockResponse;
 import WD.works.V2.alertaStock.entity.AlertaStock;
+import WD.works.V2.alertaStock.event.StockAlteradoEvent;
 import WD.works.V2.alertaStock.repository.AlertaStockRepository;
 import WD.works.V2.configuracao.context.UsuarioContext;
 import WD.works.V2.empresa.entity.Empresa;
@@ -10,10 +11,15 @@ import WD.works.V2.exception.RecursoNaoEncontradoException;
 import WD.works.V2.exception.RegraNegocioException;
 import WD.works.V2.usuario.entity.Usuario;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.time.LocalDateTime;
 
@@ -23,6 +29,9 @@ public class AlertaStockService {
 
     private final AlertaStockRepository alertaStockRepository;
     private final UsuarioContext usuarioContext;
+
+    private static final Logger log =
+            LoggerFactory.getLogger(AlertaStockService.class);
 
     /*
      * ============================================================
@@ -47,6 +56,16 @@ public class AlertaStockService {
      * Caso o stock esteja normal:
      *      resolve o alerta ativo, se existir.
      */
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void onStockAlterado(StockAlteradoEvent event) {
+        try {
+            verificarEstoque(event.getEstoque());
+        } catch (Exception e) {
+            log.error("Falha ao verificar alerta de stock", e);
+        }
+    }
 
     @Transactional
     public void verificarEstoque(
