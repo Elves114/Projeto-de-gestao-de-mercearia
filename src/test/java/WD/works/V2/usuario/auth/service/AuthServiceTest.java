@@ -2,9 +2,9 @@ package WD.works.V2.usuario.auth.service;
 
 import WD.works.V2.auditoria.service.AuditoriaService;
 import WD.works.V2.configuracao.security.JwtService;
+import WD.works.V2.exception.RegraNegocioException;
 import WD.works.V2.exception.TokenRecuperacaoException;
 import WD.works.V2.usuario.auth.dto.AuthResponse;
-import WD.works.V2.usuario.auth.security.UsuarioDetails;
 import WD.works.V2.usuario.entity.Usuario;
 import WD.works.V2.usuario.perfil.Perfil;
 import WD.works.V2.util.TestDataFactory;
@@ -20,7 +20,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,22 +38,20 @@ class AuthServiceTest {
 
     @BeforeEach
     void setUp() {
-        // Injetar dependências que o AuthService precisa via Reflection
+        // Injetar as dependências necessárias
         ReflectionTestUtils.setField(service, "jwtService", jwtService);
         ReflectionTestUtils.setField(service, "refreshTokenService", refreshTokenService);
         ReflectionTestUtils.setField(service, "auditoriaService", auditoriaService);
-        ReflectionTestUtils.setField(service, "usuarioRepository", null);
 
         usuario = TestDataFactory.usuario(1L, 10L, Perfil.FUNCIONARIO);
-
-        // Configuração base para os testes
-        when(jwtService.gerarToken(any())).thenReturn("access-token-falso");
-        when(jwtService.getExpirationSeconds()).thenReturn(3600L);
     }
 
     @Test
     @DisplayName("Refresh com token válido devolve nova autenticação")
     void refreshValidoDeveDevolverAuthResponse() {
+        // Configurações movidas para aqui
+        when(jwtService.gerarToken(any())).thenReturn("access-token-falso");
+        when(jwtService.getExpirationSeconds()).thenReturn(3600L);
         when(refreshTokenService.validarERevogar(tokenValido)).thenReturn(usuario);
         when(refreshTokenService.criar(any(Usuario.class), any(), any())).thenReturn("novo-refresh-token");
 
@@ -68,6 +65,9 @@ class AuthServiceTest {
     @Test
     @DisplayName("Falha na auditoria não deve impedir a devolução do novo token")
     void falhaAuditoriaNaoImpedeRefresh() {
+        // Configurações movidas para aqui
+        when(jwtService.gerarToken(any())).thenReturn("access-token-falso");
+        when(jwtService.getExpirationSeconds()).thenReturn(3600L);
         when(refreshTokenService.validarERevogar(tokenValido)).thenReturn(usuario);
         when(refreshTokenService.criar(any(Usuario.class), any(), any())).thenReturn("novo-refresh-token");
 
@@ -92,9 +92,11 @@ class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("Refresh com token nulo lança exceção")
+    @DisplayName("Refresh com token nulo lança exceção de regra de negócio")
     void refreshComTokenNulo() {
+        // CORREÇÃO: A exceção esperada é RegraNegocioException, não IllegalArgumentException
         assertThatThrownBy(() -> service.refresh(null, null))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(RegraNegocioException.class)
+                .hasMessageContaining("Refresh token não informado");
     }
 }
