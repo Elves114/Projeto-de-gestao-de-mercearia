@@ -819,6 +819,3 @@ ALTER TABLE ONLY public.categorias_produto
 --
 -- PostgreSQL database dump complete
 --
-
-\unrestrict v96MvthzpsECbqt4X4aiJP361mPOrrOvIIUNd03asw3RLgTm9Wilid7IkaHKfC4
-
